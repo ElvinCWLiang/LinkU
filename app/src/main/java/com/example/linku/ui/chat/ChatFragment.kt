@@ -1,4 +1,4 @@
-package com.example.linku.ui.notifications
+package com.example.linku.ui.chat
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,11 +9,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.linku.R
-import com.example.linku.databinding.FragmentNotificationsBinding
+import com.example.linku.databinding.FragmentChatBinding
+import com.example.linku.ui.dashboard.ChatViewModel
 
-class NotificationsFragment : Fragment() {
+class ChatFragment : Fragment() {
 
-    private var _binding: FragmentNotificationsBinding? = null
+    private var _binding: FragmentChatBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -24,16 +25,13 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel =
-            ViewModelProvider(this).get(NotificationsViewModel::class.java)
+        val chatViewModel =
+            ViewModelProvider(this).get(ChatViewModel::class.java)
 
-        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_notifications ,container, false)
-
+        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_chat ,container, false)
         val root: View = binding.root
-
-        val textView: TextView = binding.textNotifications
-
-        notificationsViewModel.text.observe(viewLifecycleOwner) {
+        val textView: TextView = binding.textChat
+        chatViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
         return root

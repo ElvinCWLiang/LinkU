@@ -22,4 +22,16 @@
         android:name="com.example.linku.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_chat"
+        android:name="com.example.linku.ui.chat.ChatFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_chat" />
+
+    <fragment
+        android:id="@+id/navigation_lottery"
+        android:name="com.example.linku.ui.lottery.LotteryFragment"
+        android:label="@string/title_notifications"
+        tools:layout="@layout/fragment_lottery" />
 </navigation>
