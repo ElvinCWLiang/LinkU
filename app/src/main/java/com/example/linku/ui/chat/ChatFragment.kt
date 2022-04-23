@@ -1,9 +1,11 @@
 package com.example.linku.ui.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -30,10 +32,13 @@ class ChatFragment : Fragment() {
 
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_chat ,container, false)
         val root: View = binding.root
-        val textView: TextView = binding.textChat
+
+        /*
         chatViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
+        */
+
         return root
     }
 

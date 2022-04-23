@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "906801689860",
+    "project_id": "linku-22b30",
+    "storage_bucket": "linku-22b30.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906801689860:android:0003c8ddf8c534bea90c51",
+        "android_client_info": {
+          "package_name": "com.example.linku"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "906801689860-brob932am85ihu6vmjlifpk4cbifa7rd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbjt2V3QKOM7ZcQvIn4B499MfBp9P2uS0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "906801689860-brob932am85ihu6vmjlifpk4cbifa7rd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
