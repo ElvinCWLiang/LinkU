@@ -10,7 +10,7 @@ import android.widget.Button
 import com.example.linku.R
 import kotlinx.android.synthetic.main.dialog_login.*
 
-class LoginDialog(context: Context) : Dialog(context),
+class LoginDialog(context: Context, _dashboardViewModel: DashboardViewModel) : Dialog(context),
     View.OnClickListener {
 
     override fun onClick(v: View) {

@@ -1,37 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
-
+<navigation xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/mobile_navigation" app:startDestination="@+id/navigation_home">
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.example.linku.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
-
+        android:name="com.example.linku.ui.home.HomeFragment"
+        android:id="@+id/navigation_home"/>
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.linku.ui.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
-
+        android:name="com.example.linku.ui.dashboard.DashboardFragment"
+        android:id="@+id/navigation_dashboard"/>
     <fragment
-        android:id="@+id/navigation_notifications"
+        android:label="@string/title_notifications"
         android:name="com.example.linku.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
-
+        android:id="@+id/navigation_notifications"/>
     <fragment
-        android:id="@+id/navigation_chat"
-        android:name="com.example.linku.ui.chat.ChatFragment"
         android:label="Chat"
-        tools:layout="@layout/fragment_chat" />
-
+        android:name="com.example.linku.ui.chat.ChatFragment"
+        android:id="@+id/navigation_chat"/>
     <fragment
-        android:id="@+id/navigation_lottery"
-        android:name="com.example.linku.ui.lottery.LotteryFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_lottery" />
+        android:name="com.example.linku.ui.lottery.LotteryFragment"
+        android:id="@+id/navigation_lottery"/>
+    <fragment
+        android:label="@string/publish"
+        android:name="com.example.linku.ui.home.PublishFragment"
+        android:id="@+id/navigation_publish"/>
+    <fragment
+        android:label="conversation"
+        android:name="com.example.linku.ui.chat.ConversationFragment"
+        android:id="@+id/navigation_conversation"/>
+    <fragment
+        android:label="ArticleFragment"
+        android:name="com.example.linku.ui.home.ArticleFragment"
+        android:id="@+id/navigation_article"/>
 </navigation>

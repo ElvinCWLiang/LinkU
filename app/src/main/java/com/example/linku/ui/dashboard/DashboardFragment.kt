@@ -33,8 +33,6 @@ class DashboardFragment : Fragment() {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.dashboardViewModel = dashboardViewModel
-
         val textView: TextView = binding.textUsername
 
         binding.dashboardViewModel = dashboardViewModel

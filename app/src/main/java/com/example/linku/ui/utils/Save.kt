@@ -1,9 +1,9 @@
 package com.example.linku.ui.utils
 
-import android.R
 import android.content.Context
-import kotlin.jvm.internal.Intrinsics
-
+import androidx.room.Room
+import com.example.linku.R
+import com.example.linku.data.local.LocalDatabase
 
 class Save {
     private val Account = "ACCOUNT"
@@ -11,6 +11,14 @@ class Save {
     val INSTANCE: Save = Save()
     private val LoginStatus = "LOGINSTATUS"
     private val Password = "PASSWORD"
+
+    companion object {
+        private var instance: Save? = null
+
+        fun getInstance(): Save {
+            return instance ?: Save()
+        }
+    }
 
     fun saveConnectionStatus(mContext: Context, isConnected: Boolean) {
         mContext.getSharedPreferences(mContext.getResources().getString(R.string.data), 0).edit()
@@ -37,19 +45,13 @@ class Save {
     }
 
     fun getUserAccount(mContext: Context): String {
-        val string: String =
-            mContext.getSharedPreferences(mContext.getResources().getString(R.string.data), 0)
-                .getString(Account, "zz")
-        Intrinsics.checkNotNull(string)
-        return string
+        return mContext.getSharedPreferences(mContext.resources.getString(R.string.data), 0)
+            .getString(Account, "zz")!!
     }
 
     fun getUserPassword(mContext: Context): String {
-        val string: String =
-            mContext.getSharedPreferences(mContext.getResources().getString(R.string.data), 0)
-                .getString(Password, "zz")
-        Intrinsics.checkNotNull(string)
-        return string
+        return mContext.getSharedPreferences(mContext.resources.getString(R.string.data), 0)
+            .getString(Password, "zz")!!
     }
 
     fun getConnectionStatus(mContext: Context): Boolean {

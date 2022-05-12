@@ -1,19 +1,19 @@
 package com.example.linku.data.local
 
-interface DataDao {
+interface Dao {
     fun deleteArticle()
 
     fun deleteArticle(vararg articleModelArr: ArticleModel?)
 
-    fun getArticleResponse(str: String?): List<ArticleModel?>?
+    fun getArticleResponse(str: String?): List<ArticleModel?>
 
-    fun getBoardArticle(str: String?): List<ArticleModel?>?
+    fun getBoardArticle(str: String?): List<ArticleModel?>
 
-    fun getConversation(str: String?): List<FriendModel?>?
+    fun getConversation(str: String?): List<FriendModel?>
 
-    fun getFreindList(): List<FriendModel?>?
+    fun getFreindList(): List<FriendModel?>
 
-    fun getallArticle(): Any?
+    fun getallArticle(): List<ArticleModel?>
 
     fun insertArticle(vararg articleModel: ArticleModel?)
 

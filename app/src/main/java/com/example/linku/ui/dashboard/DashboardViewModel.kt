@@ -7,11 +7,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.linku.data.remote.FireBaseRepository
 import com.example.linku.data.remote.IFireOperationCallBack
+import com.example.linku.ui.utils.Save
 
 
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
 
-    private var mContext: Context? = application
+    private var mapplication = application
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -22,7 +23,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val mApplication: Application? = null
     private val shouldshowLoginDialog: MutableLiveData<Boolean>? = null
 
-    private val userAccount: MutableLiveData<String>? = null
+    private var userAccount: MutableLiveData<String?>? = null
 
     fun signUp(acc: String?, pwd: String?) {
         FireBaseRepository(null).signUp(acc, pwd)
@@ -34,10 +35,10 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             // from class: com.example.linku.ui.dashboard.DashboardViewModel$signIn$1
             // com.example.linku.data.remote.IFireOperationCallBack
             override fun <T> onSuccess(t: T) {
-                save.saveUser(application, acc, pwd)
-                save2.saveLoginStatus(application2, true)
-                Log.i(TAG, acc)
-                userAccount.setValue(acc)
+                Save.getInstance().saveUser(mapplication, acc, pwd)
+                Save.getInstance().saveLoginStatus(mapplication, true)
+                Log.i(TAG, acc + "")
+                userAccount?.setValue(acc)
             }
 
             // com.example.linku.data.remote.IFireOperationCallBack
@@ -47,14 +48,14 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun logout() {
         FireBaseRepository(null).signOut()
-        Save.saveLoginStatus(this.mApplication, false)
-        Save.deleteUser(this.mApplication)
-        userAccount!!.value = null
+        Save.getInstance().saveLoginStatus(mapplication, false)
+        Save.getInstance().deleteUser(mapplication)
+        userAccount?.value = null
     }
 
-    fun showDialog(): MutableLiveData<Boolean>? {
-        Log.i(TAG, "loginstatus = " + Save.getLoginStatus(this.mApplication))
-        shouldshowLoginDialog!!.setValue(java.lang.Boolean.valueOf(Save.getLoginStatus(this.mApplication)))
+    fun showDialog(): MutableLiveData<Boolean> {
+        Log.i(TAG, "loginstatus = " + Save.getInstance().getLoginStatus(mapplication))
+        shouldshowLoginDialog!!.setValue((Save.getInstance().getLoginStatus(mapplication)))
         return shouldshowLoginDialog
     }
 

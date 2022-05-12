@@ -1,12 +1,33 @@
 <resources>
-    <string name="app_name">LinkU</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="readed_message">已讀訊息</string>
-    <string name="unread_message">未讀訊息</string>
     <string name="account">account</string>
-    <string name="password">password</string>
+    <string name="accountlist">accountlist</string>
+    <string name="app_name">LinkU</string>
+    <string name="article">Article</string>
+    <string name="chat">Chat</string>
+    <string name="data">data</string>
+    <string name="isConnected">isConnected</string>
+    <string name="login_first">please login</string>
+    <string name="publish">Publish</string>
+    <string name="publish_fail">publish fail</string>
+    <string name="publish_success">publish success</string>
+    <string name="readed_message">已讀訊息</string>
+    <string name="search_menu_title">Search</string>
+    <string name="title">Title</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_home">Home</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="unread_message">未讀訊息</string>
+
+
+    <array name="board_array">
+        <item>All</item>
+        <item>Travel</item>
+        <item>Aviation</item>
+        <item>Movie</item>
+    </array>
+    <array name="publish_array">
+        <item>Travel</item>
+        <item>Aviation</item>
+        <item>Movie</item>
+    </array>
 </resources>

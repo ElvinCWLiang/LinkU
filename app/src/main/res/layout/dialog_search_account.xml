@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:tag="layout/dialog_search_account_0" android:layout_width="match_parent" android:layout_height="match_parent">
+    <ImageView android:id="@+id/img_avatar" android:layout_width="257dp" android:layout_height="210dp" android:layout_marginTop="20dp" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0" app:srcCompat="@drawable/google"/>
+    <Button android:id="@+id/btn_addfriend" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="ADD" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toBottomOf="@+id/txv_introduction"/>
+    <TextView android:textSize="30sp" android:id="@+id/txv_introduction" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="40dp" android:hint="introduction" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toBottomOf="@+id/img_avatar"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

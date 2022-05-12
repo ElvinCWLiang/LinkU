@@ -8,14 +8,19 @@
         <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.137" />
         <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/activity_main.xml" value="0.1875" />
         <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/activity_main2.xml" value="0.1875" />
-        <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/dialog_login.xml" value="0.264" />
+        <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/adapter_chat.xml" value="0.15" />
+        <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/adapter_conversation.xml" value="0.15" />
+        <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/adapter_home.xml" value="0.15" />
+        <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/dialog_login.xml" value="0.1" />
+        <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/fragment_article.xml" value="0.1" />
         <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/fragment_blank.xml" value="0.1875" />
         <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/fragment_chat.xml" value="0.264" />
-        <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/fragment_dashboard.xml" value="0.1" />
+        <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/fragment_dashboard.xml" value="0.2" />
         <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/fragment_home.xml" value="0.16799999999999998" />
         <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/fragment_lottery.xml" value="0.16" />
         <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/fragment_mainpage.xml" value="0.1" />
         <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/fragment_notifications.xml" value="0.1875" />
+        <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/layout/layout_article_response.xml" value="0.15" />
         <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1" />
         <entry key="..\:/Users/CheWei Liang/LinkU/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.121" />
       </map>
