@@ -1,11 +1,14 @@
 package com.example.linku.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil.getBinding
+import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -13,23 +16,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.linku.R
 import com.example.linku.data.local.LocalDatabase
 import com.example.linku.databinding.FragmentHomeBinding
-import kotlin.jvm.internal.Intrinsics
-
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
-
+    private val binding get() = _binding!!
     // This property is only valid between onCreateView and
     // onDestroyView.
     lateinit var textView: TextView
-    private val binding get() = _binding!!
-
     private val TAG = "ev_" + javaClass.simpleName
-
-    lateinit var homeViewModel: HomeViewModel
-    lateinit var mHomeAdapter: HomeAdapter
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,19 +44,11 @@ class HomeFragment : Fragment() {
 
         binding.homeViewModel = homeViewModel
 
+        binding.spnHome.setSelection(0, false);
+
         homeViewModel.syncBoard(binding.spnHome.selectedItemPosition)
 
-        //
-        homeViewModel.syncArticle.observe(viewLifecycleOwner) {
-            if (!it) {
-                val database = LocalDatabase.getInstance(requireContext())
-                if (database != null) {
-                    database.dataDao()
-                }
-            }
-        }
-
-        mHomeAdapter = HomeAdapter(this, container!!)
+        val mHomeAdapter = HomeAdapter(this, container)
         binding.recyclerViewArticle.adapter = mHomeAdapter
         binding.recyclerViewArticle.layoutManager = LinearLayoutManager(activity)
 

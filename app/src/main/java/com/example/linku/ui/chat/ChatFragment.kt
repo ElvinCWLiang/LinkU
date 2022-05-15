@@ -10,11 +10,15 @@ import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.linku.R
 import com.example.linku.databinding.FragmentChatBinding
-import com.example.linku.ui.dashboard.ChatViewModel
+import com.example.linku.ui.chat.ChatViewModel
+import com.example.linku.ui.home.HomeAdapter
 
 class ChatFragment : Fragment() {
+
+    val TAG = "ev_" + javaClass.simpleName
 
     private var _binding: FragmentChatBinding? = null
 
@@ -33,11 +37,25 @@ class ChatFragment : Fragment() {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_chat ,container, false)
         val root: View = binding.root
 
-        /*
-        chatViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        binding.chatViewModel = chatViewModel
+
+        chatViewModel.shouldshowSearchAccountDialog.observe(viewLifecycleOwner) {
+            Log.i(TAG,"it = $it")
+            if (it) {
+                SearchAccountDialog(requireContext(), chatViewModel).show()
+            }
         }
-        */
+        val mChatAdapter = ChatAdapter(this, container)
+        binding.recyclerViewChat.adapter = mChatAdapter
+        binding.recyclerViewChat.layoutManager = LinearLayoutManager(activity)
+
+        chatViewModel.syncFriendList()
+
+        chatViewModel.chatAdapterMaterial.observe(viewLifecycleOwner) {
+            Log.i(TAG,"size = ${it.size}")
+            mChatAdapter.setModelList(it)
+            mChatAdapter.notifyDataSetChanged()
+        }
 
         return root
     }

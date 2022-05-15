@@ -15,12 +15,12 @@ class LoginDialog(context: Context, _dashboardViewModel: DashboardViewModel) : D
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.btn_login_google -> {
+            R.id.btn_sign_in -> {
                 //firebase
                 Log.i("evlog","btn_login_google")
             }
 
-            R.id.btn_login_email -> {
+            R.id.btn_sign_up -> {
                 Log.i("evlog","btn_login_email")
             }
         }
@@ -29,8 +29,8 @@ class LoginDialog(context: Context, _dashboardViewModel: DashboardViewModel) : D
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dialog_login)
-        btn_login_email.setOnClickListener(this)
-        btn_login_google.setOnClickListener(this)
+        btn_sign_in.setOnClickListener(this)
+        btn_sign_up.setOnClickListener(this)
     }
 
 

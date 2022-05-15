@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:tag="layout/dialog_login_0" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="8dp">
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="8dp">
+
     <Button
         android:id="@+id/btn_sign_in"
-        android:background="@drawable/user"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/user"
         app:layout_constraintBottom_toBottomOf="@+id/edt_password"
-        app:layout_constraintStart_toStartOf="0"
-        app:layout_constraintTop_toTopOf="@+id/edt_account"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edt_account"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <Button
         android:id="@+id/btn_sign_up"
@@ -17,26 +24,27 @@
         android:background="@drawable/google"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/edt_password"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/edt_account" />
 
     <EditText
         android:id="@+id/edt_account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:minHeight="48dp"
-        android:hint="@string/account"
-        android:ems="10"
-        android:inputType="textPersonName"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:hint="@string/account"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
         app:layout_constraintStart_toEndOf="@+id/btn_sign_in"
-        app:layout_constraintTop_toTopOf="0"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText android:id="@+id/edt_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
-        android:hint="@string/password"
+        android:hint="password"
         android:ems="10"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="@+id/edt_account"

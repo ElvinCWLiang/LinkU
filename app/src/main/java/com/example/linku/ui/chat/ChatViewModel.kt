@@ -10,53 +10,45 @@ import com.example.linku.data.local.LocalDatabase
 import com.example.linku.data.local.LocalRepository
 import com.example.linku.data.remote.FireBaseRepository
 import com.example.linku.data.remote.IFireOperationCallBack
-import com.example.linku.ui.utils.parseFun
+import com.example.linku.ui.utils.Parsefun
 import com.google.firebase.database.DataSnapshot
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlin.jvm.internal.Intrinsics
 
 
 class ChatViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val text = MutableLiveData<String>().apply {
-        value = "This is chat Fragment"
+    val _shouldshowSearchAccountDialog = MutableLiveData<Boolean>().apply {
+        value = false
     }
-    val _text: LiveData<String> = text
+    val shouldshowSearchAccountDialog: LiveData<Boolean> = _shouldshowSearchAccountDialog
 
-    lateinit var shouldshowSearchAccountDialog : MutableLiveData<Boolean>
-    var _shouldshowSearchAccountDialog: LiveData<Boolean> = shouldshowSearchAccountDialog
+    val _chatAdapterMaterial = MutableLiveData<List<FriendModel>>()
 
-    private val chatAdapterMaterial = MutableLiveData<List<FriendModel>>()
+    val chatAdapterMaterial: LiveData<List<FriendModel>> = _chatAdapterMaterial
 
     private val mapplication: Application = application
 
-
     private val TAG = "ev_" + javaClass.simpleName
-    private var userAccount = ""
 
-    fun showDialog(acc: String?) {
-        Intrinsics.checkNotNullParameter(acc, "acc")
+    var acc = ""
+
+    fun showDialog() {
         FireBaseRepository(object : IFireOperationCallBack {
             // from class: com.example.linku.ui.chat.ChatViewModel$showDialog$1
             // com.example.linku.data.remote.IFireOperationCallBack
             override fun <T> onSuccess(t: T) {
-                shouldshowSearchAccountDialog.setValue(true)
+                _shouldshowSearchAccountDialog.value = true
                 Log.i(TAG, "onSuccess")
             }
 
             // com.example.linku.data.remote.IFireOperationCallBack
             override fun onFail() {
                 Log.i(TAG, "onFail")
-                shouldshowSearchAccountDialog.setValue(false)
+                _shouldshowSearchAccountDialog.value = false
             }
         }).searchAccount(acc)
-    }
-
-    fun afterAccountChange(s: CharSequence) {
-        userAccount = s.toString()
     }
 
     fun addfriend() {
@@ -73,45 +65,45 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
             override fun onFail() {
                 Log.i(TAG, "onFail")
             }
-        }).addFriend(userAccount)
+        }).addFriend(acc)
     }
 
+    /* get friend list from Firebase and put the returning data into Room db >> */
     fun syncFriendList() {
         FireBaseRepository(object : IFireOperationCallBack {
-            // from class: com.example.linku.ui.chat.ChatViewModel$syncFriendList$1
-            // com.example.linku.data.remote.IFireOperationCallBack
             override fun <T> onSuccess(t: T) {
                 if (t != null) {
                     val mDataSnapshot = t as DataSnapshot
                     for (chatmaterial in mDataSnapshot.children) {
+                        Log.i(TAG,"${chatmaterial.value}")
                         for (n in chatmaterial.children) {
                             val m = n.getValue(FriendModel::class.java)
                             if (m != null) {
                                 m.id = n.key.toString()
                             }
                             if (m != null) {
-                                val parsefun = parseFun()
+                                val parsefun = Parsefun()
                                 val email = m.email
-                                m.email = parsefun.parseAccountasEmail(email)
+                                m.email = parsefun.parseAccountasEmail(email!!)
                             }
                             LocalRepository(LocalDatabase.getInstance(mapplication)).insertFriendList(m)
                         }
                     }
-                    fetchlocalFriendList()
-                    return
+                    synclocalFriendList()
                 }
-                throw NullPointerException("null cannot be cast to non-null type com.google.firebase.database.DataSnapshot")
             }
-
-            // com.example.linku.data.remote.IFireOperationCallBack
             override fun onFail() {}
         }).syncFriendList()
-        fetchlocalFriendList()
+
+        synclocalFriendList()
     }
+    /* get friend list from Firebase and put the returning data into Room db << */
 
-    fun fetchlocalFriendList() {
-        LocalRepository(LocalDatabase.getInstance(mapplication)).getFreindList()
+    fun synclocalFriendList() {
+        GlobalScope.launch(Dispatchers.IO) {
+            Log.i(TAG, "synclocalFriendList_start")
+            _chatAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getFreindList())
+            Log.i(TAG, "synclocalFriendList_end")
+        }
     }
-
-
 }

@@ -8,10 +8,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.linku.databinding.FragmentDashboardBinding
-import kotlin.jvm.internal.Intrinsics
-
-
-
 
 class DashboardFragment : Fragment() {
 

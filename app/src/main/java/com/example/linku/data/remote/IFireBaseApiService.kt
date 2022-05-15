@@ -10,13 +10,13 @@ interface IFireBaseApiService {
 
     fun getUserName(): String?
 
-    fun publishArticle(articleModel: ArticleModel?): ArticleModel?
+    fun publishArticle(articleModel: ArticleModel)
 
-    fun searchAccount(str: String?)
+    fun searchAccount(str: String)
 
     fun send(userMessage: String?, acc: String?)
 
-    fun sendReply(userMessage: String?, str2: String?, str3: String?)
+    fun sendReply(userReply: String, articleId: String, board: String)
 
     fun signIn(acc: String, pwd: String)
 
@@ -24,9 +24,9 @@ interface IFireBaseApiService {
 
     fun signUp(acc: String, pwd: String)
 
-    fun syncBoard(board: String?): DataSnapshot?
+    fun syncBoard(board: String)
 
-    fun syncConversation(acc: String?, childEventListener: ChildEventListener?)
+    fun syncConversation(acc: String, childEventListener: ChildEventListener?)
 
-    fun syncFriendList(): DataSnapshot?
+    fun syncFriendList()
 }

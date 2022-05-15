@@ -21,16 +21,18 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val loginstatus: MutableLiveData<Boolean>? = null
     private val mApplication: Application? = null
-    private val shouldshowLoginDialog: MutableLiveData<Boolean>? = null
+    private val shouldshowLoginDialog = MutableLiveData<Boolean>().apply {
+        value = false
+    }
 
     private var userAccount: MutableLiveData<String?>? = null
 
-    fun signUp(acc: String?, pwd: String?) {
+    fun signUp(acc: String, pwd: String) {
         FireBaseRepository(null).signUp(acc, pwd)
     }
 
 
-    fun signIn(acc: String?, pwd: String?) {
+    fun signIn(acc: String, pwd: String) {
         FireBaseRepository(object : IFireOperationCallBack {
             // from class: com.example.linku.ui.dashboard.DashboardViewModel$signIn$1
             // com.example.linku.data.remote.IFireOperationCallBack
@@ -55,7 +57,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun showDialog(): MutableLiveData<Boolean> {
         Log.i(TAG, "loginstatus = " + Save.getInstance().getLoginStatus(mapplication))
-        shouldshowLoginDialog!!.setValue((Save.getInstance().getLoginStatus(mapplication)))
+        shouldshowLoginDialog!!.value = (Save.getInstance().getLoginStatus(mapplication))
         return shouldshowLoginDialog
     }
 

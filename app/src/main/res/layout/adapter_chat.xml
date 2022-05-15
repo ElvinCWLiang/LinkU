@@ -1,7 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:background="@color/gray" android:padding="8dp" android:layout_width="match_parent" android:layout_height="wrap_content">
-    <TextView android:textSize="20sp" android:textColor="@color/white" android:id="@+id/txv_conversation_local" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_marginEnd="20dp" app:layout_constraintEnd_toStartOf="@+id/img_local" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0"/>
-    <TextView android:textSize="20sp" android:textStyle="bold" android:textColor="@color/white" android:id="@+id/txv_title" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginEnd="20dp" app:layout_constraintEnd_toStartOf="@+id/img_local" app:layout_constraintStart_toStartOf="@+id/txv_conversation_local" app:layout_constraintTop_toBottomOf="@+id/txv_conversation_local"/>
-    <TextView android:textSize="20sp" android:textColor="@color/white" android:id="@+id/txv_content" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginEnd="20dp" app:layout_constraintEnd_toStartOf="@+id/img_local" app:layout_constraintStart_toStartOf="@+id/txv_title" app:layout_constraintTop_toBottomOf="@+id/txv_title"/>
-    <ImageView android:id="@+id/img_local" android:layout_width="72dp" android:layout_height="0dp" android:layout_marginEnd="10dp" app:layout_constraintBottom_toBottomOf="@+id/txv_content" app:layout_constraintEnd_toEndOf="0" app:layout_constraintTop_toTopOf="@+id/txv_conversation_local" app:srcCompat="@drawable/google"/>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/gray" android:padding="8dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/txv_account"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/img_local"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:id="@+id/txv_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/img_local"
+        app:layout_constraintStart_toStartOf="@+id/txv_account"
+        app:layout_constraintTop_toBottomOf="@+id/txv_account"/>
+    <TextView
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:id="@+id/txv_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/img_local"
+        app:layout_constraintStart_toStartOf="@+id/txv_time"
+        app:layout_constraintTop_toBottomOf="@+id/txv_time"/>
+
+    <ImageView
+        android:id="@+id/img_local"
+        android:layout_width="72dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="9dp"
+        app:layout_constraintBottom_toBottomOf="@+id/txv_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txv_account"
+        app:srcCompat="@drawable/google" />
 </androidx.constraintlayout.widget.ConstraintLayout>

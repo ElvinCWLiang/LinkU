@@ -1,7 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/frameLayout3" android:tag="layout/fragment_conversation_0" android:layout_width="match_parent" android:layout_height="match_parent">
-    <androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerViewConversation" android:layout_width="413dp" android:layout_height="0dp" app:layoutManager="LinearLayoutManager" app:layout_constraintBottom_toTopOf="@+id/img_select_picture" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0" app:stackFromEnd="true"/>
-    <EditText android:id="@+id/edt_usercontent" android:tag="binding_1" android:background="@color/white" android:layout_width="0dp" android:layout_height="0dp" android:minHeight="32dp" android:ems="10" android:inputType="textPersonName" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintEnd_toStartOf="@+id/img_select_picture" app:layout_constraintHorizontal_bias="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toBottomOf="@+id/recyclerViewConversation"/>
-    <Button android:id="@+id/btn_send" android:tag="binding_2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Button" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintEnd_toEndOf="0" app:layout_constraintTop_toTopOf="@+id/edt_usercontent"/>
-    <ImageView android:id="@+id/img_select_picture" android:layout_width="46dp" android:layout_height="59dp" android:src="@drawable/google" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintEnd_toStartOf="@+id/btn_send" app:layout_constraintTop_toTopOf="@+id/edt_usercontent"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="conversationViewModel"
+            type="com.example.linku.ui.chat.ConversationViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frameLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewConversation"
+            android:layout_width="413dp"
+            android:layout_height="0dp"
+            app:layoutManager="LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@+id/img_select_picture"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:stackFromEnd="true" />
+
+        <EditText
+            android:id="@+id/edt_usercontent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:minHeight="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/img_select_picture"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerViewConversation"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <Button
+            android:id="@+id/btn_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button"
+            android:onClick="@{() -> conversationViewModel.send()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/edt_usercontent" />
+
+        <ImageView
+            android:id="@+id/img_select_picture"
+            android:layout_width="46dp"
+            android:layout_height="59dp"
+            android:src="@drawable/google"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_send"
+            app:layout_constraintTop_toTopOf="@+id/edt_usercontent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

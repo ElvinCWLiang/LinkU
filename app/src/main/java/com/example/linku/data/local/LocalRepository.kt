@@ -1,10 +1,6 @@
 package com.example.linku.data.local
 
-import androidx.room.Database
 import kotlinx.coroutines.*
-
-import kotlin.jvm.internal.Intrinsics
-
 
 class LocalRepository(_db: LocalDatabase) {
     private val db = _db
@@ -15,11 +11,11 @@ class LocalRepository(_db: LocalDatabase) {
         }
     }
 
-    fun getallArticle(): List<ArticleModel?> {
+    fun getallArticle(): List<ArticleModel> {
         return db.dataDao().getallArticle()
     }
 
-    fun getboardArticle(board: String?): List<ArticleModel?> {
+    fun getboardArticle(board: String?): List<ArticleModel> {
         return db.dataDao().getBoardArticle(board)
     }
 
@@ -29,15 +25,15 @@ class LocalRepository(_db: LocalDatabase) {
         }
     }
 
-    fun getLocalArticleResponse(articleId: String?): List<ArticleModel?> {
+    fun getLocalArticleResponse(articleId: String): List<ArticleModel> {
         return db.dataDao().getArticleResponse(articleId)
     }
 
-    fun getFreindList(): List<FriendModel?> {
+    fun getFreindList(): List<FriendModel> {
         return db.dataDao().getFreindList()
     }
 
-    fun getConversaion(acc: String?): List<FriendModel?> {
+    fun getConversaion(acc: String?): List<FriendModel> {
         return db.dataDao().getConversation(acc)
     }
 

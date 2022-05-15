@@ -11,78 +11,69 @@ import com.example.linku.data.local.LocalRepository
 import com.example.linku.data.remote.FireBaseRepository
 import com.example.linku.data.remote.IFireOperationCallBack
 import com.google.firebase.database.DataSnapshot
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlin.jvm.internal.Intrinsics
+import kotlinx.coroutines.launch
 
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
-    val mapplication: Application? = application
+    val mapplication: Application = application
     val TAG = "ev_" + javaClass.simpleName
     val syncArticle = MutableLiveData<Boolean>()
     val homeAdapterMaterial = MutableLiveData<List<ArticleModel>>()
 
     fun syncBoard(pos: Int) {
-        val board = mapplication!!.resources.getStringArray(R.array.board_array)[pos]
-        Intrinsics.checkNotNullExpressionValue(
-            board,
-            "mapplication.resources.g…R.array.board_array)[pos]"
-        )
+        GlobalScope.launch(Dispatchers.IO) {
+            val board_array = mapplication.resources.getStringArray(R.array.board_array)
+            val board = board_array[pos]
+            Log.i("evvv","pos = ${board}")
+            if (board == "All") {
+                for (sub_board in board_array) {
+                    syncremote(sub_board)
+                }
+            } else if (board != "All") {
+                syncremote(board)
+            }
+            synclocalArticle(board)
+        }
+    }
+
+    private fun syncremote(board: String) {
         FireBaseRepository(object : IFireOperationCallBack {
-            // from class: com.example.linku.ui.home.HomeViewModel$syncBoard$1
-            // com.example.linku.data.remote.IFireOperationCallBack
             override fun <T> onSuccess(t: T) {
-                syncArticle.setValue(true)
+                syncArticle.value = true
                 if (t != null) {
                     val mDataSnapshot = t as DataSnapshot
                     for (next in mDataSnapshot.children) {
                         val m = next.getValue(ArticleModel::class.java)
-                        LocalRepository(LocalDatabase.getInstance(mapplication)).insertArticle(m)
                         if (m != null) {
                             m.id = next.key.toString()
                         }
-                        var str: String? = null
-                        val append = StringBuilder().append("onsuccess value Time: ").append(
-                            if (m != null) java.lang.Long.valueOf(
-                                m.publishTime!!
-                            ) else null
-                        ).append(" author: ").append(m?.publishAuthor).append("content: ").append(
-                            m?.publishContent
-                        ).append("title: ").append(m?.publishTitle).append("id: ").append(m?.id)
-                            .append("reply: ")
-                        if (m != null) {
-                            str = m.reply
-                        }
-                        Log.i(tag, append.append(str).toString())
+                        LocalRepository(LocalDatabase.getInstance(mapplication)).insertArticle(m)
+                        Log.i(TAG, "id = ${m?.id} " +
+                                "title = ${m?.publishTitle} " +
+                                "board = ${m?.publishBoard} " +
+                                "author = ${m?.publishAuthor} " +
+                                "time = ${m?.publishTime} " +
+                                "content = ${m?.publishContent} " +
+                                "reply = ${m?.reply}")
                     }
-                    fetchlocalArticle(board)
-                    Log.i(TAG, "onsuccess value = ${syncArticle.value.toString()}")
-
                 }
             }
-
-            // com.example.linku.data.remote.IFireOperationCallBack
             override fun onFail() {
                 syncArticle.setValue(false)
                 Log.i(TAG, "onfail value = ${syncArticle.value.toString()}")
             }
         }).syncBoard(board)
-        fetchlocalArticle(board)
     }
 
-    fun fetchlocalArticle(board: String?) {
-        Intrinsics.checkNotNullParameter(board, "board")
-        CoroutineScope()
-        BuildersKt__Builders_commonKt.`launch$default`(
-            GlobalScope,
-            Main,
-            null,
-            `HomeViewModel$fetchlocalArticle$1`(board, this, null),
-            2,
-            null
-        )
+    private fun synclocalArticle(board: String?) {
+        GlobalScope.launch(Dispatchers.IO) {
+            if (board == "All") {
+                homeAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getallArticle())
+            } else if (board != "All")
+                homeAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getboardArticle(board))
+        }
     }
-
 }

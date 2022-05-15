@@ -1,14 +1,11 @@
 package com.example.linku.ui.utils
 
 import android.content.Context
-import androidx.room.Room
 import com.example.linku.R
-import com.example.linku.data.local.LocalDatabase
 
 class Save {
     private val Account = "ACCOUNT"
     private val ConnectionStatus = "CONNECTIONSTATUS"
-    val INSTANCE: Save = Save()
     private val LoginStatus = "LOGINSTATUS"
     private val Password = "PASSWORD"
 

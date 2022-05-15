@@ -1,46 +1,38 @@
 package com.example.linku.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.DataBindingUtil.getBinding
-import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.linku.R
+import com.example.linku.data.local.ArticleModel
 import com.example.linku.databinding.FragmentArticleBinding
-import com.example.linku.ui.utils.parseFun
+import com.example.linku.ui.utils.Parsefun
 import com.google.firebase.analytics.FirebaseAnalytics
-import kotlin.jvm.internal.Intrinsics
 
-
-class ArticleFragment: Fragment {
-    private var _binding: FragmentArticleBinding? = null
-    var articleId: String? = null
-    private val viewModel: ArticleViewModel? = null
+class ArticleFragment: Fragment() {
     private val TAG = "ev_" + javaClass.simpleName
+    private var _binding: FragmentArticleBinding? = null
     private val binding get() = _binding!!
 
-
-
-    // androidx.fragment.app.Fragment
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val articleViewModel = ViewModelProvider(this).get(ArticleViewModel::class.java)
-        _binding = DataBindingUtil.inflate(
-            inflater!!,
-            R.layout.fragment_article,
-            container,
-            false
-        ) as FragmentArticleBinding
-        val root: View = getBinding<ViewDataBinding>()!!.root
-        binding.article(articleViewModel)
-        val bundle: Bundle = getArguments()
+        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_article, container, false)
+
+        val root: View = binding.root
+        binding.articleViewModel = articleViewModel
+
+        /* receive the article information from HomeFragment >> */
+        val bundle: Bundle? = getArguments()
         if (bundle != null) {
             val articleId = bundle.getString("articleId", "")
             val time = bundle.getLong("time", 0L)
@@ -48,45 +40,36 @@ class ArticleFragment: Fragment {
             val author = bundle.getString("author", "")
             val title = bundle.getString("title", "")
             val content = bundle.getString(FirebaseAnalytics.Param.CONTENT, "")
-            getBinding<ViewDataBinding>().txvAuthor.setText(author)
-            getBinding<ViewDataBinding>().txvContent.setText(content)
-            getBinding<ViewDataBinding>().txvTime.setText(
-                parseFun().parseSecondsToDate(
-                    java.lang.Long.valueOf(
-                        time
-                    )
-                )
+            binding.txvAuthor.setText(author)
+            binding.txvContent.setText(content)
+            binding.txvTime.setText(
+                Parsefun().parseSecondsToDate(time)
             )
-            getBinding<ViewDataBinding>().txvTitle.setText(title)
-            getBinding<ViewDataBinding>().txvBoard.setText(board)
-            Log.i(
-                TAG,
-                "articleId = " + articleId + " board = " + board + " author = " + author + " title = " + title + " time = " + parseFun().parseSecondsToDate(
-                    java.lang.Long.valueOf(time)
-                ) + " content = " + content
-            )
-            Intrinsics.checkNotNullExpressionValue(articleId, "articleId")
-            Intrinsics.checkNotNullExpressionValue(board, "board")
-            articleViewModel.fetchlocalArticleResponse(articleId, board)
+            binding.txvTitle.setText(title)
+            binding.txvBoard.setText(board)
+            Log.i(TAG,"articleId = $articleId board = $board author $author title = $title time = ${Parsefun().parseSecondsToDate((time))} content = $content")
+            articleViewModel.synclocalArticleResponse(articleId, board)
         }
-        articleViewModel.getArticleAdapterMaterial()
-            .observe(getViewLifecycleOwner(), object : Observer() {
-                // from class: com.example.linku.ui.home.ArticleFragment$$ExternalSyntheticLambda1
-                // androidx.lifecycle.Observer
-                fun onChanged(obj: Any?) {
-                    ArticleFragment.`m2411onCreateView$lambda0`(
-                        this@ArticleFragment,
-                        obj as List<*>?
-                    )
-                }
-            })
-        articleViewModel.getUserReply().observe(getViewLifecycleOwner(), object : Observer() {
-            // from class: com.example.linku.ui.home.ArticleFragment$$ExternalSyntheticLambda0
-            // androidx.lifecycle.Observer
-            fun onChanged(obj: Any?) {
-                ArticleFragment.`m2412onCreateView$lambda1`(this@ArticleFragment, obj as String?)
+        /* receive the article information from HomeFragment << */
+
+        /* LiveData for the replying message in LocalRepository >> */
+        articleViewModel._articleAdapterMaterial.observe(viewLifecycleOwner){
+            Log.i(TAG, "size = ${it.size}")
+            for (i in 0 until it.size) {
+                Log.i(TAG, "i = $i, size = ${it.size}")
+                val v: View = LayoutInflater.from(requireContext()).inflate(R.layout.layout_article_response, null)
+                Parsefun.getInstance().parseModelToView(it[i], v, i)
+                binding.scrollArticleMaterial.addView(v)
             }
-        })
+        }
+        /* LiveData for the replying message in LocalRepository << */
+
+        /* clear the input edittext once user send the reply >> */
+        articleViewModel.userReply.observe(viewLifecycleOwner) {
+            if(it == "") binding.edtReply.text.clear()
+        }
+        /* clear the input edittext once user send the reply << */
+
         return root
     }
 
