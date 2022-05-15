@@ -34,7 +34,7 @@ class LocalRepository(_db: LocalDatabase) {
     }
 
     fun getConversaion(acc: String?): List<FriendModel> {
-        return db.dataDao().getConversation(acc)
+        return db.dataDao().getConversation()
     }
 
 }

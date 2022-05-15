@@ -4,7 +4,7 @@
     android:padding="16dp" android:layout_width="match_parent" android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/txv_account"
+        android:id="@+id/txv_conversation_local"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginEnd="8dp"
@@ -12,7 +12,7 @@
         android:gravity="right"
         android:textColor="@color/white"
         android:textSize="20sp"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/img_local"
         app:layout_constraintEnd_toStartOf="@+id/img_local"
         app:layout_constraintTop_toTopOf="@+id/img_local" />
@@ -26,7 +26,7 @@
         android:gravity="left"
         android:textColor="@color/white"
         android:textSize="20sp"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/img_remote"
         app:layout_constraintStart_toEndOf="@+id/img_remote"
         app:layout_constraintTop_toTopOf="@+id/img_remote" />
@@ -37,7 +37,7 @@
         android:layout_height="60dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/google" />
@@ -47,8 +47,9 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
-        android:visibility="invisible"
+        android:layout_marginTop="8dp"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/img_local"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/google" />
 </androidx.constraintlayout.widget.ConstraintLayout>

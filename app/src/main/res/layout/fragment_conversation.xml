@@ -33,6 +33,7 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:minHeight="32dp"
+            android:afterTextChanged="@{(editable) -> conversationViewModel.onTextChange(editable)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/img_select_picture"
             app:layout_constraintStart_toStartOf="parent"

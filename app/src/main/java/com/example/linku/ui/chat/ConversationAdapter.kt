@@ -1,71 +1,74 @@
 package com.example.linku.ui.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.linku.R
-import com.example.linku.data.local.ArticleModel
-import kotlinx.android.synthetic.main.adapter_chat.view.*
+import com.example.linku.data.local.FriendModel
+import com.example.linku.ui.utils.Parsefun
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.adapter_conversation.view.*
 
 class ConversationAdapter(_fragment: Fragment, _container: ViewGroup?):
     RecyclerView.Adapter<ConversationAdapter.ConversationViewHolder>() {
 
     private val TAG = "ev_" + javaClass.simpleName
-    private val container: ViewGroup? = null
-    private val fragment: Fragment = _fragment
-    private var marticleModel: List<ArticleModel> = ArrayList()
+    private var mfriendmodel: List<FriendModel> = ArrayList()
 
     // androidx.recyclerview.widget.RecyclerView.Adapter
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationViewHolder {
-        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.adapter_home, parent, false)
+        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.adapter_conversation, parent, false)
         return ConversationViewHolder(this, view)
     }
 
     override fun onBindViewHolder(holder: ConversationViewHolder, position: Int) {
-        holder.bind(marticleModel[position], position)
+        holder.bind(mfriendmodel[position], position)
     }
 
-    // androidx.recyclerview.widget.RecyclerView.Adapter
     override fun getItemCount(): Int {
-        return marticleModel.size
+        return mfriendmodel.size
     }
 
-    inner class ConversationViewHolder(mHomeAdapter: ConversationAdapter, itemView: View) : RecyclerView.ViewHolder(itemView),
-        View.OnClickListener {
+    inner class ConversationViewHolder(mConversationAdapter: ConversationAdapter, itemView: View) : RecyclerView.ViewHolder(itemView) {
         var pos = 0
+        val txv_local = itemView.txv_conversation_local
+        val txv_remote = itemView.txv_conversation_remote
+        val img_local = itemView.img_local
+        val img_remote = itemView.img_remote
+        val localaccout = FirebaseAuth.getInstance().currentUser?.email
 
-        val txv_board = itemView.txv_account
-        val txv_title = itemView.txv_time
-        val txv_content = itemView.txv_content
-
-        fun bind(articleModel: ArticleModel, position: Int) {
-            txv_board.text = articleModel.publishBoard
-            txv_title.text = articleModel.publishTitle
-            txv_content.text = articleModel.publishContent
+        fun bind(friendModel: FriendModel, position: Int) {
+            txv_local.text = friendModel.content
+            txv_remote.text = friendModel.content
             pos = position
-            itemView.setOnClickListener(this)
-        }
+            val remoteaccount = Parsefun.getInstance().parseAccountasEmail(friendModel.email)
+            Log.i(TAG, "local = $localaccout, remote = $remoteaccount, content = ${friendModel.content}, pos = $pos")
 
-        // android.view.View.OnClickListener
-        override fun onClick(v: View?) {
-            val bundle = Bundle()
-            bundle.putString("articleId", marticleModel[pos].id)
-            bundle.putLong("time", marticleModel[pos].publishTime)
-            bundle.putString("board", marticleModel[pos].publishBoard)
-            bundle.putString("author", marticleModel[pos].publishAuthor)
-            bundle.putString("title", marticleModel[pos].publishTitle)
-            bundle.putString("content", marticleModel[pos].publishContent)
-
-            fragment.findNavController().navigate(R.id.navigation_article, bundle)
+            if (remoteaccount == localaccout) {
+                Log.i(TAG,"equals")
+                txv_remote.visibility = INVISIBLE
+                img_remote.visibility = INVISIBLE
+                txv_local.visibility = VISIBLE
+                img_local.visibility = VISIBLE
+            } else {
+                Log.i(TAG,"!equals")
+                txv_remote.visibility = VISIBLE
+                img_remote.visibility = VISIBLE
+                txv_local.visibility = INVISIBLE
+                img_local.visibility = INVISIBLE
+            }
         }
     }
 
-    fun setModelList(articleModel: List<ArticleModel>) {
-        marticleModel = articleModel
+    fun setModelList(friendmodel: List<FriendModel>) {
+        mfriendmodel = friendmodel
     }
 
 }

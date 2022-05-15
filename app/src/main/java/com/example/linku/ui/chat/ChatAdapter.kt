@@ -37,7 +37,7 @@ class ChatAdapter(_fragment: Fragment , _container: ViewGroup?):
     inner class ChatViewHolder(mChatAdapter: ChatAdapter, itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
         var pos = 0
-        val txv_account = itemView.txv_account
+        val txv_account = itemView.txv_conversation_local
         val txv_time = itemView.txv_time
         val txv_content = itemView.txv_content
 
@@ -52,13 +52,7 @@ class ChatAdapter(_fragment: Fragment , _container: ViewGroup?):
 
         override fun onClick(v: View?) {
             val bundle = Bundle()
-            bundle.putString("articleId", mfriendModel[pos].id)
-            bundle.putLong("time", mfriendModel[pos].time)
-            bundle.putString("board", mfriendModel[pos].content)
-            bundle.putString("author", mfriendModel[pos].email)
-            bundle.putInt("title", mfriendModel[pos].type)
-
-
+            bundle.putString("email", mfriendModel[pos].email)
             fragment.findNavController().navigate(R.id.navigation_conversation, bundle)
         }
     }

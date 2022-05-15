@@ -9,9 +9,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.linku.R
 import com.example.linku.databinding.FragmentConversationBinding
+import com.example.linku.R
 
 class ConversationFragment : Fragment() {
 
@@ -34,43 +33,30 @@ class ConversationFragment : Fragment() {
         val mConversationAdapter = ConversationAdapter(this, container)
         binding.recyclerViewConversation.adapter = mConversationAdapter
         binding.recyclerViewConversation.layoutManager = LinearLayoutManager(activity)
-/*
-        conversationViewModel.ConversationAdapterMaterial().observe(viewLifecycleOwner){
 
+        /* receive the data from local repository and insert it into the ConversationAdapter >> */
+        conversationViewModel.conversationAdapterMaterial.observe(viewLifecycleOwner) {
+            Log.i(TAG,"size = ${it.size}  it.email = ${it[0].email}  type = ${it[0].type}")
+            mConversationAdapter.setModelList(it)
+            mConversationAdapter.notifyDataSetChanged()
+            if (it.isNotEmpty()) binding.recyclerViewConversation.smoothScrollToPosition(it.size - 1)
         }
-*/
+        /* receive the data from local repository and insert it into the ConversationAdapter << */
+
+        /* receive the conversation remote account from ChatFragment(ChatAdapter) >> */
         val bundle: Bundle? = arguments
         if (bundle != null) {
             val acc = bundle.getString("email", "")
             Log.i(TAG, bundle.getString("email", ""))
             conversationViewModel.syncConversation(acc)
         }
+        /* receive the conversation remote account from ChatFragment(ChatAdapter) << */
 
+        /* clear the input message >> */
         conversationViewModel.userMessage.observe(viewLifecycleOwner){
-            binding.edtUsercontent.text.clear()
+            if(it == "") binding.edtUsercontent.text.clear()
         }
-
-
-        val mChatAdapter = ChatAdapter(this, container)
-        binding.recyclerViewConversation.adapter = mChatAdapter
-        binding.recyclerViewConversation.layoutManager = LinearLayoutManager(activity)
-
-        conversationViewModel.conversationAdapterMaterial.observe(viewLifecycleOwner) {
-
-        }
-
-        /*
-
-        chatViewModel.syncFriendList()
-
-        chatViewModel.chatAdapterMaterial.observe(viewLifecycleOwner) {
-            Log.i(TAG,"size = ${it.size}")
-            mChatAdapter.setModelList(it)
-            mChatAdapter.notifyDataSetChanged()
-        }
-        */
-
-
+        /* clear the input message << */
 
         return root
     }

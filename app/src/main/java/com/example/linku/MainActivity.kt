@@ -1,16 +1,17 @@
 package com.example.linku
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.linku.databinding.ActivityMainBinding
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.linku.ui.utils.Save
+import com.google.android.material.bottomnavigation.BottomNavigationView
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,11 +23,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navView: BottomNavigationView = binding.navView
+        val mainactivityViewModel =
+            ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        binding.mainactivityViewModel = mainactivityViewModel
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
+        val navView: BottomNavigationView = binding.navView
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_home, R.id.navigation_chat, R.id.navigation_lottery, R.id.navigation_dashboard, R.id.navigation_notifications
@@ -34,6 +37,23 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        mainactivityViewModel.isLogin()
+        mainactivityViewModel.isConnected()
+
+        /* observe the network connecting status >> */
+        mainactivityViewModel.isConnected.observe(this) {
+            if (it) Save.getInstance().saveConnectionStatus(this, it)
+            else AlertDialog.Builder(this).setMessage("network fail").create().show()
+        }
+        /* observe the network connecting status << */
+
+        /* observe the login status >> */
+        mainactivityViewModel.isLogin.observe(this) {
+            if (it) Save.getInstance().saveLoginStatus(this, it)
+            else AlertDialog.Builder(this).setMessage("login fail").create().show()
+        }
+        /* observe the login status status << */
     }
 
 

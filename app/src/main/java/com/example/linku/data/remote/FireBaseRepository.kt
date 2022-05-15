@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.linku.data.local.ArticleModel
 import com.example.linku.data.local.FriendModel
 import com.example.linku.ui.utils.Parsefun
-import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -72,8 +71,20 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
         })
     }
 
-    override fun send(str: String?, str2: String?) {
-        TODO("Not yet implemented")
+    override fun send(userMessage: String, acc: String) {
+        val time = Timestamp.now().seconds
+        val localaccount = Parsefun.getInstance().parseEmailasAccount(currentUser?.email!!)
+        val remoteaccount = Parsefun.getInstance().parseEmailasAccount(acc)
+        database.child("friendlist").child(localaccount).child(remoteaccount).push()
+            .setValue(FriendModel("", localaccount, userMessage, time, 0))
+            /*.addOnCompleteListener{
+
+            }*/
+        database.child("friendlist").child(remoteaccount).child(localaccount).push()
+            .setValue(FriendModel("", localaccount, userMessage, time, 0))
+            /*.addOnCompleteListener {
+
+            }*/
     }
 
     override fun sendReply(userReply: String, articleId: String, board: String) {
@@ -94,7 +105,11 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
     }
 
     override fun signIn(acc: String, pwd: String) {
-        TODO("Not yet implemented")
+        auth?.signInWithEmailAndPassword(acc, pwd)
+            .addOnCompleteListener{
+                if (it.isSuccessful) mcallBack?.onSuccess(null)
+                else mcallBack?.onFail()
+            }
     }
 
     override fun signOut() {
@@ -117,12 +132,15 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
         }
     }
 
-    override fun syncConversation(acc: String, childEventListener: ChildEventListener?) {
-
+    override fun syncConversation(acc: String, childEventListener: ChildEventListener) {
+        database.child("friendlist")
+            .child(Parsefun.getInstance().parseEmailasAccount(auth.currentUser!!.email.toString()))
+            .child(Parsefun.getInstance().parseEmailasAccount(acc))
+            .addChildEventListener(childEventListener)
     }
 
     override fun addFriend(acc: String) {
-        auth.currentUser?.email.let {
+        currentUser?.email.let {
             Log.i(TAG, "local = ${Parsefun.getInstance().parseEmailasAccount(auth.currentUser!!.email.toString())}, remote = ${Parsefun.getInstance().parseEmailasAccount(acc)}" )
             val local = Parsefun.getInstance().parseEmailasAccount(auth.currentUser!!.email.toString())
             val remote = Parsefun.getInstance().parseEmailasAccount(acc)

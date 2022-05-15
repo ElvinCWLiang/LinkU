@@ -17,8 +17,9 @@ interface Dao {
     @Query("SELECT * FROM ARTICLEMODEL WHERE publishBoard LIKE :str AND publishTitle != ''")
     fun getBoardArticle(str: String?): List<ArticleModel>
 
-    @Query("SELECT * FROM FRIENDMODEL WHERE EMAIL = :str order by TIME DESC")
-    fun getConversation(str: String?): List<FriendModel>
+//@Query("SELECT * FROM FRIENDMODEL WHERE EMAIL = :str order by TIME ASC")
+    @Query("SELECT * FROM FRIENDMODEL order by TIME ASC")
+    fun getConversation(): List<FriendModel>
 
     @Query("SELECT * FROM FRIENDMODEL WHERE ID IN (SELECT MIN(ID) AS ID FROM FRIENDMODEL GROUP BY EMAIL)")
     fun getFreindList(): List<FriendModel>

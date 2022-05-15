@@ -14,7 +14,7 @@ interface IFireBaseApiService {
 
     fun searchAccount(str: String)
 
-    fun send(userMessage: String?, acc: String?)
+    fun send(userMessage: String, acc: String)
 
     fun sendReply(userReply: String, articleId: String, board: String)
 
@@ -26,7 +26,7 @@ interface IFireBaseApiService {
 
     fun syncBoard(board: String)
 
-    fun syncConversation(acc: String, childEventListener: ChildEventListener?)
+    fun syncConversation(acc: String, childEventListener: ChildEventListener)
 
     fun syncFriendList()
 }

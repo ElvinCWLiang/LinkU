@@ -52,16 +52,12 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun addfriend() {
-        Log.i(TAG, "addfriend")
         FireBaseRepository(object : IFireOperationCallBack {
-            // from class: com.example.linku.ui.chat.ChatViewModel$addfriend$1
-            // com.example.linku.data.remote.IFireOperationCallBack
             override fun <T> onSuccess(t: T) {
                 syncFriendList()
                 Log.i(TAG, "onSuccess")
             }
 
-            // com.example.linku.data.remote.IFireOperationCallBack
             override fun onFail() {
                 Log.i(TAG, "onFail")
             }

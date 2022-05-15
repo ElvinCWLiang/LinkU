@@ -38,7 +38,7 @@ class HomeAdapter(_fragment: Fragment , _container: ViewGroup?):
         View.OnClickListener {
         var pos = 0
 
-        val txv_board = itemView.txv_account
+        val txv_board = itemView.txv_conversation_local
         val txv_title = itemView.txv_time
         val txv_content = itemView.txv_content
 

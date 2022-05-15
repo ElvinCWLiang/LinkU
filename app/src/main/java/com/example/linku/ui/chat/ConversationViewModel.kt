@@ -1,6 +1,8 @@
 package com.example.linku.ui.chat
 
 import android.app.Application
+import android.text.Editable
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -25,19 +27,16 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
     val conversationAdapterMaterial : LiveData<List<FriendModel>> = _conversationAdapterMaterial
     var macc: String? = null
     val mapplication = application
-    var remoteAccount: String? = null
-    val userMessage = MutableLiveData<String>()
+    var remoteAccount = ""
+    val userMessage = MutableLiveData<String>().apply { value = "" }
 
     fun syncConversation(acc: String) {
-        Intrinsics.checkNotNullParameter(acc, "acc")
         remoteAccount = acc
         FireBaseRepository(null).syncConversation(acc, object : ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val m = snapshot.getValue(FriendModel::class.java)
-                if (m != null) {
+                m?.let {
                     m.id = snapshot.key.toString()
-                }
-                if (m != null) {
                     m.email = Parsefun.getInstance().parseAccountasEmail(m.email)
                 }
                 LocalRepository(LocalDatabase.getInstance(mapplication)).insertFriendList(m)
@@ -51,18 +50,19 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
         fetchlocalConversation(remoteAccount)
     }
 
+    fun onTextChange(editable: Editable?) {
+        userMessage.value = editable.toString()
+    }
+
     fun fetchlocalConversation(acc: String?) {
         GlobalScope.launch(IO) {
-            _conversationAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getConversaion(remoteAccount))
+            _conversationAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getConversaion(acc))
         }
     }
 
     fun send() {
-        val value = userMessage.value
-        FireBaseRepository(null).send(value, remoteAccount)
-        userMessage.setValue("")
+        FireBaseRepository(null).send(userMessage.value!!, remoteAccount)
+        Log.i(TAG,"userReply = ${userMessage!!.value}, remoteAccount = $remoteAccount")
+        userMessage.value = ""
     }
-
-
-
 }
