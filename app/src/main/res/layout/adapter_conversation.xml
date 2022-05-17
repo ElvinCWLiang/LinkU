@@ -1,55 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="16dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/txv_conversation_local"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:background="@color/local_message"
-        android:gravity="right"
+        android:layout_height="60dp"
+        android:background="@drawable/local_message"
+        android:gravity="right|center_vertical"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/img_local"
-        app:layout_constraintEnd_toStartOf="@+id/img_local"
-        app:layout_constraintTop_toTopOf="@+id/img_local" />
+        app:layout_constraintBottom_toBottomOf="@+id/img_author_local"
+        app:layout_constraintEnd_toStartOf="@+id/img_author_local"
+        app:layout_constraintTop_toTopOf="@+id/img_author_local" />
 
     <TextView
         android:id="@+id/txv_conversation_remote"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:background="@color/remote_message"
-        android:gravity="left"
+        android:layout_height="60dp"
+        android:background="@drawable/remote_message"
+        android:gravity="left|center_vertical"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/img_remote"
-        app:layout_constraintStart_toEndOf="@+id/img_remote"
-        app:layout_constraintTop_toTopOf="@+id/img_remote" />
+        app:layout_constraintBottom_toBottomOf="@+id/img_author_remote"
+        app:layout_constraintStart_toEndOf="@+id/img_author_remote"
+        app:layout_constraintTop_toTopOf="@+id/img_author_remote" />
 
     <ImageView
-        android:id="@+id/img_local"
+        android:id="@+id/img_author_local"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/google" />
+
+    <ImageView
+        android:id="@+id/img_author_remote"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:visibility="visible"
+        app:barrierAllowsGoneWidgets="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:layout_goneMarginBottom="100dp"
+        app:layout_goneMarginTop="100dp"
         app:srcCompat="@drawable/google" />
 
     <ImageView
         android:id="@+id/img_remote"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="260dp"
+        android:layout_height="300dp"
         android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/txv_conversation_remote"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginBottom="60dp"
+        app:srcCompat="@drawable/user" />
+
+    <ImageView
+        android:id="@+id/img_local"
+        android:layout_width="200dp"
+        android:layout_height="300dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/txv_conversation_local"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/google" />
+        app:srcCompat="@drawable/user" />
+
+    <TextView
+        android:id="@+id/txv_remote_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/img_author_remote"
+        app:layout_constraintStart_toEndOf="@+id/img_remote" />
+
+    <TextView
+        android:id="@+id/txv_local_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/img_author_local"
+        app:layout_constraintEnd_toStartOf="@+id/img_local" />
 </androidx.constraintlayout.widget.ConstraintLayout>

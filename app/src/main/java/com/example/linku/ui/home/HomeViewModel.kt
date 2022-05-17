@@ -22,12 +22,13 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val TAG = "ev_" + javaClass.simpleName
     val syncArticle = MutableLiveData<Boolean>()
     val homeAdapterMaterial = MutableLiveData<List<ArticleModel>>()
+    var spnboardpos = 0
 
     fun syncBoard(pos: Int) {
         GlobalScope.launch(Dispatchers.IO) {
+            spnboardpos = pos
             val board_array = mapplication.resources.getStringArray(R.array.board_array)
             val board = board_array[pos]
-            Log.i("evvv","pos = ${board}")
             if (board == "All") {
                 for (sub_board in board_array) {
                     syncremote(sub_board)
@@ -35,6 +36,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             } else if (board != "All") {
                 syncremote(board)
             }
+            Log.i(TAG,"syncBoard")
             synclocalArticle(board)
         }
     }
@@ -60,6 +62,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                                 "reply = ${m?.reply}")
                     }
                 }
+                synclocalArticle(mapplication.resources.getStringArray(R.array.board_array)[spnboardpos])
+                Log.i(TAG,"onSuccess $board")
             }
             override fun onFail() {
                 syncArticle.setValue(false)
@@ -69,6 +73,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun synclocalArticle(board: String?) {
+        Log.i(TAG,"synclocalArticle")
         GlobalScope.launch(Dispatchers.IO) {
             if (board == "All") {
                 homeAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getallArticle())

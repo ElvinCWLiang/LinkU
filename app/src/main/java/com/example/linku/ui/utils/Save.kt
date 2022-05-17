@@ -1,13 +1,14 @@
 package com.example.linku.ui.utils
 
 import android.content.Context
+import android.net.Uri
 import com.example.linku.R
 
 class Save {
     private val Account = "ACCOUNT"
     private val ConnectionStatus = "CONNECTIONSTATUS"
-    private val LoginStatus = "LOGINSTATUS"
     private val Password = "PASSWORD"
+    private val UsersURI = "USERSURI"
 
     companion object {
         private var instance: Save? = null
@@ -20,11 +21,6 @@ class Save {
     fun saveConnectionStatus(mContext: Context, isConnected: Boolean) {
         mContext.getSharedPreferences(mContext.getResources().getString(R.string.data), 0).edit()
             .putBoolean(ConnectionStatus, isConnected).apply()
-    }
-
-    fun saveLoginStatus(mContext: Context, isLogin: Boolean) {
-        mContext.getSharedPreferences(mContext.getResources().getString(R.string.data), 0).edit()
-            .putBoolean(LoginStatus, isLogin).apply()
     }
 
     fun saveUser(mContext: Context, acc: String?, pwd: String?) {
@@ -56,13 +52,14 @@ class Save {
             .getBoolean(ConnectionStatus, false)
     }
 
-    fun getLoginStatus(mContext: Context): Boolean {
-        return mContext.getSharedPreferences(mContext.getResources().getString(R.string.data), 0)
-            .getBoolean(LoginStatus, false)
+    fun saveUserAvatarUri(mContext: Context, acc: String, imagePath: Uri) {
+        mContext.getSharedPreferences(mContext.getResources().getString(R.string.data), 0).edit()
+            .putString(acc, imagePath.toString()).apply()
     }
 
-    fun canBeUpload(mContext: Context): Boolean {
-        return getLoginStatus(mContext) && getConnectionStatus(mContext)
+    fun getUserAvatarUri(mContext: Context, acc: String): String? {
+        return mContext.getSharedPreferences(mContext.getResources().getString(R.string.data), 0)
+            .getString(acc, "")
     }
 
 }

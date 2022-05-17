@@ -1,6 +1,8 @@
 package com.example.linku.data.remote
 
+import android.net.Uri
 import com.example.linku.data.local.ArticleModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 
@@ -14,7 +16,9 @@ interface IFireBaseApiService {
 
     fun searchAccount(str: String)
 
-    fun send(userMessage: String, acc: String)
+    fun send(userMessage: String, acc: String, type: Int)
+
+    fun send(imagePath: Uri)
 
     fun sendReply(userReply: String, articleId: String, board: String)
 
@@ -29,4 +33,8 @@ interface IFireBaseApiService {
     fun syncConversation(acc: String, childEventListener: ChildEventListener)
 
     fun syncFriendList()
+
+    fun updateAvatar(uri: Uri)
+
+    fun getFirebaseAuth() : FirebaseAuth?
 }

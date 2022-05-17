@@ -1,29 +1,43 @@
 package com.example.linku.ui.chat
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.linku.BuildConfig
 import com.example.linku.databinding.FragmentConversationBinding
 import com.example.linku.R
+import java.io.File
 
 class ConversationFragment : Fragment() {
 
     private val TAG = "ev_" + javaClass.simpleName
     private var _binding: FragmentConversationBinding? = null
     private val binding get() = _binding!!
+    private lateinit var conversationViewModel : ConversationViewModel
+    val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()){ uri: Uri? ->
+        uri?.let { it ->
+            Log.i(TAG, it.toString())
+            conversationViewModel.send(it)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val conversationViewModel =
-            ViewModelProvider(this).get(ConversationViewModel::class.java)
+
+        conversationViewModel = ViewModelProvider(this).get(ConversationViewModel::class.java)
 
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_conversation ,container, false)
         val root: View = binding.root
@@ -57,6 +71,10 @@ class ConversationFragment : Fragment() {
             if(it == "") binding.edtUsercontent.text.clear()
         }
         /* clear the input message << */
+
+        binding.imgSelectPicture.setOnClickListener {
+            pickImages.launch("image/*")
+        }
 
         return root
     }

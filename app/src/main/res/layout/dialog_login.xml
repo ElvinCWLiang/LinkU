@@ -22,10 +22,11 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:background="@drawable/google"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/edt_password"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/edt_account" />
+        app:layout_constraintTop_toTopOf="@+id/edt_account"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <EditText
         android:id="@+id/edt_account"

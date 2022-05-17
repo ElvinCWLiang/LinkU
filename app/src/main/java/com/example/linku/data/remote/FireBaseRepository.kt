@@ -1,5 +1,6 @@
 package com.example.linku.data.remote
 
+import android.net.Uri
 import android.util.Log
 import com.example.linku.data.local.ArticleModel
 import com.example.linku.data.local.FriendModel
@@ -8,6 +9,8 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import java.util.*
 
 
 class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService {
@@ -71,12 +74,12 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
         })
     }
 
-    override fun send(userMessage: String, acc: String) {
+    override fun send(userMessage: String, acc: String, type: Int) {
         val time = Timestamp.now().seconds
         val localaccount = Parsefun.getInstance().parseEmailasAccount(currentUser?.email!!)
         val remoteaccount = Parsefun.getInstance().parseEmailasAccount(acc)
         database.child("friendlist").child(localaccount).child(remoteaccount).push()
-            .setValue(FriendModel("", localaccount, userMessage, time, 0))
+            .setValue(FriendModel("", localaccount, userMessage, time, type))
             /*.addOnCompleteListener{
 
             }*/
@@ -85,6 +88,20 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
             /*.addOnCompleteListener {
 
             }*/
+    }
+
+    override fun send(imagePath: Uri) {
+        val refStorage = FirebaseStorage.getInstance().reference.child("images/" + UUID.randomUUID().toString() + ".jpg")
+        Log.i(TAG, imagePath.toString())
+        refStorage.putFile(imagePath)
+            .addOnSuccessListener { it ->
+                it.storage.downloadUrl.addOnSuccessListener {
+                    Log.i(TAG,"it = $it")
+                    mcallBack?.onSuccess(it)
+                }
+            }.addOnFailureListener{
+                mcallBack?.onFail()
+            }
     }
 
     override fun sendReply(userReply: String, articleId: String, board: String) {
@@ -105,11 +122,16 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
     }
 
     override fun signIn(acc: String, pwd: String) {
+        Log.i(TAG,"sign in with acc = $acc, pwd = $pwd")
         auth?.signInWithEmailAndPassword(acc, pwd)
             .addOnCompleteListener{
                 if (it.isSuccessful) mcallBack?.onSuccess(null)
                 else mcallBack?.onFail()
             }
+    }
+
+    override fun getFirebaseAuth(): FirebaseAuth? {
+        return auth
     }
 
     override fun signOut() {
@@ -133,10 +155,12 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
     }
 
     override fun syncConversation(acc: String, childEventListener: ChildEventListener) {
-        database.child("friendlist")
-            .child(Parsefun.getInstance().parseEmailasAccount(auth.currentUser!!.email.toString()))
-            .child(Parsefun.getInstance().parseEmailasAccount(acc))
-            .addChildEventListener(childEventListener)
+        auth.currentUser?.let {
+            database.child("friendlist")
+                .child(Parsefun.getInstance().parseEmailasAccount(auth.currentUser!!.email.toString()))
+                .child(Parsefun.getInstance().parseEmailasAccount(acc))
+                .addChildEventListener(childEventListener)
+        }
     }
 
     override fun addFriend(acc: String) {
@@ -171,5 +195,19 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
                     }
                 }
         }
+    }
+
+    override fun updateAvatar(imagePath: Uri) {
+        val refStorage = FirebaseStorage.getInstance().reference.child("avatar/" + Parsefun.getInstance().parseEmailasAccount(auth.currentUser?.email.toString()) + ".jpg")
+        Log.i(TAG, imagePath.toString())
+        refStorage.putFile(imagePath)
+            .addOnSuccessListener { it ->
+                it.storage.downloadUrl.addOnSuccessListener {
+                    Log.i(TAG,"it = $it")
+                    mcallBack?.onSuccess(it)
+                }
+            }.addOnFailureListener{
+                mcallBack?.onFail()
+            }
     }
 }

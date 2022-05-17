@@ -1,6 +1,5 @@
 package com.example.linku.ui.utils
 
-import android.util.Log
 import android.view.View
 import com.example.linku.data.local.ArticleModel
 import kotlinx.android.synthetic.main.layout_article_response.view.*
@@ -26,8 +25,7 @@ class Parsefun {
     }
 
     fun parseSecondsToDate(seconds: Long?): String {
-        val format: String = SimpleDateFormat("EEE, d MMM yyyy").format(seconds)
-        return format
+        return SimpleDateFormat("d MMM yy").format(seconds)
     }
 
     fun parseModelToView(articleModel: ArticleModel, v: View, pos: Int) {

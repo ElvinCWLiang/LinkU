@@ -1,6 +1,7 @@
 package com.example.linku
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -11,10 +12,13 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.linku.databinding.ActivityMainBinding
 import com.example.linku.ui.utils.Save
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 
 class MainActivity : AppCompatActivity() {
 
+    private val TAG = "ev_" + javaClass.simpleName
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,11 +54,8 @@ class MainActivity : AppCompatActivity() {
 
         /* observe the login status >> */
         mainactivityViewModel.isLogin.observe(this) {
-            if (it) Save.getInstance().saveLoginStatus(this, it)
-            else AlertDialog.Builder(this).setMessage("login fail").create().show()
+            if (!it) AlertDialog.Builder(this).setMessage("login fail").create().show()
         }
         /* observe the login status status << */
     }
-
-
 }
