@@ -39,6 +39,13 @@ data class FriendModel(
     var type: Int = 0
 )
 
-data class User(
-    var email: String? = ""
+@Entity(tableName = "UserModel")
+data class UserModel(
+    @PrimaryKey
+    @ColumnInfo(name = "email")
+    var email: String = "",
+    @ColumnInfo(name = "useruri")
+    var useruri: String = "",
+    @ColumnInfo(name = "userintroduction")
+    var userintroduction: String = ""
 )

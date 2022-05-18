@@ -11,10 +11,14 @@ import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.linku.data.local.LocalDatabase
+import com.example.linku.data.local.LocalRepository
+import com.example.linku.data.local.UserModel
 import com.example.linku.data.remote.FireBaseRepository
 import com.example.linku.data.remote.IFireOperationCallBack
 import com.example.linku.ui.utils.Save
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.*
 
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
     private val TAG = "ev_" + javaClass.simpleName
@@ -46,5 +50,17 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                     override fun onUnavailable() { _connected.postValue(false) }
                 })
         }
+    }
+
+    fun syncUserwithUri(): HashMap<String, String> {
+        var userWithUrikeySet = HashMap<String, String>()
+        runBlocking {
+            val userModelListRou = async { LocalRepository(LocalDatabase.getInstance(mApplication)).getAllUser() }
+            val userModelList = userModelListRou.await()
+            for (i in userModelList.indices) {
+                userWithUrikeySet.put(userModelList[i].email,userModelList[i].useruri)
+            }
+        }
+        return userWithUrikeySet
     }
 }

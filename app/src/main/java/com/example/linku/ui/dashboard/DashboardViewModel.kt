@@ -8,22 +8,36 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.linku.MainActivity
+import com.example.linku.data.local.LocalDatabase
+import com.example.linku.data.local.LocalRepository
+import com.example.linku.data.local.UserModel
 import com.example.linku.data.remote.FireBaseRepository
 import com.example.linku.data.remote.IFireOperationCallBack
 import com.example.linku.ui.utils.Save
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
 
     private var mapplication = application
     private val TAG = "ev_" + javaClass.simpleName
-    val _userAccount = MutableLiveData<String>().apply { value = FirebaseAuth.getInstance().currentUser?.email }
+    private val _userAccount = MutableLiveData<String>().apply { value = FirebaseAuth.getInstance().currentUser?.email }
     val userAccount : LiveData<String> = _userAccount
-    val _updateRespond = MutableLiveData<String>()
+    private val _updateRespond = MutableLiveData<String>()
     val updateRespond : LiveData<String> = _updateRespond
-    val _isAvatarChanged = MutableLiveData<Uri>()
+    private val _isAvatarChanged = MutableLiveData<Uri>()
     val isAvatarChanged : LiveData<Uri> = _isAvatarChanged
+    val currentUser = FirebaseAuth.getInstance().currentUser?.email.toString()
+    private val _introduction = MutableLiveData<String>().apply {
+        GlobalScope.launch(Dispatchers.IO) {
+            postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getUser(currentUser).userintroduction)
+        }
+    }
+    val introduction : LiveData<String> = _introduction
 
     fun signUp(acc: String, pwd: String) {
         FireBaseRepository(object : IFireOperationCallBack {
@@ -43,12 +57,52 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 _userAccount.value = acc
                 _updateRespond.value = "Success"
                 _isAvatarChanged.value = Uri.parse(Save.getInstance().getUserAvatarUri(mapplication, acc))
+                syncUser(acc)
             }
             override fun onFail() {
                 Log.i(TAG, "signIn onFail")
                 _updateRespond.value = "Fail"
             }
         }).signIn(acc, pwd)
+    }
+
+    fun syncUser(acc: String) {
+        FireBaseRepository(object : IFireOperationCallBack {
+            override fun <T> onSuccess(t: T) {
+                //save current user
+                LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList((t as DataSnapshot).getValue(UserModel::class.java))
+            }
+            override fun onFail() { }
+        }).syncUser(acc)
+    }
+
+    fun updateAvatar(imagePath: Uri) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val mUserModel = LocalRepository(LocalDatabase.getInstance(mapplication)).getUser(currentUser)
+            mUserModel.useruri = imagePath.toString()
+            FireBaseRepository(object : IFireOperationCallBack {
+                override fun <T> onSuccess(t: T) {
+                    LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(t as UserModel)
+                    _isAvatarChanged.value = Uri.parse((t as UserModel).useruri)
+                    Save.getInstance().saveUserAvatarUri(mapplication, currentUser, Uri.parse((t as UserModel).useruri))
+                }
+                override fun onFail() {  }
+            }).updateAvatar(mUserModel, imagePath)
+        }
+    }
+
+    fun updateUserIntroduction(intro: String) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val mUserModel = LocalRepository(LocalDatabase.getInstance(mapplication)).getUser(currentUser)
+            mUserModel.userintroduction = intro
+            FireBaseRepository(object : IFireOperationCallBack {
+                override fun <T> onSuccess(t: T) {
+                    _introduction.value = (t as UserModel).userintroduction
+                    LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(t as UserModel)
+                }
+                override fun onFail() {  }
+            }).updateUserIntroduction(mUserModel)
+        }
     }
 
     fun logout() {
@@ -59,15 +113,5 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun login() {
         _userAccount.value = FirebaseAuth.getInstance().currentUser?.email
-    }
-
-    fun updateAvatar(imagePath: Uri) {
-        FireBaseRepository(object : IFireOperationCallBack {
-            override fun <T> onSuccess(t: T) {
-                _isAvatarChanged.value = t as Uri
-                Save.getInstance().saveUserAvatarUri(mapplication, FirebaseAuth.getInstance().currentUser?.email.toString(), t as Uri)
-            }
-            override fun onFail() {  }
-        }).updateAvatar(imagePath)
     }
 }

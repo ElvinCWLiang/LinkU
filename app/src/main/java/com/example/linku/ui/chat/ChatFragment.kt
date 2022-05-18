@@ -41,8 +41,8 @@ class ChatFragment : Fragment() {
 
         chatViewModel.shouldshowSearchAccountDialog.observe(viewLifecycleOwner) {
             Log.i(TAG,"it = $it")
-            if (it) {
-                SearchAccountDialog(requireContext(), chatViewModel).show()
+            it?.let {
+                SearchAccountDialog(requireContext(), chatViewModel, it).show()
             }
         }
         val mChatAdapter = ChatAdapter(this, container)

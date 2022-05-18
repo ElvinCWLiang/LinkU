@@ -11,12 +11,9 @@ import com.example.linku.data.local.ArticleModel
 import com.example.linku.data.local.LocalDatabase
 import com.example.linku.data.local.LocalRepository
 import com.example.linku.data.remote.FireBaseRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import javax.annotation.Nonnull
 
 class ArticleViewModel(application: Application): AndroidViewModel(application) {
     private val TAG = "ev_" + javaClass.simpleName
@@ -26,11 +23,8 @@ class ArticleViewModel(application: Application): AndroidViewModel(application) 
     lateinit var board: String
     private var mapplication: Application = application
     var userReply = MutableLiveData<String>().apply { value = "" }
-    // internal mutable version
     private val articleAdapterMaterial = MutableLiveData<List<ArticleModel>>()
-    // exposed immutable version, with the "emit distinct values" transformation
     val _articleAdapterMaterial: LiveData<List<ArticleModel>> = articleAdapterMaterial.distinctUntilChanged()
-
 
     fun synclocalArticleResponse(articleId: String, board: String) {
         this.articleId = articleId
@@ -51,4 +45,6 @@ class ArticleViewModel(application: Application): AndroidViewModel(application) 
         Log.i(TAG,"userReply = ${userReply!!.value} + articleId = ${articleId} board = $board")
         userReply.value = ""
     }
+
+
 }

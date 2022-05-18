@@ -21,6 +21,10 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "ev_" + javaClass.simpleName
     private lateinit var binding: ActivityMainBinding
 
+    companion object{
+        lateinit var userWithUrikeySet : HashMap<String, String>
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -57,5 +61,11 @@ class MainActivity : AppCompatActivity() {
             if (!it) AlertDialog.Builder(this).setMessage("login fail").create().show()
         }
         /* observe the login status status << */
+
+        initData(mainactivityViewModel)
+    }
+
+    private fun initData(mainActivityViewModel: MainActivityViewModel){
+        userWithUrikeySet = mainActivityViewModel.syncUserwithUri()
     }
 }

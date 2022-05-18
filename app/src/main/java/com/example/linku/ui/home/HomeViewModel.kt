@@ -8,6 +8,7 @@ import com.example.linku.R
 import com.example.linku.data.local.ArticleModel
 import com.example.linku.data.local.LocalDatabase
 import com.example.linku.data.local.LocalRepository
+import com.example.linku.data.local.UserModel
 import com.example.linku.data.remote.FireBaseRepository
 import com.example.linku.data.remote.IFireOperationCallBack
 import com.google.firebase.database.DataSnapshot
@@ -52,6 +53,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                         if (m != null) {
                             m.id = next.key.toString()
                         }
+                        m?.publishAuthor?.let { syncUser(it) }
                         LocalRepository(LocalDatabase.getInstance(mapplication)).insertArticle(m)
                         Log.i(TAG, "id = ${m?.id} " +
                                 "title = ${m?.publishTitle} " +
@@ -70,6 +72,17 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 Log.i(TAG, "onfail value = ${syncArticle.value.toString()}")
             }
         }).syncBoard(board)
+    }
+
+    fun syncUser(acc: String) {
+        FireBaseRepository(object : IFireOperationCallBack {
+            override fun <T> onSuccess(t: T) {
+                //save current user
+                LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList((t as DataSnapshot).getValue(
+                    UserModel::class.java))
+            }
+            override fun onFail() { }
+        }).syncUser(acc)
     }
 
     private fun synclocalArticle(board: String?) {

@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.linku.MainActivity
 import com.example.linku.R
 import com.example.linku.data.local.FriendModel
+import com.example.linku.data.local.LocalDatabase
+import com.example.linku.data.local.LocalRepository
 import com.example.linku.ui.utils.GlideApp
 import com.example.linku.ui.utils.Parsefun
 import com.google.firebase.auth.FirebaseAuth
@@ -56,12 +58,13 @@ class ConversationAdapter(_fragment: Fragment, _container: ViewGroup?):
             txv_remote_time.text = Parsefun.getInstance().parseSecondsToDate(friendModel.time)
             pos = position
             val remoteaccount = Parsefun.getInstance().parseAccountasEmail(friendModel.email)
-            Log.i(TAG, "local = $localaccout, remote = $remoteaccount, content = ${friendModel.content}, type = ${friendModel.type}, pos = $pos")
+            //Log.i(TAG, "local = $localaccout, remote = $remoteaccount, content = ${friendModel.content}, type = ${friendModel.type}, pos = $pos")
 
             if (remoteaccount == localaccout) {
-                Log.i(TAG,"equals")
+                //Log.i(TAG,"equals")
                 img_author_remote.visibility = INVISIBLE
                 img_author_local.visibility = VISIBLE
+                GlideApp.with(itemView).load(MainActivity.userWithUrikeySet.get(friendModel.email)).into(img_author_local)
                 if (friendModel.type == 0) {
                     txv_remote.visibility = INVISIBLE
                     txv_local.visibility = VISIBLE
@@ -76,12 +79,13 @@ class ConversationAdapter(_fragment: Fragment, _container: ViewGroup?):
                     txv_local.visibility = View.GONE
                     txv_remote_time.visibility = VISIBLE
                     txv_local_time.visibility = View.GONE
-                    GlideApp.with(itemView).load(Uri.parse(friendModel.content)).into(img_local)
+                    GlideApp.with(itemView).load(Uri.parse(friendModel.content)).placeholder(R.drawable.cat).into(img_local)
                 }
             } else {
-                Log.i(TAG,"!equals")
+                //Log.i(TAG,"!equals")
                 img_author_remote.visibility = VISIBLE
                 img_author_local.visibility = INVISIBLE
+                GlideApp.with(itemView).load(MainActivity.userWithUrikeySet.get(friendModel.email)).placeholder(R.drawable.cat).into(img_author_remote)
                 if (friendModel.type == 0) {
                     txv_remote.visibility = VISIBLE
                     txv_local.visibility = INVISIBLE

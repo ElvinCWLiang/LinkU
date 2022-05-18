@@ -15,15 +15,15 @@ class LoginDialog(context: Context, _dashboardViewModel: DashboardViewModel) : D
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btn_sign_in -> {
-                if (edt_account.text.isNotBlank() && edt_password.text.isNotBlank()) {
-                    dashboardViewModel.signIn(edt_account.text.toString(), edt_password.text.toString())
+                if (edt_account.text.isNotBlank() && edt_introduction.text.isNotBlank()) {
+                    dashboardViewModel.signIn(edt_account.text.toString(), edt_introduction.text.toString())
                     dismiss()
                 }
 
             }
             R.id.btn_sign_up -> {
-                if (edt_account.text.isNotBlank() && edt_password.text.isNotBlank()) {
-                    dashboardViewModel.signUp(edt_account.text.toString(), edt_password.text.toString())
+                if (edt_account.text.isNotBlank() && edt_introduction.text.isNotBlank()) {
+                    dashboardViewModel.signUp(edt_account.text.toString(), edt_introduction.text.toString())
                     dismiss()
                 }
             }

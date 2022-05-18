@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import com.example.linku.data.local.ArticleModel
 import com.example.linku.data.local.FriendModel
+import com.example.linku.data.local.UserModel
 import com.example.linku.ui.utils.Parsefun
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -21,7 +22,6 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
     private val currentUser: FirebaseUser? = auth.currentUser
 
     init {
-
         val currentUser = auth.currentUser
         mcallBack = callBack
         if (this.auth != null) {
@@ -40,6 +40,7 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
         TODO("Not yet implemented")
     }
 
+    /* publish new article in PublishFragment */
     override fun publishArticle(articleModel: ArticleModel) {
         articleModel.publishTime = Timestamp.now().seconds
         currentUser?.let {
@@ -54,6 +55,7 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
 
     }
 
+    /* search account in chatfragment */
     override fun searchAccount(str: String) {
         Log.i(TAG,str)
         val mQuery = database.child("accountlist").child(Parsefun.getInstance().parseEmailasAccount(str))
@@ -61,7 +63,7 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     Log.i(TAG, "onSuccess = $str")
-                    mcallBack?.onSuccess(null)
+                    mcallBack?.onSuccess(dataSnapshot)
                 } else {
                     Log.i(TAG, "onFail = $str")
                     mcallBack?.onFail()
@@ -74,22 +76,18 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
         })
     }
 
+    /* send message to another user */
     override fun send(userMessage: String, acc: String, type: Int) {
         val time = Timestamp.now().seconds
         val localaccount = Parsefun.getInstance().parseEmailasAccount(currentUser?.email!!)
         val remoteaccount = Parsefun.getInstance().parseEmailasAccount(acc)
         database.child("friendlist").child(localaccount).child(remoteaccount).push()
             .setValue(FriendModel("", localaccount, userMessage, time, type))
-            /*.addOnCompleteListener{
-
-            }*/
         database.child("friendlist").child(remoteaccount).child(localaccount).push()
-            .setValue(FriendModel("", localaccount, userMessage, time, 0))
-            /*.addOnCompleteListener {
-
-            }*/
+            .setValue(FriendModel("", localaccount, userMessage, time, type))
     }
 
+    /* update avatar */
     override fun send(imagePath: Uri) {
         val refStorage = FirebaseStorage.getInstance().reference.child("images/" + UUID.randomUUID().toString() + ".jpg")
         Log.i(TAG, imagePath.toString())
@@ -104,6 +102,7 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
             }
     }
 
+    /* send reply in ArticleModel */
     override fun sendReply(userReply: String, articleId: String, board: String) {
         val seconds = Timestamp.now().seconds
         val currentUser = auth.currentUser
@@ -121,6 +120,7 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
             }
     }
 
+    /* user sign in */
     override fun signIn(acc: String, pwd: String) {
         Log.i(TAG,"sign in with acc = $acc, pwd = $pwd")
         auth?.signInWithEmailAndPassword(acc, pwd)
@@ -138,10 +138,14 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
         auth?.signOut()
     }
 
+    /* sign up with email and upload a UserModel file to Firebase*/
     override fun signUp(acc: String, pwd: String) {
         auth?.createUserWithEmailAndPassword(acc, pwd)
             ?.addOnCompleteListener {
-                if (it.isSuccessful) mcallBack?.onSuccess(null)
+                if (it.isSuccessful) {
+                    database.child("accountlist").child(Parsefun.getInstance().parseEmailasAccount(acc)).setValue(UserModel(acc, "", "Hi, my name  is $acc"))
+                    mcallBack?.onSuccess(null)
+                }
                 else mcallBack?.onFail()
             }
     }
@@ -152,6 +156,26 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
         }.addOnFailureListener{
             mcallBack?.onFail()
         }
+    }
+
+    override fun syncUser(acc: String) {
+        Log.i(TAG, "syncUser = $acc")
+        val mQuery = database.child("accountlist").child(Parsefun.getInstance().parseEmailasAccount(FirebaseAuth.getInstance().currentUser?.email.toString()))
+        mQuery.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Log.i(TAG, "onSuccess = ${dataSnapshot.value}")
+                    mcallBack?.onSuccess(dataSnapshot)
+                } else {
+                    Log.i(TAG, "onFail - syncUser")
+                    mcallBack?.onFail()
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.i(TAG, "onCancelled - syncUser")
+                mcallBack?.onFail()
+            }
+        })
     }
 
     override fun syncConversation(acc: String, childEventListener: ChildEventListener) {
@@ -197,17 +221,26 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
         }
     }
 
-    override fun updateAvatar(imagePath: Uri) {
+    override fun updateAvatar(userModel: UserModel, imagePath: Uri) {
         val refStorage = FirebaseStorage.getInstance().reference.child("avatar/" + Parsefun.getInstance().parseEmailasAccount(auth.currentUser?.email.toString()) + ".jpg")
-        Log.i(TAG, imagePath.toString())
+        Log.i(TAG, userModel.useruri)
         refStorage.putFile(imagePath)
             .addOnSuccessListener { it ->
                 it.storage.downloadUrl.addOnSuccessListener {
                     Log.i(TAG,"it = $it")
-                    mcallBack?.onSuccess(it)
+                    userModel.useruri = it.toString()
+                    mcallBack?.onSuccess(userModel)
+                    database.child("accountlist").child(Parsefun.getInstance().parseEmailasAccount(FirebaseAuth.getInstance().currentUser?.email.toString())).setValue(userModel)
                 }
             }.addOnFailureListener{
                 mcallBack?.onFail()
+            }
+    }
+
+    override fun updateUserIntroduction(userModel: UserModel) {
+        database.child("accountlist").child(Parsefun.getInstance().parseEmailasAccount(FirebaseAuth.getInstance().currentUser?.email.toString())).setValue(userModel)
+            .addOnCompleteListener {
+                if (it.isSuccessful) mcallBack?.onSuccess(userModel)
             }
     }
 }

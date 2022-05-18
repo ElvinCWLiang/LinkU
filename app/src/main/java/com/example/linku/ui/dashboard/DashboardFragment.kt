@@ -1,5 +1,6 @@
 package com.example.linku.ui.dashboard
 
+import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.linku.MainActivity
@@ -18,6 +20,7 @@ import com.example.linku.databinding.FragmentDashboardBinding
 import com.example.linku.ui.utils.GlideApp
 import com.example.linku.ui.utils.Save
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.dialog_login.view.*
 
 class DashboardFragment : Fragment() {
 
@@ -58,13 +61,13 @@ class DashboardFragment : Fragment() {
                 LoginDialog(requireContext(), dashboardViewModel).show()
                 binding.btnLogout.isEnabled = false
                 binding.btnLogin.isEnabled = true
-                GlideApp.with(this).load(R.drawable.user).into(binding.imgAvatar)
+                GlideApp.with(this).load(R.drawable.user).placeholder(R.drawable.cat).into(binding.imgAvatar)
             } else {
                 Log.i(TAG, "userAccount = $it")
                 binding.textUsername.text = it
                 binding.btnLogout.isEnabled = true
                 binding.btnLogin.isEnabled = false
-                GlideApp.with(this).load(Save.getInstance().getUserAvatarUri(requireContext(), FirebaseAuth.getInstance().currentUser?.email.toString())).into(binding.imgAvatar)
+                GlideApp.with(this).load(Save.getInstance().getUserAvatarUri(requireContext(), FirebaseAuth.getInstance().currentUser?.email.toString())).placeholder(R.drawable.cat).into(binding.imgAvatar)
             }
         }
 
@@ -77,7 +80,20 @@ class DashboardFragment : Fragment() {
         }
 
         dashboardViewModel.isAvatarChanged.observe(viewLifecycleOwner) {
-            it?.let { GlideApp.with(this).load(it).into(binding.imgAvatar) }
+            it?.let { GlideApp.with(this).load(it).placeholder(R.drawable.cat).into(binding.imgAvatar) }
+        }
+
+        dashboardViewModel.introduction.observe(viewLifecycleOwner) {
+            it?.let { binding.txvIntroduction.text = it}
+        }
+
+        binding.txvIntroduction.setOnClickListener {
+            val view: View = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_introduction, container, false)
+            AlertDialog.Builder(requireContext()).setView(view).setMessage("Input your introduction : ").setPositiveButton("set")
+            { dialog, which ->
+                Log.i(TAG, "text = ${view.edt_introduction.text}")
+                dashboardViewModel.updateUserIntroduction(view.edt_introduction.text.toString())
+            }.create().show()
         }
 
         return root

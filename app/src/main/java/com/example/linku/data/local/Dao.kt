@@ -33,4 +33,12 @@ interface Dao {
     @Update
     fun updateArticle(vararg articleModel: ArticleModel?)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertUserList(vararg userModel: UserModel?)
+
+    @Query("SELECT * FROM UserModel where email = :acc LIMIT 1")
+    fun getUser(acc: String) : UserModel
+
+    @Query("SELECT * FROM UserModel")
+    fun getAllUser() : List<UserModel>
 }

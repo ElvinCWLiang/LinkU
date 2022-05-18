@@ -2,6 +2,7 @@ package com.example.linku.data.remote
 
 import android.net.Uri
 import com.example.linku.data.local.ArticleModel
+import com.example.linku.data.local.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -34,7 +35,11 @@ interface IFireBaseApiService {
 
     fun syncFriendList()
 
-    fun updateAvatar(uri: Uri)
+    fun updateAvatar(userModel: UserModel, imagePath: Uri)
 
     fun getFirebaseAuth() : FirebaseAuth?
+
+    fun updateUserIntroduction(userModel: UserModel)
+
+    fun syncUser(acc: String)
 }

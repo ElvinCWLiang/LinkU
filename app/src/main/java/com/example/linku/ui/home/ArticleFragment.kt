@@ -5,13 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.linku.MainActivity
 import com.example.linku.R
-import com.example.linku.data.local.ArticleModel
 import com.example.linku.databinding.FragmentArticleBinding
+import com.example.linku.ui.utils.GlideApp
 import com.example.linku.ui.utils.Parsefun
 import com.google.firebase.analytics.FirebaseAnalytics
 
@@ -40,13 +40,12 @@ class ArticleFragment: Fragment() {
             val author = bundle.getString("author", "")
             val title = bundle.getString("title", "")
             val content = bundle.getString(FirebaseAnalytics.Param.CONTENT, "")
-            binding.txvAuthor.setText(author)
-            binding.txvContent.setText(content)
-            binding.txvTime.setText(
-                Parsefun().parseSecondsToDate(time)
-            )
-            binding.txvTitle.setText(title)
-            binding.txvBoard.setText(board)
+            binding.txvAuthor.text = author
+            binding.txvContent.text = content
+            binding.txvTime.text = Parsefun().parseSecondsToDate(time)
+            binding.txvTitle.text = title
+            binding.txvBoard.text = board
+            GlideApp.with(this).load(MainActivity.userWithUrikeySet.get(author)).placeholder(R.drawable.cat).into(binding.imgAuthor)
             Log.i(TAG,"articleId = $articleId board = $board author $author title = $title time = ${Parsefun().parseSecondsToDate((time))} content = $content")
             articleViewModel.synclocalArticleResponse(articleId, board)
         }
@@ -58,7 +57,7 @@ class ArticleFragment: Fragment() {
             for (i in 0 until it.size) {
                 Log.i(TAG, "i = $i, size = ${it.size}")
                 val v: View = LayoutInflater.from(requireContext()).inflate(R.layout.layout_article_response, null)
-                Parsefun.getInstance().parseModelToView(it[i], v, i)
+                Parsefun.getInstance().parseModelToView(requireContext(),it[i], v, i)
                 binding.scrollArticleMaterial.addView(v)
             }
         }
