@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.example.linku.MainActivity.Companion.userWithUrikeySet
 import com.example.linku.R
 import com.example.linku.data.local.ArticleModel
 import com.example.linku.data.local.LocalDatabase
@@ -48,12 +49,18 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 syncArticle.value = true
                 if (t != null) {
                     val mDataSnapshot = t as DataSnapshot
+                    val cacheUser = ArrayList<String>()
                     for (next in mDataSnapshot.children) {
                         val m = next.getValue(ArticleModel::class.java)
                         if (m != null) {
                             m.id = next.key.toString()
                         }
-                        m?.publishAuthor?.let { syncUser(it) }
+                        m?.publishAuthor?.let {
+                            if (!cacheUser.contains(it)) {
+                                syncUser(it)
+                                cacheUser.add(it)
+                            }
+                        }
                         LocalRepository(LocalDatabase.getInstance(mapplication)).insertArticle(m)
                         Log.i(TAG, "id = ${m?.id} " +
                                 "title = ${m?.publishTitle} " +
@@ -78,8 +85,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         FireBaseRepository(object : IFireOperationCallBack {
             override fun <T> onSuccess(t: T) {
                 //save current user
-                LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList((t as DataSnapshot).getValue(
-                    UserModel::class.java))
+                val userModel = (t as DataSnapshot).getValue(UserModel::class.java)
+                LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(userModel)
+                Log.i(TAG, "email = ${userModel?.email},  useruri = ${userModel?.useruri}")
+                userModel?.let {
+                    userWithUrikeySet.put(userModel.email, userModel.useruri)
+                }
             }
             override fun onFail() { }
         }).syncUser(acc)

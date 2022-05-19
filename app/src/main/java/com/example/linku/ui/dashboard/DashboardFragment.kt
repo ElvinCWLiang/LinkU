@@ -61,13 +61,13 @@ class DashboardFragment : Fragment() {
                 LoginDialog(requireContext(), dashboardViewModel).show()
                 binding.btnLogout.isEnabled = false
                 binding.btnLogin.isEnabled = true
-                GlideApp.with(this).load(R.drawable.user).placeholder(R.drawable.cat).into(binding.imgAvatar)
+                GlideApp.with(this).load(R.drawable.cat).into(binding.imgAvatar)
             } else {
                 Log.i(TAG, "userAccount = $it")
                 binding.textUsername.text = it
                 binding.btnLogout.isEnabled = true
                 binding.btnLogin.isEnabled = false
-                GlideApp.with(this).load(Save.getInstance().getUserAvatarUri(requireContext(), FirebaseAuth.getInstance().currentUser?.email.toString())).placeholder(R.drawable.cat).into(binding.imgAvatar)
+                GlideApp.with(this).load(MainActivity.userWithUrikeySet.get(it)).placeholder(R.drawable.cat).into(binding.imgAvatar)
             }
         }
 

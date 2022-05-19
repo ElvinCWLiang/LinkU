@@ -12,12 +12,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp">
+        android:background="@color/light_blue">
 
         <ScrollView
             android:id="@+id/scroll_article"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:padding="8dp"
             app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -31,13 +32,13 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="46dp"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <ImageView
                         android:id="@+id/img_author"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -45,12 +46,15 @@
 
                     <TextView
                         android:id="@+id/txv_author"
-                        android:layout_width="352dp"
-                        android:layout_height="50dp"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="8dp"
                         android:gravity="fill_vertical|left"
                         android:hint="author"
                         android:textSize="20sp"
-                        app:layout_constraintStart_toEndOf="@+id/imageView2"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/img_author"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -60,12 +64,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:hint="@string/title"
-                    android:textSize="20sp" />
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -88,9 +93,10 @@
                     android:id="@+id/txv_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="16dp"
                     android:hint="content"
-                    android:textSize="20sp" />
+                    android:textSize="26sp" />
             </LinearLayout>
         </ScrollView>
 
@@ -98,6 +104,8 @@
             android:id="@+id/constraintLayout"
             android:layout_width="0dp"
             android:layout_height="81dp"
+            android:padding="8dp"
+            android:background="@color/dark_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -107,25 +115,29 @@
                 android:id="@+id/edt_reply"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:afterTextChanged="@{(editable) -> articleViewModel.onTextChange(editable)}"
                 android:ems="10"
                 android:hint="reply"
                 android:inputType="textPersonName"
                 android:minHeight="48dp"
-                android:afterTextChanged="@{(editable) -> articleViewModel.onTextChange(editable)}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/btn_submit"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_submit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/transparent"
                 android:onClick="@{() -> articleViewModel.send()}"
+                android:src="@drawable/send"
                 android:text="send"
                 app:layout_constraintBottom_toBottomOf="@+id/edt_reply"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/edt_reply" />
+                app:layout_constraintTop_toTopOf="@+id/edt_reply"
+                tools:ignore="SpeakableTextPresentCheck" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

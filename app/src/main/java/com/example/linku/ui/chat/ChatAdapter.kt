@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.linku.MainActivity
 import com.example.linku.R
 import com.example.linku.data.local.FriendModel
+import com.example.linku.ui.utils.GlideApp
 import kotlinx.android.synthetic.main.adapter_chat.view.*
 
 
@@ -40,12 +42,14 @@ class ChatAdapter(_fragment: Fragment , _container: ViewGroup?):
         val txv_account = itemView.txv_conversation_local
         val txv_time = itemView.txv_time
         val txv_content = itemView.txv_content
+        val img_author = itemView.img_local
 
         fun bind(friendModel: FriendModel, position: Int) {
             txv_account.text = friendModel.email
             txv_time.text = friendModel.time.toString()
             txv_content.text = friendModel.content
             pos = position
+            GlideApp.with(itemView).load(MainActivity.userWithUrikeySet.get(friendModel.email)).placeholder(R.drawable.cat).circleCrop().into(img_author)
             itemView.setOnClickListener(this)
         }
 

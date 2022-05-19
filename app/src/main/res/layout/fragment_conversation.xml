@@ -18,45 +18,70 @@
             android:id="@+id/recyclerViewConversation"
             android:layout_width="413dp"
             android:layout_height="0dp"
+            android:background="@color/light_blue"
             app:layoutManager="LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@+id/img_select_picture"
+            app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:stackFromEnd="true" />
+            app:stackFromEnd="true">
 
-        <EditText
-            android:id="@+id/edt_usercontent"
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@color/white"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:minHeight="32dp"
-            android:afterTextChanged="@{(editable) -> conversationViewModel.onTextChange(editable)}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/img_select_picture"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerViewConversation"
-            tools:ignore="SpeakableTextPresentCheck" />
-
-        <Button
-            android:id="@+id/btn_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button"
-            android:onClick="@{() -> conversationViewModel.send(0)}"
+            android:layout_height="80dp"
+            android:background="@drawable/buttom_send_shape"
+            android:padding="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/edt_usercontent" />
+            app:layout_constraintStart_toStartOf="parent">
 
-        <ImageView
-            android:id="@+id/img_select_picture"
-            android:layout_width="46dp"
-            android:layout_height="59dp"
-            android:src="@drawable/google"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_send"
-            app:layout_constraintTop_toTopOf="@+id/edt_usercontent" />
+            <EditText
+                android:id="@+id/edt_usercontent"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="8dp"
+                android:afterTextChanged="@{(editable) -> conversationViewModel.onTextChange(editable)}"
+                android:background="@color/white"
+                android:hint="Input your text : "
+                android:inputType="textPersonName"
+                android:paddingStart="8dp"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/img_select_picture"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <ImageButton
+                android:id="@+id/btn_send"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:background="@drawable/send"
+                android:onClick="@{() -> conversationViewModel.send(0)}"
+                android:rotationY="-29"
+                android:text="Button"
+                app:layout_constraintBottom_toBottomOf="@+id/edt_usercontent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_select_picture"
+                app:layout_constraintTop_toTopOf="@+id/edt_usercontent"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+            <ImageView
+                android:id="@+id/img_select_picture"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:rotationY="-37"
+                android:src="@drawable/image"
+                app:layout_constraintBottom_toBottomOf="@+id/edt_usercontent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_send"
+                app:layout_constraintStart_toEndOf="@+id/edt_usercontent"
+                app:layout_constraintTop_toTopOf="@+id/edt_usercontent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

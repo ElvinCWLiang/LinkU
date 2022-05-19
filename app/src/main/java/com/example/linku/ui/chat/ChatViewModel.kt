@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.linku.MainActivity
 import com.example.linku.data.local.*
 import com.example.linku.data.remote.FireBaseRepository
 import com.example.linku.data.remote.IFireOperationCallBack
@@ -46,7 +47,6 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
             // com.example.linku.data.remote.IFireOperationCallBack
             override fun onFail() {
                 Log.i(TAG, "onFail")
-                _shouldshowSearchAccountDialog.value = acc
             }
         }).searchAccount(acc)
     }
@@ -69,6 +69,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         FireBaseRepository(object : IFireOperationCallBack {
             override fun <T> onSuccess(t: T) {
                 if (t != null) {
+                    val cacheUser = ArrayList<String>()
                     val mDataSnapshot = t as DataSnapshot
                     for (chatmaterial in mDataSnapshot.children) {
                         Log.i(TAG,"${chatmaterial.value}")
@@ -77,10 +78,11 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                             if (m != null) {
                                 m.id = n.key.toString()
                             }
-                            if (m != null) {
-                                val parsefun = Parsefun()
-                                val email = m.email
-                                m.email = parsefun.parseAccountasEmail(email!!)
+                            m?.email?.let {
+                                if (!cacheUser.contains(it)) {
+                                    syncUser(it)
+                                    cacheUser.add(it)
+                                }
                             }
                             LocalRepository(LocalDatabase.getInstance(mapplication)).insertFriendList(m)
                         }
@@ -101,5 +103,19 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
             _chatAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getFreindList())
             Log.i(TAG, "synclocalFriendList_end")
         }
+    }
+
+    fun syncUser(acc: String) {
+        FireBaseRepository(object : IFireOperationCallBack {
+            override fun <T> onSuccess(t: T) {
+                //save current user
+                val userModel = (t as DataSnapshot).getValue(UserModel::class.java)
+                LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(userModel)
+                userModel?.let {
+                    MainActivity.userWithUrikeySet.put(userModel.email, userModel.useruri)
+                }
+            }
+            override fun onFail() { }
+        }).syncUser(acc)
     }
 }

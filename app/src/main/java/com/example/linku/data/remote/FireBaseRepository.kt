@@ -11,6 +11,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -24,16 +27,6 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
     init {
         val currentUser = auth.currentUser
         mcallBack = callBack
-        if (this.auth != null) {
-            Log.i(TAG, "auth login" + this.auth)
-        } else {
-            Log.i(TAG, "auth null")
-        }
-        if (currentUser != null) {
-            Log.i(TAG, "user login")
-        } else {
-            Log.i(TAG, "user null")
-        }
     }
 
     override fun getUserName(): String? {
@@ -76,15 +69,22 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
         })
     }
 
+    override fun addFriend(acc: String) {
+        currentUser?.email.let {
+            if (acc == auth.currentUser!!.email.toString()) return
+            send("add new friend", acc, 0)
+        }
+    }
+
     /* send message to another user */
-    override fun send(userMessage: String, acc: String, type: Int) {
+    override fun send(userMessage: String, remote: String, type: Int) {
         val time = Timestamp.now().seconds
         val localaccount = Parsefun.getInstance().parseEmailasAccount(currentUser?.email!!)
-        val remoteaccount = Parsefun.getInstance().parseEmailasAccount(acc)
+        val remoteaccount = Parsefun.getInstance().parseEmailasAccount(remote)
         database.child("friendlist").child(localaccount).child(remoteaccount).push()
-            .setValue(FriendModel("", localaccount, userMessage, time, type))
+            .setValue(FriendModel("", remote, currentUser.email!!, userMessage, time, type))
         database.child("friendlist").child(remoteaccount).child(localaccount).push()
-            .setValue(FriendModel("", localaccount, userMessage, time, type))
+            .setValue(FriendModel("", remote, currentUser.email!!, userMessage, time, type))
     }
 
     /* update avatar */
@@ -160,22 +160,24 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
 
     override fun syncUser(acc: String) {
         Log.i(TAG, "syncUser = $acc")
-        val mQuery = database.child("accountlist").child(Parsefun.getInstance().parseEmailasAccount(FirebaseAuth.getInstance().currentUser?.email.toString()))
-        mQuery.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    Log.i(TAG, "onSuccess = ${dataSnapshot.value}")
-                    mcallBack?.onSuccess(dataSnapshot)
-                } else {
-                    Log.i(TAG, "onFail - syncUser")
+        GlobalScope.launch(Dispatchers.IO) {
+            val mQuery = database.child("accountlist").child(Parsefun.getInstance().parseEmailasAccount(acc))
+            mQuery.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        Log.i(TAG, "onSuccess = ${dataSnapshot.value}")
+                        mcallBack?.onSuccess(dataSnapshot)
+                    } else {
+                        Log.i(TAG, "onFail - syncUser")
+                        mcallBack?.onFail()
+                    }
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.i(TAG, "onCancelled - syncUser")
                     mcallBack?.onFail()
                 }
-            }
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.i(TAG, "onCancelled - syncUser")
-                mcallBack?.onFail()
-            }
-        })
+            })
+        }
     }
 
     override fun syncConversation(acc: String, childEventListener: ChildEventListener) {
@@ -184,23 +186,6 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
                 .child(Parsefun.getInstance().parseEmailasAccount(auth.currentUser!!.email.toString()))
                 .child(Parsefun.getInstance().parseEmailasAccount(acc))
                 .addChildEventListener(childEventListener)
-        }
-    }
-
-    override fun addFriend(acc: String) {
-        currentUser?.email.let {
-            Log.i(TAG, "local = ${Parsefun.getInstance().parseEmailasAccount(auth.currentUser!!.email.toString())}, remote = ${Parsefun.getInstance().parseEmailasAccount(acc)}" )
-            val local = Parsefun.getInstance().parseEmailasAccount(auth.currentUser!!.email.toString())
-            val remote = Parsefun.getInstance().parseEmailasAccount(acc)
-            if (local == remote) return
-            database.child("friendlist")
-                .child(local)
-                .child(remote)
-                .push().setValue(FriendModel("", Parsefun.getInstance().parseEmailasAccount(acc), "add new friend", Timestamp.now().seconds, 0))
-                .addOnCompleteListener {
-                    if (it.isSuccessful) mcallBack?.onSuccess(null)
-                    else mcallBack?.onFail()
-                }
         }
     }
 

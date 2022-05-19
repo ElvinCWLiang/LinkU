@@ -20,9 +20,11 @@ import com.example.linku.data.remote.IFireBaseApiService
 import com.example.linku.data.remote.IFireOperationCallBack
 import com.example.linku.ui.utils.Parsefun
 import com.example.linku.ui.utils.Save
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -35,8 +37,10 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
     var macc: String? = null
     val mapplication = application
     var remoteAccount = ""
+    var localAccount = Firebase.auth.currentUser?.email!!
     val userMessage = MutableLiveData<String>().apply { value = "" }
 
+    /* sync specific account conversation on Firebase */
     fun syncConversation(acc: String) {
         remoteAccount = acc
         FireBaseRepository(null).syncConversation(acc, object : ChildEventListener{
@@ -44,7 +48,7 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
                 val m = snapshot.getValue(FriendModel::class.java)
                 m?.let {
                     m.id = snapshot.key.toString()
-                    m.email = Parsefun.getInstance().parseAccountasEmail(m.email)
+                    Log.i(TAG,"id = ${m.id},  emailto = ${m.email}, emailfrom = ${m.emailfrom},  content = ${m.content}")
                 }
                 LocalRepository(LocalDatabase.getInstance(mapplication)).insertFriendList(m)
                 fetchlocalConversation(remoteAccount)
@@ -61,9 +65,10 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
         userMessage.value = editable.toString()
     }
 
-    fun fetchlocalConversation(acc: String?) {
+    /* fetch account conversation on local db */
+    fun fetchlocalConversation(remoteAccount: String) {
         GlobalScope.launch(IO) {
-            _conversationAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getConversaion(acc))
+            _conversationAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getConversaion(remoteAccount, localAccount))
         }
     }
 

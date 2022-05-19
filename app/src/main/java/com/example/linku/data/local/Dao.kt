@@ -2,6 +2,9 @@ package com.example.linku.data.local
 
 import androidx.room.*
 import androidx.room.Dao
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Dao
 interface Dao {
@@ -11,15 +14,14 @@ interface Dao {
     @Query("SELECT * FROM ARTICLEMODEL WHERE reply = :articleId")
     fun getArticleResponse(articleId: String): List<ArticleModel>
 
-    @Query("SELECT * FROM ARTICLEMODEL WHERE publishTitle != ''")
+    @Query("SELECT * FROM ARTICLEMODEL WHERE publishTitle != '' order by publishTime DESC")
     fun getallArticle(): List<ArticleModel>
 
-    @Query("SELECT * FROM ARTICLEMODEL WHERE publishBoard LIKE :str AND publishTitle != ''")
+    @Query("SELECT * FROM ARTICLEMODEL WHERE publishBoard LIKE :str AND publishTitle != '' order by publishTime DESC")
     fun getBoardArticle(str: String?): List<ArticleModel>
 
-//@Query("SELECT * FROM FRIENDMODEL WHERE EMAIL = :str order by TIME ASC")
-    @Query("SELECT * FROM FRIENDMODEL order by TIME ASC")
-    fun getConversation(): List<FriendModel>
+    @Query("SELECT * FROM FRIENDMODEL WHERE (EMAIL = :remoteAccount AND EMAILFROM = :localAccount) OR (EMAIL = :localAccount AND EMAILFROM = :remoteAccount) order by TIME ASC")
+    fun getConversation(remoteAccount: String, localAccount: String): List<FriendModel>
 
     @Query("SELECT * FROM FRIENDMODEL WHERE ID IN (SELECT MIN(ID) AS ID FROM FRIENDMODEL GROUP BY EMAIL)")
     fun getFreindList(): List<FriendModel>
@@ -40,5 +42,5 @@ interface Dao {
     fun getUser(acc: String) : UserModel
 
     @Query("SELECT * FROM UserModel")
-    fun getAllUser() : List<UserModel>
+    suspend fun getAllUser() : List<UserModel>
 }

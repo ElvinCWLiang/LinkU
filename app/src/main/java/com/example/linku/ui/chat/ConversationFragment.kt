@@ -48,12 +48,16 @@ class ConversationFragment : Fragment() {
         binding.recyclerViewConversation.adapter = mConversationAdapter
         binding.recyclerViewConversation.layoutManager = LinearLayoutManager(activity)
 
+        /*todo 檢查auth 如果為null 不顯示介面*/
+
         /* receive the data from local repository and insert it into the ConversationAdapter >> */
         conversationViewModel.conversationAdapterMaterial.observe(viewLifecycleOwner) {
-            Log.i(TAG,"size = ${it.size}  it.email = ${it[0].email}  type = ${it[0].type}")
             mConversationAdapter.setModelList(it)
             mConversationAdapter.notifyDataSetChanged()
-            if (it.isNotEmpty()) binding.recyclerViewConversation.smoothScrollToPosition(it.size - 1)
+            if (it.isNotEmpty()) {
+                Log.i(TAG, "size = ${it.size}  it.email = ${it[0].email}  type = ${it[0].type}")
+                binding.recyclerViewConversation.smoothScrollToPosition(it.size - 1)
+            }
         }
         /* receive the data from local repository and insert it into the ConversationAdapter << */
 

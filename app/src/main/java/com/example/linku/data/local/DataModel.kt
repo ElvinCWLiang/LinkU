@@ -31,6 +31,8 @@ data class FriendModel(
     var id: String = "",
     @ColumnInfo(name = "email")
     var email: String = "",
+    @ColumnInfo(name = "emailfrom")
+    var emailfrom: String = "",
     @ColumnInfo(name = "content")
     var content: String? = "",
     @ColumnInfo(name = "time")

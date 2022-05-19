@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.linku.MainActivity
 import com.example.linku.R
 import com.example.linku.data.local.ArticleModel
-import kotlinx.android.synthetic.main.adapter_chat.view.*
+import com.example.linku.ui.utils.GlideApp
+import kotlinx.android.synthetic.main.adapter_home.view.*
 
 class HomeAdapter(_fragment: Fragment , _container: ViewGroup?):
     RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
@@ -41,12 +43,14 @@ class HomeAdapter(_fragment: Fragment , _container: ViewGroup?):
         val txv_board = itemView.txv_conversation_local
         val txv_title = itemView.txv_time
         val txv_content = itemView.txv_content
+        val img_author = itemView.img_local
 
         fun bind(articleModel: ArticleModel, position: Int) {
             txv_board.text = articleModel.publishBoard
             txv_title.text = articleModel.publishTitle
             txv_content.text = articleModel.publishContent
             pos = position
+            GlideApp.with(itemView).load(MainActivity.userWithUrikeySet.get(articleModel.publishAuthor)).placeholder(R.drawable.cat).circleCrop().into(img_author)
             itemView.setOnClickListener(this)
         }
 

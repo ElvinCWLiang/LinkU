@@ -10,6 +10,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frameLayout2"
+        android:background="@color/light_blue"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -79,12 +80,14 @@
             app:layout_constraintStart_toStartOf="@+id/spn_publish_board"
             app:layout_constraintTop_toBottomOf="@+id/spn_publish_board" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_publish_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:text="Button"
+            android:src="@drawable/send"
+            android:background="@color/transparent"
             android:onClick="@{() -> publishViewModel.publishArticle()}"
             android:layout_marginEnd="20dp"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -57,7 +57,9 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 _userAccount.value = acc
                 _updateRespond.value = "Success"
                 _isAvatarChanged.value = Uri.parse(Save.getInstance().getUserAvatarUri(mapplication, acc))
-                syncUser(acc)
+                GlobalScope.launch(Dispatchers.IO) {
+                    syncUser(acc)
+                }
             }
             override fun onFail() {
                 Log.i(TAG, "signIn onFail")
@@ -66,7 +68,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }).signIn(acc, pwd)
     }
 
-    fun syncUser(acc: String) {
+    suspend fun syncUser(acc: String) {
         FireBaseRepository(object : IFireOperationCallBack {
             override fun <T> onSuccess(t: T) {
                 //save current user

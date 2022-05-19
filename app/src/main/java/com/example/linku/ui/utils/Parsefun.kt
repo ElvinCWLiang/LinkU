@@ -1,12 +1,14 @@
 package com.example.linku.ui.utils
 
 import android.content.Context
+import android.text.format.DateFormat
 import android.view.View
 import com.example.linku.MainActivity
 import com.example.linku.R
 import com.example.linku.data.local.ArticleModel
 import kotlinx.android.synthetic.main.layout_article_response.view.*
 import java.text.SimpleDateFormat
+import java.util.*
 
 class Parsefun {
     private val TAG = "ev_" + javaClass.simpleName
@@ -28,7 +30,12 @@ class Parsefun {
     }
 
     fun parseSecondsToDate(seconds: Long?): String {
-        return SimpleDateFormat("d MMM yy").format(seconds)
+        val calendar = Calendar.getInstance(Locale.ENGLISH)
+        if (seconds != null) {
+            calendar.timeInMillis = seconds * 1000L
+        }
+        val date = DateFormat.format("dd-MM-yyyy",calendar).toString()
+        return date
     }
 
     fun parseModelToView(context: Context, articleModel: ArticleModel, v: View, pos: Int) {

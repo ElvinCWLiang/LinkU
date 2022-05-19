@@ -14,52 +14,51 @@ class LocalRepository(_db: LocalDatabase) {
     }
 
     /* return all article to HomeFragment(HomeAdpater) */
-    fun getallArticle(): List<ArticleModel> {
-        return db.dataDao().getallArticle()
+    suspend fun getallArticle(): List<ArticleModel> = withContext(Dispatchers.IO){
+        return@withContext db.dataDao().getallArticle()
     }
 
     /* return specific article response to ArticleFragment */
-    fun getLocalArticleResponse(articleId: String): List<ArticleModel> {
-        return db.dataDao().getArticleResponse(articleId)
+    suspend fun getLocalArticleResponse(articleId: String): List<ArticleModel> = withContext(Dispatchers.IO){
+        return@withContext db.dataDao().getArticleResponse(articleId)
     }
 
     /* return specific board article to HomeFragment(HomeAdpater) */
-    fun getboardArticle(board: String?): List<ArticleModel> {
-        return db.dataDao().getBoardArticle(board)
+    suspend fun getboardArticle(board: String?): List<ArticleModel> = withContext(Dispatchers.IO){
+        return@withContext db.dataDao().getBoardArticle(board)
     }
 
     /* insert friend list to ChatFragment(ChatAdapter) */
-    fun insertFriendList(friendModel: FriendModel?) {
+    fun insertFriendList(friendModel: FriendModel?){
         GlobalScope.launch(Dispatchers.IO) {
             db.dataDao().insertFriendList(friendModel)
         }
     }
 
     /* return friend list according from this account */
-    fun getFreindList(): List<FriendModel> {
-        return db.dataDao().getFreindList()
+    suspend fun getFreindList(): List<FriendModel> = withContext(Dispatchers.IO){
+        return@withContext db.dataDao().getFreindList()
     }
 
     /* return the specific conversation from the acc*/
-    fun getConversaion(acc: String?): List<FriendModel> {
-        return db.dataDao().getConversation()
+    suspend fun getConversaion(remoteAccount: String, localAccount: String): List<FriendModel> = withContext(Dispatchers.IO){
+        return@withContext db.dataDao().getConversation(remoteAccount, localAccount)
     }
 
     /* insert UserModel as entiry into db */
-    fun insertUserList(userModel: UserModel?) {
+    fun insertUserList(userModel: UserModel?){
         GlobalScope.launch(Dispatchers.IO) {
             db.dataDao().insertUserList(userModel)
         }
     }
 
     /* return the UserModel by account */
-    fun getUser(acc: String) : UserModel{
-        return db.dataDao().getUser(acc)
+    suspend fun getUser(acc: String) : UserModel = withContext(Dispatchers.IO){
+        return@withContext db.dataDao().getUser(acc)
     }
 
     /* return the UserModel by account */
     suspend fun getAllUser() : List<UserModel> = withContext(Dispatchers.IO){
         return@withContext db.dataDao().getAllUser()
     }
-
 }
