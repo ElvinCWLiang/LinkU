@@ -14,25 +14,41 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:text="Please Login!"
+            android:textSize="32sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_chat"
+            android:background="@color/background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_search_account"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="search"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@color/transparent"
                 android:onClick="@{() -> chatViewModel.showDialog()}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:src="@drawable/search"
+                app:layout_constraintBottom_toBottomOf="@+id/edt_search_account"
+                app:layout_constraintEnd_toEndOf="@+id/recyclerViewChat"
+                app:layout_constraintTop_toTopOf="@+id/edt_search_account"
+                tools:ignore="SpeakableTextPresentCheck" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewChat"
@@ -53,11 +69,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="32dp"
                 android:ems="10"
                 android:hint="@string/account"
                 android:inputType="textPersonName"
                 android:minHeight="48dp"
                 android:text="@={chatViewModel.acc}"
+                app:layout_constraintEnd_toStartOf="@+id/btn_search_account"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -71,6 +89,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

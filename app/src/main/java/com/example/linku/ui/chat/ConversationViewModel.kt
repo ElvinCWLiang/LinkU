@@ -67,6 +67,7 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
 
     /* fetch account conversation on local db */
     fun fetchlocalConversation(remoteAccount: String) {
+        Log.i(TAG, "remoteAccount = $remoteAccount")
         GlobalScope.launch(IO) {
             _conversationAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getConversaion(remoteAccount, localAccount))
         }

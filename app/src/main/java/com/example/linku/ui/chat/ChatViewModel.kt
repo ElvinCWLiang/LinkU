@@ -10,8 +10,8 @@ import com.example.linku.MainActivity
 import com.example.linku.data.local.*
 import com.example.linku.data.remote.FireBaseRepository
 import com.example.linku.data.remote.IFireOperationCallBack
-import com.example.linku.ui.utils.Parsefun
 import com.example.linku.ui.utils.Save
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -24,7 +24,6 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     val shouldshowSearchAccountDialog: LiveData<String> = _shouldshowSearchAccountDialog
 
     val _chatAdapterMaterial = MutableLiveData<List<FriendModel>>()
-
     val chatAdapterMaterial: LiveData<List<FriendModel>> = _chatAdapterMaterial
 
     private val mapplication: Application = application
@@ -99,9 +98,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
 
     fun synclocalFriendList() {
         GlobalScope.launch(Dispatchers.IO) {
-            Log.i(TAG, "synclocalFriendList_start")
-            _chatAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getFreindList())
-            Log.i(TAG, "synclocalFriendList_end")
+            _chatAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getFriendList(FirebaseAuth.getInstance().currentUser?.email.toString()))
         }
     }
 
@@ -112,7 +109,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                 val userModel = (t as DataSnapshot).getValue(UserModel::class.java)
                 LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(userModel)
                 userModel?.let {
-                    MainActivity.userWithUrikeySet.put(userModel.email, userModel.useruri)
+                    MainActivity.userkeySet.put(userModel.email, userModel)
                 }
             }
             override fun onFail() { }

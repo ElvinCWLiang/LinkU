@@ -12,11 +12,14 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.distinctUntilChanged
 import com.example.linku.data.local.LocalDatabase
 import com.example.linku.data.local.LocalRepository
+import com.example.linku.data.local.UserModel
 import com.example.linku.data.remote.FireBaseRepository
 import com.example.linku.data.remote.IFireOperationCallBack
 import com.example.linku.ui.utils.Save
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
 
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
@@ -24,17 +27,23 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     private val _connected = MutableLiveData<Boolean>()
     val isConnected : LiveData<Boolean> = _connected
     private val _isLogin = MutableLiveData<Boolean>()
-    val isLogin : LiveData<Boolean> = _isLogin
+    val isLogin : LiveData<Boolean> = _isLogin.distinctUntilChanged()
     private val mApplication = application
 
     fun isLogin(){
         FireBaseRepository(object : IFireOperationCallBack {
-            override fun <T> onSuccess(t: T) { _isLogin.value = true }
+            override fun <T> onSuccess(t: T) {
+                _isLogin.value = true
+            }
             override fun onFail() { _isLogin.value = false }
         }).signIn(
             Save.getInstance().getUserAccount(this.mApplication),
             Save.getInstance().getUserPassword(this.mApplication)
         )
+
+        FirebaseAuth.getInstance().addAuthStateListener {
+            _isLogin.value = it.currentUser != null
+        }
     }
 
     fun isConnected() {
@@ -51,16 +60,16 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun syncUserwithUri(): HashMap<String, String> {
-        var userWithUrikeySet = HashMap<String, String>()
+    fun syncLocalUserData(): HashMap<String, UserModel> {
+        var userWithkeySet = HashMap<String, UserModel>()
         runBlocking {
             val userModelListRou = async { LocalRepository(LocalDatabase.getInstance(mApplication)).getAllUser() }
             val userModelList = userModelListRou.await()
             for (i in userModelList.indices) {
-                Log.i(TAG, "email = ${userModelList[i].email},  useruri = ${userModelList[i].useruri}")
-                userWithUrikeySet.put(userModelList[i].email, userModelList[i].useruri)
+//                Log.i(TAG, "email = ${userModelList[i].email},  useruri = ${userModelList[i].useruri}")
+                userWithkeySet.put(userModelList[i].email, userModelList[i])
             }
         }
-        return userWithUrikeySet
+        return userWithkeySet
     }
 }

@@ -7,10 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.linku.MainActivity
 import com.example.linku.R
 import com.example.linku.databinding.FragmentChatBinding
 import com.example.linku.ui.chat.ChatViewModel
@@ -40,16 +42,23 @@ class ChatFragment : Fragment() {
         binding.chatViewModel = chatViewModel
 
         chatViewModel.shouldshowSearchAccountDialog.observe(viewLifecycleOwner) {
-            Log.i(TAG,"it = $it")
             it?.let {
                 SearchAccountDialog(requireContext(), chatViewModel, it).show()
+                binding.edtSearchAccount.text.clear()
             }
         }
+        
         val mChatAdapter = ChatAdapter(this, container)
         binding.recyclerViewChat.adapter = mChatAdapter
         binding.recyclerViewChat.layoutManager = LinearLayoutManager(activity)
 
         chatViewModel.syncFriendList()
+
+        if (MainActivity.islogin) {
+            binding.layoutChat.visibility = View.VISIBLE
+        } else {
+            binding.layoutChat.visibility = View.INVISIBLE
+        }
 
         chatViewModel.chatAdapterMaterial.observe(viewLifecycleOwner) {
             Log.i(TAG,"size = ${it.size}")

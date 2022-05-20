@@ -11,14 +11,6 @@
         android:icon="@android:drawable/stat_notify_chat"
         android:title="Chat" />
     <item
-        android:id="@+id/navigation_lottery"
-        android:icon="@android:drawable/ic_menu_myplaces"
-        android:title="Pick" />
-    <item
-        android:id="@+id/navigation_notifications"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/title_notifications" />
-    <item
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/ic_dashboard_black_24dp"
         android:title="@string/title_dashboard" />

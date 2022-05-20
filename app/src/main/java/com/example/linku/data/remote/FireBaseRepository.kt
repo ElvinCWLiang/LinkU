@@ -159,16 +159,16 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
     }
 
     override fun syncUser(acc: String) {
-        Log.i(TAG, "syncUser = $acc")
+        //Log.i(TAG, "syncUser = $acc")
         GlobalScope.launch(Dispatchers.IO) {
             val mQuery = database.child("accountlist").child(Parsefun.getInstance().parseEmailasAccount(acc))
             mQuery.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        Log.i(TAG, "onSuccess = ${dataSnapshot.value}")
+                        //Log.i(TAG, "onSuccess = ${dataSnapshot.value}")
                         mcallBack?.onSuccess(dataSnapshot)
                     } else {
-                        Log.i(TAG, "onFail - syncUser")
+                        //Log.i(TAG, "onFail - syncUser")
                         mcallBack?.onFail()
                     }
                 }
@@ -185,6 +185,13 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
             database.child("friendlist")
                 .child(Parsefun.getInstance().parseEmailasAccount(auth.currentUser!!.email.toString()))
                 .child(Parsefun.getInstance().parseEmailasAccount(acc))
+                .addChildEventListener(childEventListener)
+        }
+    }
+
+    override fun syncArticleResponse(articleId: String, board: String, childEventListener: ChildEventListener) {
+        auth.currentUser?.let {
+            database.child(board)
                 .addChildEventListener(childEventListener)
         }
     }

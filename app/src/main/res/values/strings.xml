@@ -17,7 +17,7 @@
     <string name="title_home">Home</string>
     <string name="title_notifications">Notifications</string>
     <string name="unread_message">未讀訊息</string>
-    <string name="input_your_article">input_your_article</string>
+    <string name="input_your_article">Input your article</string>
 
 
     <array name="board_array">

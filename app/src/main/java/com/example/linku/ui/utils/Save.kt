@@ -30,6 +30,7 @@ class Save {
             .putString(Password, pwd).apply()
     }
 
+    /* when user click signout in dashboardFragment */
     fun deleteUser(mContext: Context) {
         mContext.getSharedPreferences(mContext.getResources().getString(R.string.data), 0).edit()
             .remove(Account).apply()
@@ -37,11 +38,13 @@ class Save {
             .remove(Password).apply()
     }
 
+    /* return userAccount in MainActivityViewModel when the application is initiated */
     fun getUserAccount(mContext: Context): String {
         return mContext.getSharedPreferences(mContext.resources.getString(R.string.data), 0)
             .getString(Account, "zz")!!
     }
 
+    /* return UserPassword in MainActivityViewModel when the application is initiated */
     fun getUserPassword(mContext: Context): String {
         return mContext.getSharedPreferences(mContext.resources.getString(R.string.data), 0)
             .getString(Password, "zz")!!

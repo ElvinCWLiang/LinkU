@@ -12,8 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.linku.MainActivity
 import com.example.linku.R
 import com.example.linku.data.local.FriendModel
-import com.example.linku.data.local.LocalDatabase
-import com.example.linku.data.local.LocalRepository
 import com.example.linku.ui.utils.GlideApp
 import com.example.linku.ui.utils.Parsefun
 import com.google.firebase.auth.FirebaseAuth
@@ -63,7 +61,7 @@ class ConversationAdapter(_fragment: Fragment, _container: ViewGroup?):
             if (remoteaccount == localaccout) {
                 img_author_remote.visibility = INVISIBLE
                 img_author_local.visibility = VISIBLE
-                GlideApp.with(itemView).load(MainActivity.userWithUrikeySet.get(localaccout)).placeholder(R.drawable.cat).circleCrop().into(img_author_local)
+                GlideApp.with(itemView).load(MainActivity.userkeySet.get(localaccout)?.useruri).placeholder(R.drawable.cat).circleCrop().into(img_author_local)
                 if (friendModel.type == 0) {
                     txv_remote.visibility = INVISIBLE
                     txv_local.visibility = VISIBLE
@@ -84,7 +82,7 @@ class ConversationAdapter(_fragment: Fragment, _container: ViewGroup?):
                 //Log.i(TAG,"!equals")
                 img_author_remote.visibility = VISIBLE
                 img_author_local.visibility = INVISIBLE
-                GlideApp.with(itemView).load(MainActivity.userWithUrikeySet.get(remoteaccount)).placeholder(R.drawable.cat).circleCrop().into(img_author_remote)
+                GlideApp.with(itemView).load(MainActivity.userkeySet.get(remoteaccount)?.useruri).placeholder(R.drawable.cat).circleCrop().into(img_author_remote)
                 if (friendModel.type == 0) {
                     txv_remote.visibility = VISIBLE
                     txv_local.visibility = INVISIBLE

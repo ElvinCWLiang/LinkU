@@ -19,6 +19,7 @@ class ArticleFragment: Fragment() {
     private val TAG = "ev_" + javaClass.simpleName
     private var _binding: FragmentArticleBinding? = null
     private val binding get() = _binding!!
+    private var preview = 0;
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,20 +46,27 @@ class ArticleFragment: Fragment() {
             binding.txvTime.text = Parsefun().parseSecondsToDate(time)
             binding.txvTitle.text = title
             binding.txvBoard.text = board
-            GlideApp.with(this).load(MainActivity.userWithUrikeySet.get(author)).placeholder(R.drawable.cat).into(binding.imgAuthor)
+            GlideApp.with(this).load(MainActivity.userkeySet.get(author)?.useruri).placeholder(R.drawable.cat).into(binding.imgAuthor)
             Log.i(TAG,"articleId = $articleId board = $board author $author title = $title time = ${Parsefun().parseSecondsToDate((time))} content = $content")
-            articleViewModel.synclocalArticleResponse(articleId, board)
+            articleViewModel.syncArticleResponse(articleId, board)
         }
         /* receive the article information from HomeFragment << */
 
+        if (MainActivity.islogin) {
+            binding.layoutRespond.visibility = View.VISIBLE
+        } else {
+            binding.layoutRespond.visibility = View.INVISIBLE
+        }
+
         /* LiveData for the replying message in LocalRepository >> */
-        articleViewModel._articleAdapterMaterial.observe(viewLifecycleOwner){
+        articleViewModel.articleAdapterMaterial.observe(viewLifecycleOwner){
             Log.i(TAG, "size = ${it.size}")
-            for (i in 0 until it.size) {
+            for (i in preview until it.size) {
                 Log.i(TAG, "i = $i, size = ${it.size}")
                 val v: View = LayoutInflater.from(requireContext()).inflate(R.layout.layout_article_response, null)
                 Parsefun.getInstance().parseModelToView(requireContext(),it[i], v, i)
                 binding.scrollArticleMaterial.addView(v)
+                preview = it.size
             }
         }
         /* LiveData for the replying message in LocalRepository << */

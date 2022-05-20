@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -36,7 +37,6 @@ class ConversationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         conversationViewModel = ViewModelProvider(this).get(ConversationViewModel::class.java)
 
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_conversation ,container, false)
@@ -47,8 +47,6 @@ class ConversationFragment : Fragment() {
         val mConversationAdapter = ConversationAdapter(this, container)
         binding.recyclerViewConversation.adapter = mConversationAdapter
         binding.recyclerViewConversation.layoutManager = LinearLayoutManager(activity)
-
-        /*todo 檢查auth 如果為null 不顯示介面*/
 
         /* receive the data from local repository and insert it into the ConversationAdapter >> */
         conversationViewModel.conversationAdapterMaterial.observe(viewLifecycleOwner) {

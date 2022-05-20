@@ -1,7 +1,6 @@
 package com.example.linku
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -9,11 +8,10 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.linku.data.local.UserModel
 import com.example.linku.databinding.ActivityMainBinding
 import com.example.linku.ui.utils.Save
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 
 
 class MainActivity : AppCompatActivity() {
@@ -22,12 +20,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     companion object{
-        lateinit var userWithUrikeySet : HashMap<String, String>
+        lateinit var userkeySet : HashMap<String, UserModel>
+        var islogin = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        supportActionBar?.hide()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -40,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.navView
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_chat, R.id.navigation_lottery, R.id.navigation_dashboard, R.id.navigation_notifications
+                R.id.navigation_home, R.id.navigation_chat, R.id.navigation_dashboard
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -58,7 +57,10 @@ class MainActivity : AppCompatActivity() {
 
         /* observe the login status >> */
         mainactivityViewModel.isLogin.observe(this) {
-            if (!it) AlertDialog.Builder(this).setMessage("login fail").create().show()
+            it?.let {
+                islogin = it
+                if (!it) { AlertDialog.Builder(this).setMessage("Please login").create().show() }
+            }
         }
         /* observe the login status status << */
 
@@ -66,6 +68,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData(mainActivityViewModel: MainActivityViewModel){
-        userWithUrikeySet = mainActivityViewModel.syncUserwithUri()
+        userkeySet = mainActivityViewModel.syncLocalUserData()
+
     }
 }

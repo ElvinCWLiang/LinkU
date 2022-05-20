@@ -9,17 +9,9 @@
         android:name="com.example.linku.ui.dashboard.DashboardFragment"
         android:id="@+id/navigation_dashboard"/>
     <fragment
-        android:label="@string/title_notifications"
-        android:name="com.example.linku.ui.notifications.NotificationsFragment"
-        android:id="@+id/navigation_notifications"/>
-    <fragment
         android:label="Chat"
         android:name="com.example.linku.ui.chat.ChatFragment"
         android:id="@+id/navigation_chat"/>
-    <fragment
-        android:label="@string/title_notifications"
-        android:name="com.example.linku.ui.lottery.LotteryFragment"
-        android:id="@+id/navigation_lottery"/>
     <fragment
         android:label="@string/publish"
         android:name="com.example.linku.ui.home.PublishFragment"

@@ -31,7 +31,6 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         val homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
 
@@ -53,6 +52,7 @@ class HomeFragment : Fragment() {
         binding.recyclerViewArticle.layoutManager = LinearLayoutManager(activity)
 
         homeViewModel.homeAdapterMaterial.observe(viewLifecycleOwner){
+            Log.i(TAG,"size = ${it.size}")
             mHomeAdapter.setModelList(it)
             mHomeAdapter.notifyDataSetChanged()
         }

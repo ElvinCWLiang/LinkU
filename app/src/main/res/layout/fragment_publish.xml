@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -18,79 +19,88 @@
             android:id="@+id/edt_publish_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:minHeight="48dp"
-            android:hint="@string/title"
+            android:layout_marginStart="8dp"
             android:ems="10"
+            android:hint="@string/title"
             android:inputType="textPersonName"
-            android:layout_marginEnd="20dp"
+            android:minHeight="48dp"
             android:text="@={publishViewModel.title}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/spn_publish_board"
-            app:layout_constraintTop_toBottomOf="@+id/imageView" />
+            app:layout_constraintBottom_toBottomOf="@+id/imageView6"
+            app:layout_constraintStart_toEndOf="@+id/imageView6"
+            app:layout_constraintTop_toTopOf="@+id/imageView6" />
 
         <EditText
-            android:gravity="top|left"
             android:id="@+id/edt_publish_content"
-            android:layout_width="361dp"
+            android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:hint="@string/input_your_article"
-            android:ems="10"
-            android:inputType="textPersonName"
             android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:ems="10"
+            android:gravity="top|left"
+            android:hint="@string/input_your_article"
+            android:inputType="textPersonName"
             android:text="@={publishViewModel.content}"
             app:layout_constraintBottom_toTopOf="@+id/btn_publish_submit"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/spn_publish_board"
+            app:layout_constraintStart_toEndOf="@+id/imageView8"
             app:layout_constraintTop_toBottomOf="@+id/edt_publish_title" />
 
-        <TextView
-            android:textSize="20dp"
-            android:id="@+id/txv_publish_time"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:layout_constraintTop_toTopOf="@+id/imageView" />
-
         <Spinner
-            android:entries="@array/publish_array"
             android:id="@+id/spn_publish_board"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginStart="8dp"
+            android:entries="@array/publish_array"
             android:minHeight="48dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="200dp"
             android:selectedItemPosition="@={publishViewModel.board_num}"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView7"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintStart_toStartOf="@+id/spn_publish_board"
-            app:layout_constraintTop_toBottomOf="@+id/spn_publish_board" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/imageView7"
+            app:layout_constraintTop_toTopOf="@+id/imageView7" />
 
         <ImageButton
             android:id="@+id/btn_publish_submit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
-            android:text="Button"
-            android:src="@drawable/send"
             android:background="@color/transparent"
             android:onClick="@{() -> publishViewModel.publishArticle()}"
-            android:layout_marginEnd="20dp"
+            android:src="@drawable/send"
+            android:text="Button"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="@+id/imageView7"
+            app:layout_constraintTop_toBottomOf="@+id/imageView7"
+            app:srcCompat="@drawable/tag" />
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/board" />
+
+        <ImageView
+            android:id="@+id/imageView8"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="@+id/imageView6"
+            app:layout_constraintTop_toBottomOf="@+id/imageView6"
+            app:srcCompat="@drawable/content" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

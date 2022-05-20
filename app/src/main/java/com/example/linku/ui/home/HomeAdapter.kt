@@ -50,7 +50,7 @@ class HomeAdapter(_fragment: Fragment , _container: ViewGroup?):
             txv_title.text = articleModel.publishTitle
             txv_content.text = articleModel.publishContent
             pos = position
-            GlideApp.with(itemView).load(MainActivity.userWithUrikeySet.get(articleModel.publishAuthor)).placeholder(R.drawable.cat).circleCrop().into(img_author)
+            GlideApp.with(itemView).load(MainActivity.userkeySet.get(articleModel.publishAuthor)?.useruri).placeholder(R.drawable.cat).circleCrop().into(img_author)
             itemView.setOnClickListener(this)
         }
 

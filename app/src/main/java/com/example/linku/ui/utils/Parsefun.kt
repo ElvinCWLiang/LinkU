@@ -7,7 +7,6 @@ import com.example.linku.MainActivity
 import com.example.linku.R
 import com.example.linku.data.local.ArticleModel
 import kotlinx.android.synthetic.main.layout_article_response.view.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 class Parsefun {
@@ -43,7 +42,7 @@ class Parsefun {
         v.txv_respond.text = articleModel.publishContent
         v.txv_time.text = parseSecondsToDate(articleModel.publishTime)
         v.txv_floor.text = pos.toString()
-        GlideApp.with(context).load(MainActivity.userWithUrikeySet.get(articleModel.publishAuthor)).placeholder(R.drawable.cat).into(v.img_responder)
+        GlideApp.with(context).load(MainActivity.userkeySet.get(articleModel.publishAuthor)?.useruri).placeholder(R.drawable.cat).into(v.img_responder)
     }
 
 }

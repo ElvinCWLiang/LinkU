@@ -36,8 +36,12 @@ class LocalRepository(_db: LocalDatabase) {
     }
 
     /* return friend list according from this account */
-    suspend fun getFreindList(): List<FriendModel> = withContext(Dispatchers.IO){
-        return@withContext db.dataDao().getFreindList()
+    suspend fun getFriendList(localAccount: String): List<FriendModel> = withContext(Dispatchers.IO){
+        return@withContext db.dataDao().getFreindList(localAccount)
+    }
+
+    suspend fun deleteFriendList() = withContext(Dispatchers.IO){
+        db.dataDao().deleteFriendList()
     }
 
     /* return the specific conversation from the acc*/
@@ -53,7 +57,7 @@ class LocalRepository(_db: LocalDatabase) {
     }
 
     /* return the UserModel by account */
-    suspend fun getUser(acc: String) : UserModel = withContext(Dispatchers.IO){
+    suspend fun getUser(acc: String) : UserModel? = withContext(Dispatchers.IO){
         return@withContext db.dataDao().getUser(acc)
     }
 

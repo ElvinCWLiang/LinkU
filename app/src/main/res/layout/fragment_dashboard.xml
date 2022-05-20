@@ -66,6 +66,7 @@
             app:layout_constraintTop_toBottomOf="@+id/img_avatar" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_dashboard_setting"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"

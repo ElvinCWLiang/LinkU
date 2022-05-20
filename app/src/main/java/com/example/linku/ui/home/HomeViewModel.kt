@@ -4,7 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.example.linku.MainActivity.Companion.userWithUrikeySet
+import com.example.linku.MainActivity.Companion.userkeySet
 import com.example.linku.R
 import com.example.linku.data.local.ArticleModel
 import com.example.linku.data.local.LocalDatabase
@@ -33,17 +33,17 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             val board = board_array[pos]
             if (board == "All") {
                 for (sub_board in board_array) {
-                    syncremote(sub_board)
+                    syncspecificboard(sub_board)
                 }
             } else if (board != "All") {
-                syncremote(board)
+                syncspecificboard(board)
             }
-            Log.i(TAG,"syncBoard")
+            //Log.i(TAG,"syncBoard")
             synclocalArticle(board)
         }
     }
 
-    private fun syncremote(board: String) {
+    private fun syncspecificboard(board: String) {
         FireBaseRepository(object : IFireOperationCallBack {
             override fun <T> onSuccess(t: T) {
                 syncArticle.value = true
@@ -62,21 +62,19 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                             }
                         }
                         LocalRepository(LocalDatabase.getInstance(mapplication)).insertArticle(m)
-                        Log.i(TAG, "id = ${m?.id} " +
+                        /*Log.i(TAG, "id = ${m?.id} " +
                                 "title = ${m?.publishTitle} " +
                                 "board = ${m?.publishBoard} " +
                                 "author = ${m?.publishAuthor} " +
                                 "time = ${m?.publishTime} " +
                                 "content = ${m?.publishContent} " +
-                                "reply = ${m?.reply}")
+                                "reply = ${m?.reply}")*/
                     }
                 }
                 synclocalArticle(mapplication.resources.getStringArray(R.array.board_array)[spnboardpos])
-                Log.i(TAG,"onSuccess $board")
             }
             override fun onFail() {
                 syncArticle.setValue(false)
-                Log.i(TAG, "onfail value = ${syncArticle.value.toString()}")
             }
         }).syncBoard(board)
     }
@@ -84,12 +82,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     fun syncUser(acc: String) {
         FireBaseRepository(object : IFireOperationCallBack {
             override fun <T> onSuccess(t: T) {
-                //save current user
                 val userModel = (t as DataSnapshot).getValue(UserModel::class.java)
                 LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(userModel)
-                Log.i(TAG, "email = ${userModel?.email},  useruri = ${userModel?.useruri}")
                 userModel?.let {
-                    userWithUrikeySet.put(userModel.email, userModel.useruri)
+                    userkeySet.put(userModel.email, userModel)
                 }
             }
             override fun onFail() { }
@@ -97,7 +93,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun synclocalArticle(board: String?) {
-        Log.i(TAG,"synclocalArticle")
         GlobalScope.launch(Dispatchers.IO) {
             if (board == "All") {
                 homeAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getallArticle())

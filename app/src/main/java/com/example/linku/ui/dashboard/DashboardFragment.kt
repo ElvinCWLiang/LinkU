@@ -1,26 +1,22 @@
 package com.example.linku.ui.dashboard
 
-import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.linku.MainActivity
-import com.example.linku.MainActivityViewModel
 import com.example.linku.R
 import com.example.linku.databinding.FragmentDashboardBinding
 import com.example.linku.ui.utils.GlideApp
-import com.example.linku.ui.utils.Save
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.dialog_login.view.*
+
 
 class DashboardFragment : Fragment() {
 
@@ -37,6 +33,7 @@ class DashboardFragment : Fragment() {
             dashboardViewModel.updateAvatar(it)
         }
     }
+    lateinit var dialog : LoginDialog
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,22 +49,26 @@ class DashboardFragment : Fragment() {
         binding.dashboardViewModel = dashboardViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        dialog = LoginDialog(requireContext(), dashboardViewModel)
+
         dashboardViewModel.userAccount.observe(viewLifecycleOwner) {
             binding.btnLogout.isEnabled = it != null
             binding.btnLogin.isEnabled = it == null
-            if (it == null) {
+            if (it == null || it == "null") {
+                binding.layoutDashboardSetting.visibility = View.INVISIBLE
                 Log.i(TAG, "userAccount null = $it")
                 binding.textUsername.text = ""
-                LoginDialog(requireContext(), dashboardViewModel).show()
+                dialog.show()
                 binding.btnLogout.isEnabled = false
                 binding.btnLogin.isEnabled = true
                 GlideApp.with(this).load(R.drawable.cat).into(binding.imgAvatar)
             } else {
+                binding.layoutDashboardSetting.visibility = View.VISIBLE
                 Log.i(TAG, "userAccount = $it")
                 binding.textUsername.text = it
                 binding.btnLogout.isEnabled = true
                 binding.btnLogin.isEnabled = false
-                GlideApp.with(this).load(MainActivity.userWithUrikeySet.get(it)).placeholder(R.drawable.cat).into(binding.imgAvatar)
+                GlideApp.with(this).load(MainActivity.userkeySet.get(it)?.useruri).placeholder(R.drawable.cat).into(binding.imgAvatar)
             }
         }
 
@@ -102,5 +103,6 @@ class DashboardFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        dialog.dismiss()
     }
 }
