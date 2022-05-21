@@ -3,7 +3,7 @@
 Main page
 ![Screenshot_20220521-072108](https://user-images.githubusercontent.com/95346303/169640789-2834bc00-bd3d-41b6-9731-f592c1a64b65.png) 
 
-<img src="[https://user-images.githubusercontent.com/95346303/169640789-2834bc00-bd3d-41b6-9731-f592c1a64b65.png]" width="200" height="200" /><br/>
+<img src="[https://github.com/favicon.ico](https://user-images.githubusercontent.com/95346303/169640789-2834bc00-bd3d-41b6-9731-f592c1a64b65.png)" width="48">
 
 Chat page
 ![Screenshot_20220521-072119](https://user-images.githubusercontent.com/95346303/169640783-c629fe34-36db-45dd-86fc-a1c9196d5834.png)
