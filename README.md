@@ -1,5 +1,7 @@
 # LinkU
-![1](https://user-images.githubusercontent.com/95346303/169640471-af34a2e0-778f-415b-8d4c-90b090321d62.jpg)
-![2](https://user-images.githubusercontent.com/95346303/169640473-a565d73d-0682-48ba-b5d3-85925c4e349d.jpg)
-![3](https://user-images.githubusercontent.com/95346303/169640474-b52d6548-6009-4086-9320-0ee6ac409ddb.jpg)
-![4](https://user-images.githubusercontent.com/95346303/169640542-dc784ef3-5777-450c-bd7c-5bf3fc39e7f2.JPG)
+
+![image](https://user-images.githubusercontent.com/95346303/169640577-337052ef-9756-4024-b0a1-f816bb2dd632.png)
+![image](https://user-images.githubusercontent.com/95346303/169640588-3e3c67c8-3cb3-425d-849a-1320cb628878.png)
+![image](https://user-images.githubusercontent.com/95346303/169640612-2677ef62-73b3-462e-b2ad-0b9458164064.png)
+![image](https://user-images.githubusercontent.com/95346303/169640634-d418c401-5bfb-4c20-bc87-5fff1ffc8e40.png)
+![image](https://user-images.githubusercontent.com/95346303/169640649-6351aad6-049f-4ede-8b4f-a0571433f07c.png)
