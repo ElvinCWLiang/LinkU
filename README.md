@@ -1,7 +1,16 @@
 # LinkU
 
-![image](https://user-images.githubusercontent.com/95346303/169640577-337052ef-9756-4024-b0a1-f816bb2dd632.png)
-![image](https://user-images.githubusercontent.com/95346303/169640588-3e3c67c8-3cb3-425d-849a-1320cb628878.png)
-![image](https://user-images.githubusercontent.com/95346303/169640612-2677ef62-73b3-462e-b2ad-0b9458164064.png)
-![image](https://user-images.githubusercontent.com/95346303/169640634-d418c401-5bfb-4c20-bc87-5fff1ffc8e40.png)
-![image](https://user-images.githubusercontent.com/95346303/169640649-6351aad6-049f-4ede-8b4f-a0571433f07c.png)
+Main page
+![Screenshot_20220521-072108](https://user-images.githubusercontent.com/95346303/169640789-2834bc00-bd3d-41b6-9731-f592c1a64b65.png)
+
+Chat page
+![Screenshot_20220521-072119](https://user-images.githubusercontent.com/95346303/169640783-c629fe34-36db-45dd-86fc-a1c9196d5834.png)
+
+Conversation page
+![Screenshot_20220521-072126](https://user-images.githubusercontent.com/95346303/169640786-d6b419c3-4533-4c4f-9fc3-5b4f4328074c.png)
+
+Publish page
+![Screenshot_20220521-072113](https://user-images.githubusercontent.com/95346303/169640790-cd8d6b71-a9dd-45d7-ab18-24bfaf5dfee6.png)
+
+Login page
+![Screenshot_20220521-072136](https://user-images.githubusercontent.com/95346303/169640787-8e0ded56-4479-41f3-ba20-f56c4d5fc43f.png)
