@@ -1,7 +1,9 @@
 # LinkU
 
 Main page
-<img src="[https://github.com/倉庫名/專案名/blob/master/m/20200424230237910.jpg](https://user-images.githubusercontent.com/95346303/169640789-2834bc00-bd3d-41b6-9731-f592c1a64b65.png)" width="200" height="200" /><br/>
+![Screenshot_20220521-072108](https://user-images.githubusercontent.com/95346303/169640789-2834bc00-bd3d-41b6-9731-f592c1a64b65.png) 
+
+<img src="[https://user-images.githubusercontent.com/95346303/169640789-2834bc00-bd3d-41b6-9731-f592c1a64b65.png]" width="200" height="200" /><br/>
 
 Chat page
 ![Screenshot_20220521-072119](https://user-images.githubusercontent.com/95346303/169640783-c629fe34-36db-45dd-86fc-a1c9196d5834.png)
