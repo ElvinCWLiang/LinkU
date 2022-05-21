@@ -6,7 +6,7 @@
     <data>
         <variable
             name="dashboardViewModel"
-            type="com.example.linku.ui.dashboard.DashboardViewModel" />
+            type="com.project.linku.ui.dashboard.DashboardViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

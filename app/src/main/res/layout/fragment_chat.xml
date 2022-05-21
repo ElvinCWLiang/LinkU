@@ -6,7 +6,7 @@
     <data>
         <variable
             name="chatViewModel"
-            type="com.example.linku.ui.chat.ChatViewModel" />
+            type="com.project.linku.ui.chat.ChatViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,23 +14,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView"
+        <ImageView
+            android:id="@+id/imageView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:gravity="center"
-            android:text="Please Login!"
-            android:textSize="32sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/please_login" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_chat"
-            android:background="@color/background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -79,17 +78,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/txv_mention"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/login_first"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

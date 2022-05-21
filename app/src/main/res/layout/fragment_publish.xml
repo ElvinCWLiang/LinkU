@@ -6,7 +6,7 @@
     <data>
         <variable
             name="publishViewModel"
-            type="com.example.linku.ui.home.PublishViewModel" />
+            type="com.project.linku.ui.home.PublishViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

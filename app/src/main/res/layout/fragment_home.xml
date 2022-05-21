@@ -6,7 +6,7 @@
     <data>
         <variable
             name="homeViewModel"
-            type="com.example.linku.ui.home.HomeViewModel" />
+            type="com.project.linku.ui.home.HomeViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,7 +41,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/button"
+            android:id="@+id/img_publish"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:background="@color/transparent"

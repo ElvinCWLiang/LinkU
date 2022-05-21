@@ -5,7 +5,7 @@
     <data>
         <variable
             name="mainactivityViewModel"
-            type="com.example.linku.MainActivityViewModel" />
+            type="com.project.linku.MainActivityViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

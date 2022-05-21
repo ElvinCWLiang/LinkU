@@ -2,26 +2,26 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/mobile_navigation" app:startDestination="@+id/navigation_home">
     <fragment
         android:label="@string/title_home"
-        android:name="com.example.linku.ui.home.HomeFragment"
+        android:name="com.project.linku.ui.home.HomeFragment"
         android:id="@+id/navigation_home"/>
     <fragment
         android:label="@string/title_dashboard"
-        android:name="com.example.linku.ui.dashboard.DashboardFragment"
+        android:name="com.project.linku.ui.dashboard.DashboardFragment"
         android:id="@+id/navigation_dashboard"/>
     <fragment
         android:label="Chat"
-        android:name="com.example.linku.ui.chat.ChatFragment"
+        android:name="com.project.linku.ui.chat.ChatFragment"
         android:id="@+id/navigation_chat"/>
     <fragment
         android:label="@string/publish"
-        android:name="com.example.linku.ui.home.PublishFragment"
+        android:name="com.project.linku.ui.home.PublishFragment"
         android:id="@+id/navigation_publish"/>
     <fragment
         android:label="conversation"
-        android:name="com.example.linku.ui.chat.ConversationFragment"
+        android:name="com.project.linku.ui.chat.ConversationFragment"
         android:id="@+id/navigation_conversation"/>
     <fragment
         android:label="ArticleFragment"
-        android:name="com.example.linku.ui.home.ArticleFragment"
+        android:name="com.project.linku.ui.home.ArticleFragment"
         android:id="@+id/navigation_article"/>
 </navigation>

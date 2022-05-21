@@ -6,7 +6,7 @@
     <data>
         <variable
             name="conversationViewModel"
-            type="com.example.linku.ui.chat.ConversationViewModel" />
+            type="com.project.linku.ui.chat.ConversationViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
