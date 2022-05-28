@@ -16,52 +16,44 @@ import com.project.linku.databinding.FragmentChatBinding
 class ChatFragment : Fragment() {
 
     val TAG = "ev_" + javaClass.simpleName
-
     private var _binding: FragmentChatBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+    private lateinit var chatViewModel : ChatViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val chatViewModel =
+        chatViewModel =
             ViewModelProvider(this).get(ChatViewModel::class.java)
 
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_chat ,container, false)
         val root: View = binding.root
-
         binding.chatViewModel = chatViewModel
 
+        initViews(container)
+
+        return root
+    }
+
+    private fun initViews(container: ViewGroup?){
         chatViewModel.shouldshowSearchAccountDialog.observe(viewLifecycleOwner) {
-            it?.let {
+            it.getContentIfNotHandled()?.let {
                 SearchAccountDialog(requireContext(), chatViewModel, it).show()
                 binding.edtSearchAccount.text.clear()
             }
         }
-        
         val mChatAdapter = ChatAdapter(this, container)
         binding.recyclerViewChat.adapter = mChatAdapter
         binding.recyclerViewChat.layoutManager = LinearLayoutManager(activity)
-
         chatViewModel.syncFriendList()
-
-        if (MainActivity.islogin) {
-            binding.layoutChat.visibility = View.VISIBLE
-        } else {
-            binding.layoutChat.visibility = View.INVISIBLE
-        }
-
+        binding.layoutChat.visibility = if (MainActivity.islogin) View.VISIBLE else View.INVISIBLE
         chatViewModel.chatAdapterMaterial.observe(viewLifecycleOwner) {
             Log.i(TAG,"size = ${it.size}")
             mChatAdapter.setModelList(it)
             mChatAdapter.notifyDataSetChanged()
         }
-
-        return root
     }
 
     override fun onDestroyView() {

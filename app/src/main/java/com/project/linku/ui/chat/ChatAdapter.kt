@@ -54,10 +54,9 @@ class ChatAdapter(_fragment: Fragment , _container: ViewGroup?):
             itemView.setOnClickListener(this)
         }
 
-
         override fun onClick(v: View?) {
             val bundle = Bundle()
-            bundle.putString("email", mfriendModel[pos].email)
+            bundle.putString(fragment.resources.getString(R.string.email), mfriendModel[pos].email)
             fragment.findNavController().navigate(R.id.navigation_conversation, bundle)
         }
     }
@@ -65,5 +64,4 @@ class ChatAdapter(_fragment: Fragment , _container: ViewGroup?):
     fun setModelList(friendModel: List<FriendModel>) {
         mfriendModel = friendModel
     }
-
 }

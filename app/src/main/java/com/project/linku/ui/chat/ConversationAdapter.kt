@@ -56,7 +56,7 @@ class ConversationAdapter(_fragment: Fragment, _container: ViewGroup?):
             pos = position
             val remoteaccount = friendModel.emailfrom
             val localaccout = FirebaseAuth.getInstance().currentUser?.email
-            Log.i(TAG, "currentUser = $localaccout, friendModel.email = ${friendModel.email}, remote = $remoteaccount, content = ${friendModel.content}, type = ${friendModel.type}, pos = $pos")
+            Log.i(TAG, "currentUser = $localaccout, remote = $remoteaccount, $friendModel")
 
             if (remoteaccount == localaccout) {
                 img_author_remote.visibility = INVISIBLE
@@ -76,10 +76,9 @@ class ConversationAdapter(_fragment: Fragment, _container: ViewGroup?):
                     txv_local.visibility = View.GONE
                     txv_remote_time.visibility = View.GONE
                     txv_local_time.visibility = VISIBLE
-                    GlideApp.with(itemView).load(Uri.parse(friendModel.content)).placeholder(R.drawable.cat).into(img_local)
+                    GlideApp.with(itemView).load(Uri.parse(friendModel.content)).circleCrop().into(img_local)
                 }
             } else {
-                //Log.i(TAG,"!equals")
                 img_author_remote.visibility = VISIBLE
                 img_author_local.visibility = INVISIBLE
                 GlideApp.with(itemView).load(MainActivity.userkeySet.get(remoteaccount)?.useruri).placeholder(R.drawable.cat).circleCrop().into(img_author_remote)
@@ -97,7 +96,7 @@ class ConversationAdapter(_fragment: Fragment, _container: ViewGroup?):
                     txv_local.visibility = View.GONE
                     txv_remote_time.visibility = VISIBLE
                     txv_local_time.visibility = View.GONE
-                    GlideApp.with(itemView).load(Uri.parse(friendModel.content)).into(img_remote)
+                    GlideApp.with(itemView).load(Uri.parse(friendModel.content)).circleCrop().into(img_remote)
                 }
             }
         }

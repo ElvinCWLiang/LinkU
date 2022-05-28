@@ -26,7 +26,6 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
     private val TAG = "ev_" + javaClass.simpleName
     val _conversationAdapterMaterial = MutableLiveData<List<FriendModel>>()
     val conversationAdapterMaterial : LiveData<List<FriendModel>> = _conversationAdapterMaterial
-    var macc: String? = null
     val mapplication = application
     var remoteAccount = ""
     var localAccount = Firebase.auth.currentUser?.email!!
@@ -65,7 +64,7 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    // type 0 = text, type 1 = image
+    /* type 0 = text, type 1 = image */
     fun send(type: Int) {
         FireBaseRepository(null).send(userMessage.value!!, remoteAccount, type)
         Log.i(TAG,"userReply = ${userMessage!!.value}, remoteAccount = $remoteAccount")
@@ -75,10 +74,9 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
     fun send(imagePath: Uri) {
         FireBaseRepository(object : IFireOperationCallBack {
             override fun <T> onSuccess(t: T) {
-                FireBaseRepository(null).send(t.toString(), remoteAccount, 1)
+                FireBaseRepository(null).send(t.toString(), remoteAccount, 1 /* image */)
             }
             override fun onFail() {}
         }).send(imagePath)
     }
-
 }

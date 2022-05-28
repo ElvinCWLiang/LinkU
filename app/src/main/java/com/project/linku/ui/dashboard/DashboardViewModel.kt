@@ -15,6 +15,7 @@ import com.project.linku.data.remote.IFireOperationCallBack
 import com.project.linku.ui.utils.Save
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
+import com.project.linku.ui.utils.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -26,11 +27,11 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val TAG = "ev_" + javaClass.simpleName
     private val _userAccount = MutableLiveData<String>().apply { value = FirebaseAuth.getInstance().currentUser?.email }
     val userAccount : LiveData<String> = _userAccount
-    private val _updateRespond = MutableLiveData<String>()
-    val updateRespond : LiveData<String> = _updateRespond.distinctUntilChanged()
+    private val _updateRespond = MutableLiveData<Event<String>>()
+    val updateRespond : LiveData<Event<String>> = _updateRespond.distinctUntilChanged()
     private val _isAvatarChanged = MutableLiveData<Uri>()
     val isAvatarChanged : LiveData<Uri> = _isAvatarChanged
-    val currentUser = FirebaseAuth.getInstance().currentUser?.email.toString()
+    private val currentUser = FirebaseAuth.getInstance().currentUser?.email.toString()
     private val _introduction = MutableLiveData<String>().apply {
         GlobalScope.launch(Dispatchers.IO) {
             postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getUser(currentUser)?.userintroduction)
@@ -42,10 +43,10 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         FireBaseRepository(object : IFireOperationCallBack {
             override fun <T> onSuccess(t: T) {
                 Log.i(TAG, acc + "signUp")
-                _updateRespond.value = "Success"
+                _updateRespond.value = Event("Success")
                 signIn(acc, pwd)
             }
-            override fun onFail() { _updateRespond.value = "Fail" }
+            override fun onFail() { _updateRespond.value = Event("Fail") }
         }).signUp(acc, pwd)
     }
 
@@ -55,7 +56,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 Save.getInstance().saveUser(mapplication, acc, pwd)
                 Log.i(TAG, acc + "signIn")
                 _userAccount.value = acc
-                _updateRespond.value = "Success"
+                _updateRespond.value = Event("Success")
                 _isAvatarChanged.value = Uri.parse(Save.getInstance().getUserAvatarUri(mapplication, acc))
                 GlobalScope.launch(Dispatchers.IO) {
                     syncUser(acc)
@@ -63,7 +64,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             }
             override fun onFail() {
                 Log.i(TAG, "signIn onFail")
-                _updateRespond.value = "Fail"
+                _updateRespond.value = Event("Fail")
             }
         }).signIn(acc, pwd)
     }

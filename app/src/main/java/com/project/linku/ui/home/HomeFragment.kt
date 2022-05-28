@@ -19,8 +19,7 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private lateinit var homeViewModel : HomeViewModel
     lateinit var textView: TextView
     private val TAG = "ev_" + javaClass.simpleName
 
@@ -29,18 +28,21 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
+        homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
 
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home ,container, false)
         val root: View = binding.root
+        binding.homeViewModel = homeViewModel
+        initViews(container)
 
+        return root
+    }
+
+    fun initViews(container: ViewGroup?) {
         binding.imgPublish.setOnClickListener{
             this.findNavController().navigate(R.id.navigation_publish)
         }
-
-        binding.homeViewModel = homeViewModel
-
         binding.spnHome.setSelection(0, false);
 
         homeViewModel.syncBoard(binding.spnHome.selectedItemPosition)
@@ -57,8 +59,6 @@ class HomeFragment : Fragment() {
             mHomeAdapter.setModelList(it)
             mHomeAdapter.notifyDataSetChanged()
         }
-
-        return root
     }
 
     override fun onDestroyView() {

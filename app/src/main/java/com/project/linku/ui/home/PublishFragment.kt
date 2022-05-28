@@ -15,8 +15,8 @@ import com.project.linku.databinding.FragmentPublishBinding
 class PublishFragment: Fragment() {
     private var _binding: FragmentPublishBinding? = null
     private val binding get() = _binding!!
-    var articleId: String? = null
     private val TAG = "ev_" + javaClass.simpleName
+    private lateinit var publishViewModel : PublishViewModel
 
     // androidx.fragment.app.Fragment
     override fun onCreateView(
@@ -24,23 +24,25 @@ class PublishFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val publishViewModel = ViewModelProvider(this).get(PublishViewModel::class.java)
+        publishViewModel = ViewModelProvider(this).get(PublishViewModel::class.java)
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_publish, container, false)
-
         val root: View = binding.root
-
         binding.publishViewModel = publishViewModel
 
-        publishViewModel.publishResponse.observe(viewLifecycleOwner) {
-            if (it) {
-                Toast.makeText(requireContext(), "publish success", Toast.LENGTH_SHORT)
-                findNavController().navigate(R.id.navigation_home)
-            } else {
-                Toast.makeText(requireContext(), "can't publish", Toast.LENGTH_SHORT)
-            }
-        }
+        initViews()
 
         return root
+    }
+
+    fun initViews() {
+        publishViewModel.publishResponse.observe(viewLifecycleOwner) {
+            if (it) {
+                Toast.makeText(requireContext(), resources.getString(R.string.publish_success), Toast.LENGTH_SHORT)
+                findNavController().navigate(R.id.navigation_home)
+            } else {
+                Toast.makeText(requireContext(), resources.getString(R.string.publish_fail), Toast.LENGTH_SHORT)
+            }
+        }
     }
 
 }

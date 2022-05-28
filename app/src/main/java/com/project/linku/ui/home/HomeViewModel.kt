@@ -12,6 +12,7 @@ import com.project.linku.data.local.UserModel
 import com.project.linku.data.remote.FireBaseRepository
 import com.project.linku.data.remote.IFireOperationCallBack
 import com.google.firebase.database.DataSnapshot
+import com.project.linku.data.remote.IFireBaseApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -19,11 +20,11 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
-    val mapplication: Application = application
-    val TAG = "ev_" + javaClass.simpleName
+    private val mapplication: Application = application
+    private val TAG = "ev_" + javaClass.simpleName
     val syncArticle = MutableLiveData<Boolean>()
     val homeAdapterMaterial = MutableLiveData<List<ArticleModel>>()
-    var spnboardpos = 0
+    private var spnboardpos = 0
 
     fun syncBoard(pos: Int) {
         GlobalScope.launch(Dispatchers.IO) {
@@ -37,7 +38,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             } else if (board != "All") {
                 syncspecificboard(board)
             }
-            //Log.i(TAG,"syncBoard")
             synclocalArticle(board)
         }
     }
@@ -61,13 +61,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                             }
                         }
                         LocalRepository(LocalDatabase.getInstance(mapplication)).insertArticle(m)
-                        /*Log.i(TAG, "id = ${m?.id} " +
-                                "title = ${m?.publishTitle} " +
-                                "board = ${m?.publishBoard} " +
-                                "author = ${m?.publishAuthor} " +
-                                "time = ${m?.publishTime} " +
-                                "content = ${m?.publishContent} " +
-                                "reply = ${m?.reply}")*/
                     }
                 }
                 synclocalArticle(mapplication.resources.getStringArray(R.array.board_array)[spnboardpos])

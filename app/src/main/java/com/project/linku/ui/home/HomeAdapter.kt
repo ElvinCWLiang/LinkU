@@ -17,11 +17,9 @@ class HomeAdapter(_fragment: Fragment , _container: ViewGroup?):
     RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
 
     private val TAG = "ev_" + javaClass.simpleName
-    private val container: ViewGroup? = null
     private val fragment: Fragment = _fragment
     private var marticleModel: List<ArticleModel> = ArrayList()
 
-    // androidx.recyclerview.widget.RecyclerView.Adapter
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.adapter_home, parent, false)
         return HomeViewHolder(this, view)
@@ -31,7 +29,6 @@ class HomeAdapter(_fragment: Fragment , _container: ViewGroup?):
         holder.bind(marticleModel[position], position)
     }
 
-    // androidx.recyclerview.widget.RecyclerView.Adapter
     override fun getItemCount(): Int {
         return marticleModel.size
     }
@@ -56,12 +53,12 @@ class HomeAdapter(_fragment: Fragment , _container: ViewGroup?):
 
         override fun onClick(v: View?) {
             val bundle = Bundle()
-            bundle.putString("articleId", marticleModel[pos].id)
-            bundle.putLong("time", marticleModel[pos].publishTime)
-            bundle.putString("board", marticleModel[pos].publishBoard)
-            bundle.putString("author", marticleModel[pos].publishAuthor)
-            bundle.putString("title", marticleModel[pos].publishTitle)
-            bundle.putString("content", marticleModel[pos].publishContent)
+            bundle.putString(fragment.resources.getString(R.string.article_id), marticleModel[pos].id)
+            bundle.putLong(fragment.resources.getString(R.string.article_time), marticleModel[pos].publishTime)
+            bundle.putString(fragment.resources.getString(R.string.article_board), marticleModel[pos].publishBoard)
+            bundle.putString(fragment.resources.getString(R.string.article_author), marticleModel[pos].publishAuthor)
+            bundle.putString(fragment.resources.getString(R.string.article_title), marticleModel[pos].publishTitle)
+            bundle.putString(fragment.resources.getString(R.string.article_content), marticleModel[pos].publishContent)
 
             fragment.findNavController().navigate(R.id.navigation_article, bundle)
         }

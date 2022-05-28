@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.project.linku.MainActivity
 import com.project.linku.R
 import com.project.linku.databinding.FragmentDashboardBinding
+import com.project.linku.ui.chat.SearchAccountDialog
+import com.project.linku.ui.utils.Event
 import com.project.linku.ui.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_login.view.*
 
@@ -22,12 +24,9 @@ class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
     private val TAG = "ev_" + javaClass.simpleName
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
     private lateinit var dashboardViewModel: DashboardViewModel
-    val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()){ uri: Uri? ->
+    private val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()){ uri: Uri? ->
         uri?.let { it ->
             Log.i(TAG, it.toString())
             dashboardViewModel.updateAvatar(it)
@@ -42,38 +41,46 @@ class DashboardFragment : Fragment() {
     ): View {
         dashboardViewModel =
             ViewModelProvider(this).get(DashboardViewModel::class.java)
-
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        initView(container)
+
+        return root
+    }
+
+    fun initView(container: ViewGroup?) {
+        dialog = LoginDialog(requireContext(), dashboardViewModel)
 
         binding.dashboardViewModel = dashboardViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        dialog = LoginDialog(requireContext(), dashboardViewModel)
+        dashboardViewModel.userAccount.observe(viewLifecycleOwner) { account ->
+            binding.btnLogout.isEnabled = account != null
+            binding.btnLogin.isEnabled = account == null
 
-        dashboardViewModel.userAccount.observe(viewLifecycleOwner) {
-            binding.btnLogout.isEnabled = it != null
-            binding.btnLogin.isEnabled = it == null
-            if (it == null || it == "null") {
+            if (account == null || account == "null") {
                 binding.layoutDashboardSetting.visibility = View.INVISIBLE
-                Log.i(TAG, "userAccount null = $it")
                 binding.textUsername.text = ""
                 dialog.show()
                 binding.btnLogout.isEnabled = false
                 binding.btnLogin.isEnabled = true
-                GlideApp.with(this).load(R.drawable.cat).into(binding.imgAvatar)
+                GlideApp.with(this).load(R.drawable.cat).circleCrop().into(binding.imgAvatar)
             } else {
                 binding.layoutDashboardSetting.visibility = View.VISIBLE
-                Log.i(TAG, "userAccount = $it")
-                binding.textUsername.text = it
+                binding.textUsername.text = account
                 binding.btnLogout.isEnabled = true
                 binding.btnLogin.isEnabled = false
-                GlideApp.with(this).load(MainActivity.userkeySet.get(it)?.useruri).placeholder(R.drawable.cat).into(binding.imgAvatar)
+                Log.i(TAG, "${MainActivity.userkeySet.get(account)?.useruri}")
+                GlideApp.with(this).load(MainActivity.userkeySet.get(account)?.useruri).circleCrop().placeholder(R.drawable.cat).into(binding.imgAvatar)
             }
+            Log.i(TAG, "userAccount = $account")
         }
 
         dashboardViewModel.updateRespond.observe(viewLifecycleOwner) {
-            it?.let { Toast.makeText(activity, it, Toast.LENGTH_SHORT).show() }
+            it.getContentIfNotHandled()?.let {
+                Toast.makeText(activity, it, Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.imgAvatar.setOnClickListener {
@@ -96,8 +103,6 @@ class DashboardFragment : Fragment() {
                 dashboardViewModel.updateUserIntroduction(view.edt_introduction.text.toString())
             }.create().show()
         }
-
-        return root
     }
 
     override fun onDestroyView() {

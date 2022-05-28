@@ -20,7 +20,7 @@ class ConversationFragment : Fragment() {
     private var _binding: FragmentConversationBinding? = null
     private val binding get() = _binding!!
     private lateinit var conversationViewModel : ConversationViewModel
-    val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()){ uri: Uri? ->
+    private val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()){ uri: Uri? ->
         uri?.let { it ->
             Log.i(TAG, it.toString())
             conversationViewModel.send(it)
@@ -32,15 +32,39 @@ class ConversationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         conversationViewModel = ViewModelProvider(this).get(ConversationViewModel::class.java)
-
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_conversation ,container, false)
         val root: View = binding.root
-
         binding.conversationViewModel = conversationViewModel
 
+        initVariables()
+        initView(container)
+
+        return root
+    }
+
+    fun initVariables() {
+        /* receive the conversation remote account from ChatFragment(ChatAdapter) >> */
+        val bundle: Bundle? = arguments
+        if (bundle != null) {
+            val acc = bundle.getString(resources.getString(R.string.email), "")
+            Log.i(TAG, bundle.getString(resources.getString(R.string.email), ""))
+            conversationViewModel.syncConversation(acc)
+        }
+        /* receive the conversation remote account from ChatFragment(ChatAdapter) << */
+    }
+
+    fun initView(container: ViewGroup?) {
+        /* init reyclerview & adapter >> */
         val mConversationAdapter = ConversationAdapter(this, container)
         binding.recyclerViewConversation.adapter = mConversationAdapter
         binding.recyclerViewConversation.layoutManager = LinearLayoutManager(activity)
+        /* init reyclerview & adapter << */
+
+        /* set the imgSelectPicture onClick event >> */
+        binding.imgSelectPicture.setOnClickListener {
+            pickImages.launch("image/*")
+        }
+        /* set the imgSelectPicture onClick event << */
 
         /* receive the data from local repository and insert it into the ConversationAdapter >> */
         conversationViewModel.conversationAdapterMaterial.observe(viewLifecycleOwner) {
@@ -53,25 +77,10 @@ class ConversationFragment : Fragment() {
         }
         /* receive the data from local repository and insert it into the ConversationAdapter << */
 
-        /* receive the conversation remote account from ChatFragment(ChatAdapter) >> */
-        val bundle: Bundle? = arguments
-        if (bundle != null) {
-            val acc = bundle.getString("email", "")
-            Log.i(TAG, bundle.getString("email", ""))
-            conversationViewModel.syncConversation(acc)
-        }
-        /* receive the conversation remote account from ChatFragment(ChatAdapter) << */
-
         /* clear the input message >> */
         conversationViewModel.userMessage.observe(viewLifecycleOwner){
             if(it == "") binding.edtUsercontent.text.clear()
         }
         /* clear the input message << */
-
-        binding.imgSelectPicture.setOnClickListener {
-            pickImages.launch("image/*")
-        }
-
-        return root
     }
 }

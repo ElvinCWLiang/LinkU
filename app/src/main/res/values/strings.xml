@@ -8,17 +8,25 @@
     <string name="isConnected">isConnected</string>
     <string name="login_first">please login</string>
     <string name="publish">Publish</string>
-    <string name="publish_fail">publish fail</string>
-    <string name="publish_success">publish success</string>
-    <string name="readed_message">已讀訊息</string>
+    <string name="publish_fail">Publish Fail</string>
+    <string name="publish_success">Publish Success</string>
+    <string name="readed_message">read_message</string>
     <string name="search_menu_title">Search</string>
     <string name="title">Title</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_home">Home</string>
     <string name="title_notifications">Notifications</string>
-    <string name="unread_message">未讀訊息</string>
+    <string name="unread_message">unread_message</string>
     <string name="input_your_article">Input your article</string>
-
+    <string name="email">email</string>
+    <string name="article_time">article_time</string>
+    <string name="article_board">article_board</string>
+    <string name="article_author">article_author</string>
+    <string name="article_title">article_title</string>
+    <string name="article_id">article_id</string>
+    <string name="article_content">article_content</string>
+    <string name="friend_exist">Friend already exist!</string>
+    <string name="cant_add_yourself">Can\'t add yourself</string>
 
     <array name="board_array">
         <item>All</item>

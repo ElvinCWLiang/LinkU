@@ -20,43 +20,49 @@ class ArticleFragment: Fragment() {
     private var _binding: FragmentArticleBinding? = null
     private val binding get() = _binding!!
     private var preview = 0;
+    private lateinit var articleViewModel: ArticleViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val articleViewModel = ViewModelProvider(this).get(ArticleViewModel::class.java)
+        articleViewModel = ViewModelProvider(this).get(ArticleViewModel::class.java)
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_article, container, false)
-
         val root: View = binding.root
         binding.articleViewModel = articleViewModel
 
+        initVariables()
+        initViews()
+
+        return root
+    }
+
+    fun initVariables(){
         /* receive the article information from HomeFragment >> */
         val bundle: Bundle? = getArguments()
         if (bundle != null) {
-            val articleId = bundle.getString("articleId", "")
-            val time = bundle.getLong("time", 0L)
-            val board = bundle.getString("board", "")
-            val author = bundle.getString("author", "")
-            val title = bundle.getString("title", "")
-            val content = bundle.getString(FirebaseAnalytics.Param.CONTENT, "")
+            val articleId = bundle.getString(resources.getString(R.string.article_id), "")
+            val time = bundle.getLong(resources.getString(R.string.article_time), 0L)
+            val board = bundle.getString(resources.getString(R.string.article_board), "")
+            val author = bundle.getString(resources.getString(R.string.article_author), "")
+            val title = bundle.getString(resources.getString(R.string.article_title), "")
+            val content = bundle.getString(resources.getString(R.string.article_content), "")
             binding.txvAuthor.text = author
             binding.txvContent.text = content
             binding.txvTime.text = Parsefun().parseSecondsToDate(time)
             binding.txvTitle.text = title
             binding.txvBoard.text = board
-            GlideApp.with(this).load(MainActivity.userkeySet.get(author)?.useruri).placeholder(R.drawable.cat).into(binding.imgAuthor)
+            GlideApp.with(this).load(MainActivity.userkeySet.get(author)?.useruri).placeholder(R.drawable.cat).circleCrop().into(binding.imgAuthor)
             Log.i(TAG,"articleId = $articleId board = $board author $author title = $title time = ${Parsefun().parseSecondsToDate((time))} content = $content")
             articleViewModel.syncArticleResponse(articleId, board)
         }
         /* receive the article information from HomeFragment << */
+    }
 
-        if (MainActivity.islogin) {
-            binding.layoutRespond.visibility = View.VISIBLE
-        } else {
-            binding.layoutRespond.visibility = View.INVISIBLE
-        }
+    fun initViews() {
+        /* Respond section can be seen only if User has logged in*/
+        binding.layoutRespond.visibility = if (MainActivity.islogin) View.VISIBLE else View.INVISIBLE
 
         /* LiveData for the replying message in LocalRepository >> */
         articleViewModel.articleAdapterMaterial.observe(viewLifecycleOwner){
@@ -77,7 +83,6 @@ class ArticleFragment: Fragment() {
         }
         /* clear the input edittext once user send the reply << */
 
-        return root
     }
 
 }

@@ -6,7 +6,7 @@ import com.project.linku.data.local.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 
-
+/* The operations which provide by Firebase */
 interface IFireBaseApiService {
     fun addFriend(acc: String)
     fun getUserName(): String?

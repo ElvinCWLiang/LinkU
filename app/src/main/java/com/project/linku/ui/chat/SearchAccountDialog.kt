@@ -22,23 +22,23 @@ class SearchAccountDialog(context: Context, _chatViewModel: ChatViewModel, _acc:
     private val mContext = context
 
     override fun onClick(v: View) {
-        if (v.getId() === R.id.btn_addfriend) {
+        if (v.id == R.id.btn_addfriend) {
             val currentUser: FirebaseUser? = Firebase.auth.currentUser
             val modellist = chatViewModel.chatAdapterMaterial.value
             modellist?.let {
                 for (i in modellist.indices) {
-                    if (modellist[i].email == acc)
-                        Toast.makeText(mContext, "Friend already exist", Toast.LENGTH_SHORT).show()
+                    if (modellist[i].email == acc) {
+                        Toast.makeText(mContext, context.resources.getString(R.string.friend_exist), Toast.LENGTH_SHORT).show()
                         dismiss()
                         return
+                    }
                 }
             }
+            Log.i(TAG, "$currentUser, ${currentUser?.email}")
             if (currentUser != null && currentUser.email != acc) {
-                Log.i(TAG,"if")
-                chatViewModel.addfriend()
+                chatViewModel.addfriend(acc)
             } else {
-                Log.i(TAG,"else")
-                Toast.makeText(mContext, "Can't add yourself", Toast.LENGTH_SHORT).show()
+                Toast.makeText(mContext, context.resources.getString(R.string.cant_add_yourself), Toast.LENGTH_SHORT).show()
             }
             dismiss()
         }
@@ -49,8 +49,6 @@ class SearchAccountDialog(context: Context, _chatViewModel: ChatViewModel, _acc:
         setContentView(R.layout.dialog_search_account)
         btn_addfriend.setOnClickListener(this)
         txv_introduction.text = MainActivity.userkeySet.get(acc)?.userintroduction
-        GlideApp.with(context).load(MainActivity.userkeySet.get(acc)?.useruri).placeholder(R.drawable.cat).into(img_avatar)
+        GlideApp.with(context).load(MainActivity.userkeySet.get(acc)?.useruri).placeholder(R.drawable.cat).circleCrop().into(img_avatar)
     }
-
-
 }

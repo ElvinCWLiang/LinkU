@@ -13,6 +13,7 @@ import com.project.linku.data.remote.IFireOperationCallBack
 import com.project.linku.ui.utils.Save
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
+import com.project.linku.ui.utils.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -20,43 +21,37 @@ import kotlinx.coroutines.launch
 
 class ChatViewModel(application: Application) : AndroidViewModel(application) {
 
-    val _shouldshowSearchAccountDialog = MutableLiveData<String>()
-    val shouldshowSearchAccountDialog: LiveData<String> = _shouldshowSearchAccountDialog
+    val _shouldshowSearchAccountDialog = MutableLiveData<Event<String>>()
+    val shouldshowSearchAccountDialog: LiveData<Event<String>> = _shouldshowSearchAccountDialog
 
-    val _chatAdapterMaterial = MutableLiveData<List<FriendModel>>()
+    private val _chatAdapterMaterial = MutableLiveData<List<FriendModel>>()
     val chatAdapterMaterial: LiveData<List<FriendModel>> = _chatAdapterMaterial
 
     private val mapplication: Application = application
-
     private val TAG = "ev_" + javaClass.simpleName
-
     var acc = ""
 
     fun showDialog() {
         FireBaseRepository(object : IFireOperationCallBack {
-            // from class: com.project.linku.ui.chat.ChatViewModel$showDialog$1
-            // com.project.linku.data.remote.IFireOperationCallBack
             override fun <T> onSuccess(t: T) {
                 val userUri: Uri = Uri.parse((t as DataSnapshot).getValue(UserModel::class.java)?.useruri)
                 Save.getInstance().saveUserAvatarUri(mapplication, acc, userUri)
-                _shouldshowSearchAccountDialog.value = acc
+                _shouldshowSearchAccountDialog.value = Event(acc)
                 Log.i(TAG, "onSuccess")
             }
 
-            // com.project.linku.data.remote.IFireOperationCallBack
             override fun onFail() {
                 Log.i(TAG, "onFail")
             }
         }).searchAccount(acc)
     }
 
-    fun addfriend() {
+    fun addfriend(acc: String) {
         FireBaseRepository(object : IFireOperationCallBack {
             override fun <T> onSuccess(t: T) {
                 syncFriendList()
                 Log.i(TAG, "onSuccess")
             }
-
             override fun onFail() {
                 Log.i(TAG, "onFail")
             }
@@ -94,11 +89,13 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
 
         synclocalFriendList()
     }
-    /* get friend list from Firebase and put the returning data into Room db << */
 
+    /* get friend list from Firebase and put the returning data into Room db << */
     fun synclocalFriendList() {
-        GlobalScope.launch(Dispatchers.IO) {
-            _chatAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getFriendList(FirebaseAuth.getInstance().currentUser?.email.toString()))
+        GlobalScope.launch(Dispatchers.Main) {
+            Log.i(TAG, "Friend list size = ${FirebaseAuth.getInstance().currentUser?.email.toString()}")
+            Log.i(TAG, "Friend list size = ${LocalRepository(LocalDatabase.getInstance(mapplication)).getFriendList(FirebaseAuth.getInstance().currentUser?.email.toString())}")
+            _chatAdapterMaterial.value = LocalRepository(LocalDatabase.getInstance(mapplication)).getFriendList(FirebaseAuth.getInstance().currentUser?.email.toString())
         }
     }
 

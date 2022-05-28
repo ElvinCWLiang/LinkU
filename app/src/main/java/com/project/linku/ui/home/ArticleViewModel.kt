@@ -20,10 +20,9 @@ import kotlinx.coroutines.launch
 
 class ArticleViewModel(application: Application): AndroidViewModel(application) {
     private val TAG = "ev_" + javaClass.simpleName
-
-    lateinit var articleId: String
-    var articleModel: ArticleModel? = null
-    lateinit var board: String
+    private lateinit var articleId: String
+    private var articleModel: ArticleModel? = null
+    private lateinit var board: String
     private var mapplication: Application = application
     var userReply = MutableLiveData<String>().apply { value = "" }
     private val _articleAdapterMaterial = MutableLiveData<List<ArticleModel>>()
@@ -53,7 +52,6 @@ class ArticleViewModel(application: Application): AndroidViewModel(application) 
         GlobalScope.launch(IO) {
             Log.i(TAG, "board = $board, articleId = $articleId")
             _articleAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getLocalArticleResponse(articleId))
-            Log.i(TAG, "fetchlocalArticle_end")
         }
     }
 
@@ -66,6 +64,4 @@ class ArticleViewModel(application: Application): AndroidViewModel(application) 
         Log.i(TAG,"userReply = ${userReply!!.value} + articleId = ${articleId} board = $board")
         userReply.value = ""
     }
-
-
 }
