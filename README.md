@@ -3,6 +3,9 @@ LinkU
 
 <img src="https://user-images.githubusercontent.com/95346303/169641708-327091bd-aa62-4e06-8262-c34bc650ed26.png" width="50">
 
+This sample is already uploaded on Play Store!
+[Play Store - LinkU](https://play.google.com/store/apps/details?id=com.project.linku "LinkU")
+
     LinkU is a Chat application that use MVVM architeture's and Jetpack components.
     We use Room database to store all the articles, user details and conversations. 
     LiveData for observing the data change.
