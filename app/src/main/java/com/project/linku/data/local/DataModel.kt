@@ -19,6 +19,8 @@ data class ArticleModel(
     var publishTitle: String? = "",
     @ColumnInfo(name = "publishContent")
     var publishContent: String? = "",
+    @ColumnInfo(name = "publishImage")
+    var publishImage: String? = "",
     @ColumnInfo(name = "reply")
     var reply: String? = ""
 )

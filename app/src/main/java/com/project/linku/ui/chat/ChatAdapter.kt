@@ -40,8 +40,8 @@ class ChatAdapter(_fragment: Fragment , _container: ViewGroup?):
     inner class ChatViewHolder(mChatAdapter: ChatAdapter, itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
         var pos = 0
-        val txv_account = itemView.txv_conversation_local
-        val txv_time = itemView.txv_time
+        val txv_account = itemView.txv_board
+        val txv_time = itemView.txv_title
         val txv_content = itemView.txv_content
         val img_author = itemView.img_local
 

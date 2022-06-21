@@ -40,7 +40,7 @@ class Parsefun {
     fun parseModelToView(context: Context, articleModel: ArticleModel, v: View, pos: Int) {
         v.txv_author.text = articleModel.publishAuthor
         v.txv_respond.text = articleModel.publishContent
-        v.txv_time.text = parseSecondsToDate(articleModel.publishTime)
+        v.txv_title.text = parseSecondsToDate(articleModel.publishTime)
         v.txv_floor.text = pos.toString()
         GlideApp.with(context).load(MainActivity.userkeySet.get(articleModel.publishAuthor)?.useruri).placeholder(R.drawable.cat).into(v.img_responder)
     }

@@ -6,7 +6,9 @@
         android:id="@+id/navigation_home">
         <action
             android:id="@+id/action_navigation_home_to_navigation_article"
-            app:popUpTo="@id/navigation_article" />
+            app:destination="@id/navigation_article"
+            app:enterAnim="@animator/slide_in_right"
+            app:exitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_navigation_home_to_navigation_publish"
             app:popUpTo="@id/navigation_publish" />
@@ -21,7 +23,9 @@
         android:id="@+id/navigation_chat">
         <action
             android:id="@+id/action_navigation_chat_to_navigation_conversation"
-            app:destination="@id/navigation_conversation" />
+            app:destination="@id/navigation_conversation"
+            app:enterAnim="@animator/slide_in_right"
+            app:exitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -34,10 +38,19 @@
         android:id="@+id/navigation_conversation">
         <action
             android:id="@+id/action_navigation_conversation_to_navigation_voicecall"
-            app:destination="@id/navigation_voicecall" />
+            app:destination="@id/navigation_voicecall"
+            app:enterAnim="@animator/slide_in_right"
+            app:exitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_navigation_conversation_to_navigation_videocall"
-            app:destination="@id/navigation_videocall" />
+            app:destination="@id/navigation_videocall"
+            app:enterAnim="@animator/slide_in_right"
+            app:exitAnim="@android:anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_navigation_conversation_to_navigation_chat"
+            app:destination="@id/navigation_chat"
+            app:enterAnim="@animator/slide_in_right"
+            app:exitAnim="@android:anim/slide_out_right"/>
     </fragment>
     <fragment
         android:label="ArticleFragment"
@@ -52,8 +65,10 @@
         <action
             android:id="@+id/action_navigation_voicecall_to_navigation_conversation"
             app:destination="@id/navigation_conversation"
+            app:enterAnim="@animator/slide_in_right"
+            app:exitAnim="@android:anim/slide_out_right"
             app:popUpTo="@id/navigation_conversation"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

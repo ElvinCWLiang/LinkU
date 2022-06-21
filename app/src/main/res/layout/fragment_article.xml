@@ -39,6 +39,7 @@
                         android:id="@+id/img_author"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
+                        android:padding="4dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -128,6 +129,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:padding="4dp"
+                        android:layout_marginStart="12dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/txv_board"
                         app:layout_constraintTop_toTopOf="parent"
@@ -136,8 +138,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="20dp">
+                    android:layout_height="wrap_content">
 
                     <ImageView
                         android:id="@+id/imageView5"
@@ -148,15 +149,26 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/content" />
 
+                    <ImageView
+                        android:id="@+id/img_article_photo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/imageView5"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/cat" />
+
                     <TextView
                         android:id="@+id/txv_content"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:hint="content"
                         android:textSize="26sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toEndOf="@+id/imageView5"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toBottomOf="@+id/img_article_photo" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>

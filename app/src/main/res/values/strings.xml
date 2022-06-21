@@ -10,6 +10,8 @@
     <string name="publish">Publish</string>
     <string name="publish_fail">Publish Fail</string>
     <string name="publish_success">Publish Success</string>
+    <string name="update_success">Image has been uploaded</string>
+    <string name="update_fail">Image has not been uploaded</string>
     <string name="readed_message">read_message</string>
     <string name="search_menu_title">Search</string>
     <string name="title">Title</string>
@@ -23,6 +25,7 @@
     <string name="article_board">article_board</string>
     <string name="article_author">article_author</string>
     <string name="article_title">article_title</string>
+    <string name="article_image">article_iamge</string>
     <string name="article_id">article_id</string>
     <string name="article_content">article_content</string>
     <string name="friend_exist">Friend already exist!</string>

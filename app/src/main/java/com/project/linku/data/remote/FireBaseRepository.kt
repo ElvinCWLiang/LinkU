@@ -94,9 +94,24 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
 
     }
 
-    /* update avatar */
+    /* update avatar and send image */
     override fun send(imagePath: Uri) {
         val refStorage = FirebaseStorage.getInstance().reference.child("images/" + UUID.randomUUID().toString() + ".jpg")
+        Log.i(TAG, imagePath.toString())
+        refStorage.putFile(imagePath)
+            .addOnSuccessListener { it ->
+                it.storage.downloadUrl.addOnSuccessListener {
+                    Log.i(TAG,"it = $it")
+                    mcallBack?.onSuccess(it)
+                }
+            }.addOnFailureListener{
+                mcallBack?.onFail()
+            }
+    }
+
+    /* update avatar and send image */
+    override fun sendImageWithArticle(imagePath: Uri) {
+        val refStorage = FirebaseStorage.getInstance().reference.child("article/" + Parsefun.getInstance().parseEmailasAccount(auth.currentUser?.email.toString()) + ".jpg")
         Log.i(TAG, imagePath.toString())
         refStorage.putFile(imagePath)
             .addOnSuccessListener { it ->
@@ -115,7 +130,7 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
         val currentUser = auth.currentUser
         val articleModel = ArticleModel(
             "", seconds, board,
-            currentUser?.email, "", userReply, articleId
+            currentUser?.email, "", userReply, "", articleId
         )
         database.child(articleModel.publishBoard).push().setValue(articleModel)
             .addOnCompleteListener {

@@ -43,7 +43,7 @@ class ConversationAdapter(_fragment: ConversationFragment, _acc: String):
 
     inner class ConversationViewHolder(mConversationAdapter: ConversationAdapter, itemView: View) : RecyclerView.ViewHolder(itemView) {
         var pos = 0
-        val txv_local = itemView.txv_conversation_local
+        val txv_local = itemView.txv_board
         val txv_remote = itemView.txv_conversation_remote
         val img_author_local = itemView.img_author_local
         val img_author_remote = itemView.img_author_remote

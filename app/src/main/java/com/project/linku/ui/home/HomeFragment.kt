@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.project.linku.MainActivity
 import com.project.linku.R
 import com.project.linku.databinding.FragmentHomeBinding
@@ -47,12 +48,16 @@ class HomeFragment : Fragment() {
 
         homeViewModel.syncBoard(binding.spnHome.selectedItemPosition)
 
+        /* TODO **Bug** first time never show the publish icon.
+            islogin need to be updated when livadata response back from MainActivity */
         if (MainActivity.islogin) { binding.imgPublish.visibility = View.VISIBLE }
         else { binding.imgPublish.visibility = View.INVISIBLE }
 
         val mHomeAdapter = HomeAdapter(this, container)
         binding.recyclerViewArticle.adapter = mHomeAdapter
-        binding.recyclerViewArticle.layoutManager = LinearLayoutManager(activity)
+        val staggeredGridLayoutManager =
+            StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+        binding.recyclerViewArticle.layoutManager = staggeredGridLayoutManager
 
         homeViewModel.homeAdapterMaterial.observe(viewLifecycleOwner){
             Log.i(TAG,"size = ${it.size}")

@@ -101,11 +101,11 @@ class ConversationFragment : Fragment() {
         /* receive the data from local repository and insert it into the ConversationAdapter >> */
         conversationViewModel.conversationAdapterMaterial.observe(viewLifecycleOwner) {
             mConversationAdapter.setModelList(it)
-            mConversationAdapter.notifyDataSetChanged()
             if (it.isNotEmpty()) {
-                Log.i(TAG, "size = ${it.size}  it.email = ${it[0].email}  type = ${it[0].type}")
-                //binding.recyclerViewConversation.smoothScrollToPosition(it.size - 1)
+                Log.i(TAG, "size = ${it.size}  it.emfail = ${it[0].email}  type = ${it[0].type}")
+                binding.recyclerViewConversation.scrollToPosition(it.size - 1)
             }
+            mConversationAdapter.notifyDataSetChanged()
         }
         /* receive the data from local repository and insert it into the ConversationAdapter << */
 

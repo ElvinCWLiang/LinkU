@@ -13,7 +13,7 @@ import com.project.linku.R
 import com.project.linku.databinding.FragmentArticleBinding
 import com.project.linku.ui.utils.GlideApp
 import com.project.linku.ui.utils.Parsefun
-import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.android.synthetic.main.fragment_article.*
 
 class ArticleFragment: Fragment() {
     private val TAG = "ev_" + javaClass.simpleName
@@ -39,7 +39,7 @@ class ArticleFragment: Fragment() {
     }
 
     fun initVariables(){
-        /* receive the article information from HomeFragment >> */
+        /* receive the article information from HomeFragment(HomeAdapter) >> */
         val bundle: Bundle? = getArguments()
         if (bundle != null) {
             val articleId = bundle.getString(resources.getString(R.string.article_id), "")
@@ -48,11 +48,14 @@ class ArticleFragment: Fragment() {
             val author = bundle.getString(resources.getString(R.string.article_author), "")
             val title = bundle.getString(resources.getString(R.string.article_title), "")
             val content = bundle.getString(resources.getString(R.string.article_content), "")
+            val imagePath = bundle.getString(resources.getString(R.string.article_image), "")
+            Log.i(TAG, "imagePath = $imagePath")
             binding.txvAuthor.text = author
             binding.txvContent.text = content
             binding.txvTime.text = Parsefun().parseSecondsToDate(time)
             binding.txvTitle.text = title
             binding.txvBoard.text = board
+            GlideApp.with(this).load(imagePath).into(binding.imgArticlePhoto)
             GlideApp.with(this).load(MainActivity.userkeySet.get(author)?.useruri).placeholder(R.drawable.cat).circleCrop().into(binding.imgAuthor)
             Log.i(TAG,"articleId = $articleId board = $board author $author title = $title time = ${Parsefun().parseSecondsToDate((time))} content = $content")
             articleViewModel.syncArticleResponse(articleId, board)

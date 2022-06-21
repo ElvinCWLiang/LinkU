@@ -9,9 +9,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.project.linku.MainActivity
 import com.project.linku.R
 import com.project.linku.databinding.FragmentChatBinding
+
 
 class ChatFragment : Fragment() {
 
@@ -51,6 +53,8 @@ class ChatFragment : Fragment() {
         binding.layoutChat.visibility = if (MainActivity.islogin) View.VISIBLE else View.INVISIBLE
         chatViewModel.chatAdapterMaterial.observe(viewLifecycleOwner) {
             Log.i(TAG,"size = ${it.size}")
+            // Setting the layout as Staggered Grid for vertical orientation
+            // Setting the layout as Staggered Grid for vertical orientation
             mChatAdapter.setModelList(it)
             mChatAdapter.notifyDataSetChanged()
         }

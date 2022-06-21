@@ -14,6 +14,7 @@ interface IFireBaseApiService {
     fun searchAccount(str: String)
     fun send(userMessage: String, acc: String, type: Int)
     fun send(imagePath: Uri)
+    fun sendImageWithArticle(imagePath: Uri)
     fun sendReply(userReply: String, articleId: String, board: String)
     fun signIn(acc: String, pwd: String)
     fun signOut()
