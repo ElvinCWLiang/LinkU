@@ -50,3 +50,6 @@ com.project.linku
 
 ## New Voice Call feature
 <img src="https://user-images.githubusercontent.com/95346303/174713276-a9b89eac-fe9c-48ac-a4e1-b4b70b824583.png" width="200"><img src="https://user-images.githubusercontent.com/95346303/174713389-30b94fbb-10b7-484c-8d40-50e7ed9618ce.png" width="200">
+
+## New UI
+<img src="https://user-images.githubusercontent.com/95346303/174797534-6ab7e8a2-b043-4f72-9244-1867105292b6.png" width="200"><img src="https://user-images.githubusercontent.com/95346303/174797592-5c12b37a-e97c-4166-a229-0ecf6c87482e.png" width="200">
