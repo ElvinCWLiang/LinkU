@@ -82,8 +82,16 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
         Log.i(TAG, "localaccount = $localaccount, remoteaccount = $remoteaccount")
         database.child(FRIENDLIST).child(localaccount).child(remoteaccount).push()
             .setValue(FriendModel("", remote, currentUser.email!!, userMessage, time, type))
-        database.child(FRIENDLIST).child(remoteaccount).child(localaccount).push()
-            .setValue(FriendModel("", remote, currentUser.email!!, userMessage, time, type))
+            .addOnCompleteListener {
+                database.child(FRIENDLIST).child(remoteaccount).child(localaccount).push()
+                    .setValue(FriendModel("", remote, currentUser.email!!, userMessage, time, type))
+                    .addOnCompleteListener {
+                        mcallBack?.onSuccess(it)
+                    }.addOnFailureListener {
+                        mcallBack?.onFail()
+                    }
+            }
+
     }
 
     /* update avatar */
@@ -137,6 +145,7 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
         auth?.signOut()
     }
 
+
     /* sign up with email and upload a UserModel file to Firebase*/
     override fun signUp(acc: String, pwd: String) {
         auth?.createUserWithEmailAndPassword(acc, pwd)
@@ -176,6 +185,16 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
                     mcallBack?.onFail()
                 }
             })
+        }
+    }
+
+    override fun notifyMessage(childEventListener: ChildEventListener) {
+        auth.currentUser?.let {
+            database.child(FRIENDLIST)
+                .child(
+                    Parsefun.getInstance().parseEmailasAccount(auth.currentUser!!.email.toString())
+                )
+                .addChildEventListener(childEventListener)
         }
     }
 

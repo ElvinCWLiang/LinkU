@@ -19,7 +19,10 @@ interface Dao {
 
     @Query("SELECT * FROM FRIENDMODEL WHERE (EMAIL = :remoteAccount AND EMAILFROM = :localAccount) OR (EMAIL = :localAccount AND EMAILFROM = :remoteAccount) order by TIME ASC")
     fun getConversation(remoteAccount: String, localAccount: String): List<FriendModel>
-
+/*
+    @Query("SELECT * FROM FRIENDMODEL WHERE (EMAIL = :remoteAccount AND EMAILFROM = :localAccount) OR (EMAIL = :localAccount AND EMAILFROM = :remoteAccount) order by TIME ASC")
+    fun getConversationRange(remoteAccount: String, localAccount: String, start: Int, end: Int): List<FriendModel>
+*/
     @Query("SELECT * FROM FRIENDMODEL WHERE ID IN (SELECT MAX(ID) AS ID FROM FRIENDMODEL WHERE EMAIL != :localAccount GROUP BY EMAIL)")
     fun getFreindList(localAccount: String): List<FriendModel>
 

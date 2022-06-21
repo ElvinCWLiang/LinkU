@@ -1,8 +1,14 @@
 package com.project.linku
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -12,12 +18,18 @@ import com.project.linku.data.local.UserModel
 import com.project.linku.databinding.ActivityMainBinding
 import com.project.linku.ui.utils.Save
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
+import java.util.ArrayList
+// Kotlin
+import io.agora.rtc.RtcEngine
+import io.agora.rtc.IRtcEngineEventHandler
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "ev_" + javaClass.simpleName
     private lateinit var binding: ActivityMainBinding
+
+    private val PERMISSION_REQ_ID_RECORD_AUDIO = 22
+    private val PERMISSION_REQ_ID_CAMERA = PERMISSION_REQ_ID_RECORD_AUDIO + 1
 
     companion object{
         lateinit var userkeySet : HashMap<String, UserModel>
@@ -30,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {}
         val mainactivityViewModel =
             ViewModelProvider(this).get(MainActivityViewModel::class.java)
         binding.mainactivityViewModel = mainactivityViewModel
@@ -59,16 +72,36 @@ class MainActivity : AppCompatActivity() {
         mainactivityViewModel.isLogin.observe(this) {
             it?.let {
                 islogin = it
-                if (!it) { AlertDialog.Builder(this).setMessage("Please login").create().show() }
+                val intent = Intent(this, MessageService::class.java)
+                startService(intent)
+                if (!it) {
+                    AlertDialog.Builder(this).setMessage("Please login").create().show()
+                }
             }
         }
         /* observe the login status status << */
+        val c : ArrayList<String> = ArrayList<String>()
 
         initData(mainactivityViewModel)
-    }
 
+        when (true) {
+            true -> System.out.println()
+            false -> System.out.println()
+        }
+
+    }
     private fun initData(mainActivityViewModel: MainActivityViewModel){
         userkeySet = mainActivityViewModel.syncLocalUserData()
+    }
 
+    private fun checkSelfPermission(permission: String, requestCode: Int): Boolean {
+        if (ContextCompat.checkSelfPermission(this, permission) !=
+            PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(permission),
+                requestCode)
+            return false
+        }
+        return true
     }
 }

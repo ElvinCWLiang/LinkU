@@ -45,4 +45,10 @@ class Parsefun {
         GlideApp.with(context).load(MainActivity.userkeySet.get(articleModel.publishAuthor)?.useruri).placeholder(R.drawable.cat).into(v.img_responder)
     }
 
+    fun randomStringGenerator(): String {
+        val alphabet: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+        val randomString: String = List(20) { alphabet.random() }.joinToString("")
+        return randomString
+    }
+
 }

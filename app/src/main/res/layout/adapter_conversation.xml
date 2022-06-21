@@ -7,6 +7,16 @@
     android:background="@color/light_blue"
     android:padding="8dp">
 
+    <com.project.linku.ui.utils.ImgTextView
+        android:id="@+id/img_txv_local"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/img_author_local"
+        app:layout_constraintEnd_toStartOf="@+id/img_local"
+        app:layout_constraintTop_toTopOf="@+id/img_author_local">
+    </com.project.linku.ui.utils.ImgTextView>
+
     <TextView
         android:id="@+id/txv_conversation_local"
         android:layout_width="wrap_content"
@@ -20,6 +30,17 @@
         app:layout_constraintBottom_toBottomOf="@+id/img_author_local"
         app:layout_constraintEnd_toStartOf="@+id/img_author_local"
         app:layout_constraintTop_toTopOf="@+id/img_author_local" />
+
+    <com.project.linku.ui.utils.ImgTextView
+        android:id="@+id/img_txv_remote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/img_author_remote"
+        app:layout_constraintStart_toEndOf="@+id/img_remote"
+        app:layout_constraintTop_toTopOf="@+id/img_author_remote">
+    </com.project.linku.ui.utils.ImgTextView>
+
 
     <TextView
         android:id="@+id/txv_conversation_remote"
@@ -67,7 +88,7 @@
         android:layout_width="200dp"
         android:layout_height="300dp"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
+
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/txv_conversation_remote"
         app:layout_constraintTop_toTopOf="parent"
@@ -81,7 +102,7 @@
         android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/txv_conversation_local"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
+
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/user" />
 
@@ -92,9 +113,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/img_author_remote"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/img_remote" />
+        app:layout_constraintStart_toEndOf="@+id/img_txv_remote" />
 
     <TextView
         android:id="@+id/txv_local_time"
@@ -103,7 +123,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/img_author_local"
-        app:layout_constraintEnd_toStartOf="@+id/img_local"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/img_txv_local"
+        app:layout_constraintHorizontal_bias="1.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -57,7 +57,7 @@ class ChatAdapter(_fragment: Fragment , _container: ViewGroup?):
         override fun onClick(v: View?) {
             val bundle = Bundle()
             bundle.putString(fragment.resources.getString(R.string.email), mfriendModel[pos].email)
-            fragment.findNavController().navigate(R.id.navigation_conversation, bundle)
+            fragment.findNavController().navigate(R.id.action_navigation_chat_to_navigation_conversation, bundle)
         }
     }
 

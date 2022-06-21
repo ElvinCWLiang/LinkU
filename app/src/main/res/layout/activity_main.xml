@@ -8,6 +8,7 @@
             type="com.project.linku.MainActivityViewModel" />
     </data>
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"

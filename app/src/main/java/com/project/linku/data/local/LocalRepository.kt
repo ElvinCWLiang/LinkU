@@ -47,7 +47,12 @@ class LocalRepository(_db: LocalDatabase) {
     suspend fun getConversaion(remoteAccount: String, localAccount: String): List<FriendModel> = withContext(Dispatchers.IO){
         return@withContext db.dataDao().getConversation(remoteAccount, localAccount)
     }
-
+/*
+    /* return the specific conversation range from the acc*/
+    suspend fun getConversaionRange(remoteAccount: String, localAccount: String, start: Int, end: Int): List<FriendModel> = withContext(Dispatchers.IO){
+        return@withContext db.dataDao().getConversationRange(remoteAccount, localAccount, start, end)
+    }
+*/
     /* insert UserModel as entiry into db */
     fun insertUserList(userModel: UserModel?){
         GlobalScope.launch(Dispatchers.IO) {

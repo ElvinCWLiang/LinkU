@@ -68,17 +68,21 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                     for (chatmaterial in mDataSnapshot.children) {
                         Log.i(TAG,"${chatmaterial.value}")
                         for (n in chatmaterial.children) {
-                            val m = n.getValue(FriendModel::class.java)
-                            if (m != null) {
-                                m.id = n.key.toString()
-                            }
-                            m?.email?.let {
-                                if (!cacheUser.contains(it)) {
-                                    syncUser(it)
-                                    cacheUser.add(it)
+                            try {
+                                val m = n.getValue(FriendModel::class.java)
+                                if (m != null) {
+                                    m.id = n.key.toString()
                                 }
+                                m?.email?.let {
+                                    if (!cacheUser.contains(it)) {
+                                        syncUser(it)
+                                        cacheUser.add(it)
+                                    }
+                                }
+                                LocalRepository(LocalDatabase.getInstance(mapplication)).insertFriendList(m)
+                            } catch (e: Exception) {
+                                Log.e(TAG, "error = $e")
                             }
-                            LocalRepository(LocalDatabase.getInstance(mapplication)).insertFriendList(m)
                         }
                     }
                     synclocalFriendList()

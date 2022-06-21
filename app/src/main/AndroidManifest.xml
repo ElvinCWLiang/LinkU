@@ -4,6 +4,16 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+<!-- For agora access permissions >> -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <!-- Add the following permission on devices running Android 12.0 or later -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"  />
+<!-- For agora access permissions << -->
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"

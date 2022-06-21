@@ -3,7 +3,14 @@
     <fragment
         android:label="@string/title_home"
         android:name="com.project.linku.ui.home.HomeFragment"
-        android:id="@+id/navigation_home"/>
+        android:id="@+id/navigation_home">
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_article"
+            app:popUpTo="@id/navigation_article" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_publish"
+            app:popUpTo="@id/navigation_publish" />
+    </fragment>
     <fragment
         android:label="@string/title_dashboard"
         android:name="com.project.linku.ui.dashboard.DashboardFragment"
@@ -11,7 +18,12 @@
     <fragment
         android:label="Chat"
         android:name="com.project.linku.ui.chat.ChatFragment"
-        android:id="@+id/navigation_chat"/>
+        android:id="@+id/navigation_chat">
+        <action
+            android:id="@+id/action_navigation_chat_to_navigation_conversation"
+            app:destination="@id/navigation_conversation" />
+    </fragment>
+
     <fragment
         android:label="@string/publish"
         android:name="com.project.linku.ui.home.PublishFragment"
@@ -19,9 +31,41 @@
     <fragment
         android:label="conversation"
         android:name="com.project.linku.ui.chat.ConversationFragment"
-        android:id="@+id/navigation_conversation"/>
+        android:id="@+id/navigation_conversation">
+        <action
+            android:id="@+id/action_navigation_conversation_to_navigation_voicecall"
+            app:destination="@id/navigation_voicecall" />
+        <action
+            android:id="@+id/action_navigation_conversation_to_navigation_videocall"
+            app:destination="@id/navigation_videocall" />
+    </fragment>
     <fragment
         android:label="ArticleFragment"
         android:name="com.project.linku.ui.home.ArticleFragment"
         android:id="@+id/navigation_article"/>
+
+    <fragment
+        android:label="VoiceCallFragment"
+        android:name="com.project.linku.ui.chat.VoiceCallFragment"
+        android:id="@+id/navigation_voicecall">
+
+        <action
+            android:id="@+id/action_navigation_voicecall_to_navigation_conversation"
+            app:destination="@id/navigation_conversation"
+            app:popUpTo="@id/navigation_conversation"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:label="VideoCallFragment"
+        android:name="com.project.linku.ui.chat.VoiceCallFragment"
+        android:id="@+id/navigation_videocall">
+
+        <action
+            android:id="@+id/action_navigation_videocall_to_navigation_conversation"
+            app:destination="@id/navigation_conversation"
+            app:popUpTo="@id/navigation_conversation"
+            app:popUpToInclusive="true" />
+    </fragment>
+
 </navigation>

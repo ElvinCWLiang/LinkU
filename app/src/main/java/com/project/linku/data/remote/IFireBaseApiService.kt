@@ -26,4 +26,5 @@ interface IFireBaseApiService {
     fun updateUserIntroduction(userModel: UserModel)
     fun syncUser(acc: String)
     fun syncArticleResponse(articleId: String, board: String, childEventListener: ChildEventListener)
+    fun notifyMessage(param: ChildEventListener)
 }
