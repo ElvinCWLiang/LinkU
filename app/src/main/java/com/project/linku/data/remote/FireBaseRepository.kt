@@ -12,8 +12,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 
@@ -181,9 +181,9 @@ class FireBaseRepository(callBack: IFireOperationCallBack?): IFireBaseApiService
         }
     }
 
-    override fun syncUser(acc: String) {
+    override suspend fun syncUser(acc: String) {
         //Log.i(TAG, "syncUser = $acc")
-        GlobalScope.launch(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             val mQuery = database.child(ACCOUNTLIST).child(Parsefun.getInstance().parseEmailasAccount(acc))
             mQuery.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {

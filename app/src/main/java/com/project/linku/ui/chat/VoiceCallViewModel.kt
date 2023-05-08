@@ -6,20 +6,8 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.project.linku.MainActivity
-import com.project.linku.data.local.*
-import com.project.linku.data.remote.FireBaseRepository
-import com.project.linku.data.remote.IFireOperationCallBack
-import com.project.linku.ui.utils.Save
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.project.linku.ui.utils.Event
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-
 
 class VoiceCallViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -58,8 +46,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
             super.onJoinChannelSuccess(channel, uid, elapsed)
             _statusDialog.postValue("JoinChannelSuccess")
         }
-
-
     }
     /* agora << */
 

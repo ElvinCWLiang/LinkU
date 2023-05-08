@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.viewModelScope
 import com.project.linku.data.local.ArticleModel
 import com.project.linku.data.local.LocalDatabase
 import com.project.linku.data.local.LocalRepository
@@ -15,7 +16,6 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class ArticleViewModel(application: Application): AndroidViewModel(application) {
@@ -35,7 +35,9 @@ class ArticleViewModel(application: Application): AndroidViewModel(application) 
                 m?.let {
                     m.id = snapshot.key.toString()
                 }
-                LocalRepository(LocalDatabase.getInstance(mapplication)).insertArticle(m)
+                viewModelScope.launch {
+                    LocalRepository(LocalDatabase.getInstance(mapplication)).insertArticle(m)
+                }
                 fetchlocalArticleResponse(articleId, board)
             }
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
@@ -49,7 +51,7 @@ class ArticleViewModel(application: Application): AndroidViewModel(application) 
     fun fetchlocalArticleResponse(articleId: String, board: String) {
         this.articleId = articleId
         this.board = board
-        GlobalScope.launch(IO) {
+        viewModelScope.launch(IO) {
             Log.i(TAG, "board = $board, articleId = $articleId")
             _articleAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getLocalArticleResponse(articleId))
         }

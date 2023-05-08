@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.project.linku.data.local.FriendModel
 import com.project.linku.data.local.LocalDatabase
@@ -19,11 +20,8 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.ktx.Firebase
-import com.project.linku.R
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-
 
 class ConversationViewModel(application: Application) : AndroidViewModel(application) {
     private val TAG = "ev_" + javaClass.simpleName
@@ -46,7 +44,9 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
                     m.id = snapshot.key.toString()
                     //Log.i(TAG,"id = ${m.id},  emailto = ${m.email}, emailfrom = ${m.emailfrom},  content = ${m.content}")
                 }
-                LocalRepository(LocalDatabase.getInstance(mapplication)).insertFriendList(m)
+                viewModelScope.launch {
+                    LocalRepository(LocalDatabase.getInstance(mapplication)).insertFriendList(m)
+                }
                 fetchlocalConversation(remoteAccount)
             }
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
@@ -64,7 +64,7 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
     /* fetch account conversation on local db */
     fun fetchlocalConversation(remoteAccount: String) {
         //Log.i(TAG, "remoteAccount = $remoteAccount")
-        GlobalScope.launch(IO) {
+        viewModelScope.launch(IO) {
             _conversationAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getConversaion(remoteAccount, localAccount))
         }
     }

@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.viewModelScope
 import com.project.linku.data.local.LocalDatabase
 import com.project.linku.data.local.LocalRepository
 import com.project.linku.data.local.UserModel
@@ -17,9 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.project.linku.ui.utils.Event
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-
 
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -33,7 +32,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     val isAvatarChanged : LiveData<Uri> = _isAvatarChanged
     private val currentUser = FirebaseAuth.getInstance().currentUser?.email.toString()
     private val _introduction = MutableLiveData<String>().apply {
-        GlobalScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getUser(currentUser)?.userintroduction)
         }
     }
@@ -58,7 +57,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 _userAccount.value = acc
                 _updateRespond.value = Event("Success")
                 _isAvatarChanged.value = Uri.parse(Save.getInstance().getUserAvatarUri(mapplication, acc))
-                GlobalScope.launch(Dispatchers.IO) {
+                viewModelScope.launch(Dispatchers.IO) {
                     syncUser(acc)
                 }
             }
@@ -69,25 +68,31 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }).signIn(acc, pwd)
     }
 
-    suspend fun syncUser(acc: String) {
-        FireBaseRepository(object : IFireOperationCallBack {
-            override fun <T> onSuccess(t: T) {
-                //save current user
-                LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList((t as DataSnapshot).getValue(UserModel::class.java))
-                _introduction.value = (t as DataSnapshot).getValue(UserModel::class.java)?.userintroduction
-            }
-            override fun onFail() { }
-        }).syncUser(acc)
+    fun syncUser(acc: String) {
+        viewModelScope.launch {
+            FireBaseRepository(object : IFireOperationCallBack {
+                override fun <T> onSuccess(t: T) {
+                    //save current user
+                    viewModelScope.launch {
+                        LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList((t as DataSnapshot).getValue(UserModel::class.java))
+                    }
+                    _introduction.value = (t as DataSnapshot).getValue(UserModel::class.java)?.userintroduction
+                }
+                override fun onFail() { }
+            }).syncUser(acc)
+        }
     }
 
     fun updateAvatar(imagePath: Uri) {
-        GlobalScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val mUserModel = LocalRepository(LocalDatabase.getInstance(mapplication)).getUser(currentUser)
             mUserModel?.let {
                 mUserModel.useruri = imagePath.toString()
                 FireBaseRepository(object : IFireOperationCallBack {
                     override fun <T> onSuccess(t: T) {
-                        LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(t as UserModel)
+                        viewModelScope.launch {
+                            LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(t as UserModel)
+                        }
                         _isAvatarChanged.value = Uri.parse((t as UserModel).useruri)
                         Save.getInstance().saveUserAvatarUri(mapplication, currentUser, Uri.parse((t as UserModel).useruri))
                     }
@@ -98,14 +103,16 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun updateUserIntroduction(intro: String) {
-        GlobalScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val mUserModel = LocalRepository(LocalDatabase.getInstance(mapplication)).getUser(currentUser)
             mUserModel?.let {
                 mUserModel.userintroduction = intro
                 FireBaseRepository(object : IFireOperationCallBack {
                     override fun <T> onSuccess(t: T) {
                         _introduction.value = (t as UserModel).userintroduction
-                        LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(t as UserModel)
+                        viewModelScope.launch {
+                            LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(t as UserModel)
+                        }
                     }
                     override fun onFail() {  }
                 }).updateUserIntroduction(mUserModel)
@@ -115,7 +122,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun logout() {
         FireBaseRepository(null).signOut()
-        GlobalScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             LocalRepository(LocalDatabase.getInstance(mapplication)).deleteFriendList()
         }
         Save.getInstance().deleteUser(mapplication)

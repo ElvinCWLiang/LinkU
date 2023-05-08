@@ -25,7 +25,7 @@ interface IFireBaseApiService {
     fun updateAvatar(userModel: UserModel, imagePath: Uri)
     fun getFirebaseAuth() : FirebaseAuth?
     fun updateUserIntroduction(userModel: UserModel)
-    fun syncUser(acc: String)
+    suspend fun syncUser(acc: String)
     fun syncArticleResponse(articleId: String, board: String, childEventListener: ChildEventListener)
     fun notifyMessage(param: ChildEventListener)
 }

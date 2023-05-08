@@ -6,10 +6,8 @@ class LocalRepository(_db: LocalDatabase) {
     private val db = _db
 
     /* insert article to Room db */
-    fun insertArticle(articleModel: ArticleModel?) {
-        GlobalScope.launch(Dispatchers.IO) {
-            db.dataDao().insertArticle(articleModel)
-        }
+    suspend fun insertArticle(articleModel: ArticleModel?) = withContext(Dispatchers.IO) {
+        db.dataDao().insertArticle(articleModel)
     }
 
     /* return all article to HomeFragment(HomeAdpater) */
@@ -28,10 +26,8 @@ class LocalRepository(_db: LocalDatabase) {
     }
 
     /* insert friend list to ChatFragment(ChatAdapter) */
-    fun insertFriendList(friendModel: FriendModel?){
-        GlobalScope.launch(Dispatchers.IO) {
-            db.dataDao().insertFriendList(friendModel)
-        }
+    suspend fun insertFriendList(friendModel: FriendModel?) = withContext(Dispatchers.IO){
+        db.dataDao().insertFriendList(friendModel)
     }
 
     /* return friend list according from this account */
@@ -54,10 +50,8 @@ class LocalRepository(_db: LocalDatabase) {
     }
 */
     /* insert UserModel as entiry into db */
-    fun insertUserList(userModel: UserModel?){
-        GlobalScope.launch(Dispatchers.IO) {
-            db.dataDao().insertUserList(userModel)
-        }
+    suspend fun insertUserList(userModel: UserModel?) = withContext(Dispatchers.IO) {
+        db.dataDao().insertUserList(userModel)
     }
 
     /* return the UserModel by account */

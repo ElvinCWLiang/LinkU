@@ -3,6 +3,7 @@ package com.project.linku.ui.home
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.project.linku.MainActivity.Companion.userkeySet
 import com.project.linku.R
 import com.project.linku.data.local.ArticleModel
@@ -12,9 +13,7 @@ import com.project.linku.data.local.UserModel
 import com.project.linku.data.remote.FireBaseRepository
 import com.project.linku.data.remote.IFireOperationCallBack
 import com.google.firebase.database.DataSnapshot
-import com.project.linku.data.remote.IFireBaseApiService
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
@@ -27,7 +26,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private var spnboardpos = 0
 
     fun syncBoard(pos: Int) {
-        GlobalScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             spnboardpos = pos
             val board_array = mapplication.resources.getStringArray(R.array.board_array)
             val board = board_array[pos]
@@ -60,7 +59,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                                 cacheUser.add(it)
                             }
                         }
-                        LocalRepository(LocalDatabase.getInstance(mapplication)).insertArticle(m)
+                        viewModelScope.launch {
+                            LocalRepository(LocalDatabase.getInstance(mapplication)).insertArticle(m)
+                        }
                     }
                 }
                 synclocalArticle(mapplication.resources.getStringArray(R.array.board_array)[spnboardpos])
@@ -72,20 +73,24 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun syncUser(acc: String) {
-        FireBaseRepository(object : IFireOperationCallBack {
-            override fun <T> onSuccess(t: T) {
-                val userModel = (t as DataSnapshot).getValue(UserModel::class.java)
-                LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(userModel)
-                userModel?.let {
-                    userkeySet.put(userModel.email, userModel)
+        viewModelScope.launch {
+            FireBaseRepository(object : IFireOperationCallBack {
+                override fun <T> onSuccess(t: T) {
+                    val userModel = (t as DataSnapshot).getValue(UserModel::class.java)
+                    viewModelScope.launch {
+                        LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(userModel)
+                    }
+                    userModel?.let {
+                        userkeySet.put(userModel.email, userModel)
+                    }
                 }
-            }
-            override fun onFail() { }
-        }).syncUser(acc)
+                override fun onFail() { }
+            }).syncUser(acc)
+        }
     }
 
     private fun synclocalArticle(board: String?) {
-        GlobalScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             if (board == "All") {
                 homeAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getallArticle())
             } else if (board != "All")

@@ -4,7 +4,6 @@ import android.app.Application
 import android.util.Log
 import androidx.paging.ItemKeyedDataSource
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class PagingKeyDataSource(application: Application, _remoteAccount: String, _localAccount: String) : ItemKeyedDataSource<Int, FriendModel>() {
@@ -44,9 +43,6 @@ class PagingKeyDataSource(application: Application, _remoteAccount: String, _loc
         val start = end
         end += range
         Log.i(TAG, "loadInitial start = $start, end = $end")
-        GlobalScope.launch(Dispatchers.IO) {
-        //    LocalRepository(LocalDatabase.getInstance(mapplication)).getConversaionRange(remoteAccount, localAccount, start, end)
-        }
     }
 
     /**
