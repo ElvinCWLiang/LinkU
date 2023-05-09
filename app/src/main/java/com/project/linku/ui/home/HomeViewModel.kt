@@ -1,8 +1,9 @@
 package com.project.linku.ui.home
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.linku.MainActivity.Companion.userkeySet
 import com.project.linku.R
@@ -13,38 +14,43 @@ import com.project.linku.data.local.UserModel
 import com.project.linku.data.remote.FireBaseRepository
 import com.project.linku.data.remote.IFireOperationCallBack
 import com.google.firebase.database.DataSnapshot
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val application: Application
+) : ViewModel() {
+    private val _syncArticle = MutableLiveData<Boolean>()
+    val syncArticle: LiveData<Boolean> get() = _syncArticle
 
-class HomeViewModel(application: Application) : AndroidViewModel(application) {
+    private val _homeAdapterMaterial = MutableLiveData<List<ArticleModel>>()
+    val homeAdapterMaterial: LiveData<List<ArticleModel>> get() = _homeAdapterMaterial
 
-    private val mapplication: Application = application
-    private val TAG = "ev_" + javaClass.simpleName
-    val syncArticle = MutableLiveData<Boolean>()
-    val homeAdapterMaterial = MutableLiveData<List<ArticleModel>>()
-    private var spnboardpos = 0
+    private var spannableBoardPosition = 0
 
     fun syncBoard(pos: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            spnboardpos = pos
-            val board_array = mapplication.resources.getStringArray(R.array.board_array)
-            val board = board_array[pos]
+            spannableBoardPosition = pos
+            val boardArray = application.resources.getStringArray(R.array.board_array)
+            val board = boardArray[pos]
             if (board == "All") {
-                for (sub_board in board_array) {
-                    syncspecificboard(sub_board)
+                for (sub_board in boardArray) {
+                    syncSpecificBoard(sub_board)
                 }
-            } else if (board != "All") {
-                syncspecificboard(board)
+            } else {
+                syncSpecificBoard(board)
             }
-            synclocalArticle(board)
+            syncLocalArticle(board)
         }
     }
 
-    private fun syncspecificboard(board: String) {
+    private fun syncSpecificBoard(board: String) {
         FireBaseRepository(object : IFireOperationCallBack {
             override fun <T> onSuccess(t: T) {
-                syncArticle.value = true
+                _syncArticle.value = true
                 if (t != null) {
                     val mDataSnapshot = t as DataSnapshot
                     val cacheUser = ArrayList<String>()
@@ -60,14 +66,14 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                             }
                         }
                         viewModelScope.launch {
-                            LocalRepository(LocalDatabase.getInstance(mapplication)).insertArticle(m)
+                            LocalRepository(LocalDatabase.getInstance(application)).insertArticle(m)
                         }
                     }
                 }
-                synclocalArticle(mapplication.resources.getStringArray(R.array.board_array)[spnboardpos])
+                syncLocalArticle(application.resources.getStringArray(R.array.board_array)[spannableBoardPosition])
             }
             override fun onFail() {
-                syncArticle.setValue(false)
+                _syncArticle.value = false
             }
         }).syncBoard(board)
     }
@@ -78,7 +84,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 override fun <T> onSuccess(t: T) {
                     val userModel = (t as DataSnapshot).getValue(UserModel::class.java)
                     viewModelScope.launch {
-                        LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(userModel)
+                        LocalRepository(LocalDatabase.getInstance(application)).insertUserList(userModel)
                     }
                     userModel?.let {
                         userkeySet.put(userModel.email, userModel)
@@ -89,12 +95,13 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun synclocalArticle(board: String?) {
+    private fun syncLocalArticle(board: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             if (board == "All") {
-                homeAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getallArticle())
-            } else if (board != "All")
-                homeAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getboardArticle(board))
+                _homeAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(application)).getallArticle())
+            } else {
+                _homeAdapterMaterial.postValue(LocalRepository(LocalDatabase.getInstance(application)).getboardArticle(board))
+            }
         }
     }
 }
