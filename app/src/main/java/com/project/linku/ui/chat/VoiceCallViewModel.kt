@@ -1,33 +1,22 @@
 package com.project.linku.ui.chat
 
-import android.app.Application
-import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.project.linku.data.rtcEngine.RtcEngineFactory
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.agora.rtc.IRtcEngineEventHandler
-import io.agora.rtc.RtcEngine
+import javax.inject.Inject
 
-class VoiceCallViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val mapplication: Application = application
+@HiltViewModel
+class VoiceCallViewModel @Inject constructor(
+    rtcEngineFactory: RtcEngineFactory
+): ViewModel() {
     private val TAG = "ev_" + javaClass.simpleName
 
     private val _statusDialog = MutableLiveData<String>()
     val statusDialog: LiveData<String> = _statusDialog
-
-    /* agora >> */
-    private val PERMISSION_REQ_ID_RECORD_AUDIO = 22
-    private val PERMISSION_REQ_ID_CAMERA = PERMISSION_REQ_ID_RECORD_AUDIO + 1
-
-    // Fill the App ID of your project generated on Agora Console.
-    private val APP_ID = ""
-    // Fill the channel name.
-    private val CHANNEL = ""
-    // Fill the temp token generated on Agora Console.
-    private val TOKEN = ""
-    private var mRtcEngine: RtcEngine?= null
 
     private val mRtcEventHandler = object : IRtcEngineEventHandler() {
         override fun onUserJoined(uid: Int, elapsed: Int) {
@@ -37,7 +26,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
 
         override fun onUserOffline(uid: Int, reason: Int) {
             super.onUserOffline(uid, reason)
-            Log.i(TAG, "onUserOffline")
             endCall()
             _statusDialog.postValue("UserOffline")
         }
@@ -47,28 +35,32 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
             _statusDialog.postValue("JoinChannelSuccess")
         }
     }
-    /* agora << */
+
+    val rtcEngine = rtcEngineFactory.create(mRtcEventHandler)
+
+    /* agora >> */
+    private val PERMISSION_REQ_ID_RECORD_AUDIO = 22
+    private val PERMISSION_REQ_ID_CAMERA = PERMISSION_REQ_ID_RECORD_AUDIO + 1
 
     fun initializeAndJoinChannel(channel: String) {
         try {
-            mRtcEngine = RtcEngine.create(mapplication.applicationContext, APP_ID, mRtcEventHandler)
-            mRtcEngine!!.joinChannel(TOKEN, channel, "", 0)
+            rtcEngine.initializeAndJoinChannel(channel)
         } catch (e: Exception) {
             Log.i(TAG, "error = $e")
         }
     }
 
     fun endCall() {
-        mRtcEngine!!.leaveChannel()
+        rtcEngine.endCall()
         Log.i(TAG, "endCall")
         _statusDialog.postValue("endCall")
     }
 
     fun muteCall() {
-        mRtcEngine!!.muteAllRemoteAudioStreams(true)
+        rtcEngine.muteCall()
     }
 
     fun speakerCall() {
-        mRtcEngine!!.setEnableSpeakerphone(!(mRtcEngine!!.isSpeakerphoneEnabled))
+        rtcEngine.speakerCall()
     }
 }

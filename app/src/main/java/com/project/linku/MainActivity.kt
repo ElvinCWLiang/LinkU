@@ -18,11 +18,13 @@ import com.project.linku.data.local.UserModel
 import com.project.linku.databinding.ActivityMainBinding
 import com.project.linku.ui.utils.Save
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.ArrayList
 // Kotlin
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.IRtcEngineEventHandler
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "ev_" + javaClass.simpleName

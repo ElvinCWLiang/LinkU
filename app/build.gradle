@@ -5,6 +5,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -16,8 +17,11 @@ android {
         targetSdk 33
         versionCode 3
         versionName "1.1"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        manifestPlaceholders = [AGORA_SDK_APPID: "${properties.getProperty('agora.sdk.appId')}"]
     }
     apply plugin:'kotlin-android-extensions'
     apply plugin: 'com.android.application'
@@ -39,6 +43,10 @@ android {
         dataBinding true
         viewBinding true
     }
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 dependencies {
@@ -85,4 +93,8 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.13.2'
 
     implementation 'androidx.paging:paging-runtime-ktx:2.1.0'
+
+    // Hilt
+    implementation 'com.google.dagger:hilt-android:2.44'
+    kapt 'com.google.dagger:hilt-android-compiler:2.44'
 }

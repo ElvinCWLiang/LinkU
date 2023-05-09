@@ -10,22 +10,19 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.linku.MainActivity
 import com.project.linku.R
-import com.project.linku.databinding.FragmentChatBinding
 import com.project.linku.databinding.FragmentVoicecallBinding
 import com.project.linku.ui.utils.GlideApp
-import io.agora.rtc.IRtcEngineEventHandler
-import io.agora.rtc.RtcEngine
-import kotlinx.android.synthetic.main.fragment_conversation.*
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class VoiceCallFragment : Fragment() {
 
     val TAG = "ev_" + javaClass.simpleName
     private var _binding: FragmentVoicecallBinding? = null
     private val binding get() = _binding!!
-    private lateinit var voicecallViewModel : VoiceCallViewModel
+    private lateinit var voiceCallViewModel : VoiceCallViewModel
     private lateinit var acc : String
 
     override fun onCreateView(
@@ -33,22 +30,22 @@ class VoiceCallFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        voicecallViewModel =
-            ViewModelProvider(this).get(VoiceCallViewModel::class.java)
+        voiceCallViewModel =
+            ViewModelProvider(this)[VoiceCallViewModel::class.java]
 
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_voicecall ,container, false)
         val root: View = binding.root
-        binding.voicecallViewModel = voicecallViewModel
+        binding.voicecallViewModel = voiceCallViewModel
 
         val bundle: Bundle? = arguments
         bundle?.let {
             val channel = bundle.getString("channel", "")
             acc = bundle.getString("email", "")
             Log.i(TAG, "channel = $channel, acc = $acc")
-            voicecallViewModel.initializeAndJoinChannel(channel)
+            voiceCallViewModel.initializeAndJoinChannel(channel)
         }
 
-        voicecallViewModel.statusDialog.observe(viewLifecycleOwner) { status ->
+        voiceCallViewModel.statusDialog.observe(viewLifecycleOwner) { status ->
             val bundle = Bundle()
             bundle.putString("email", acc)
             Log.i(TAG, "acc = $acc, status = $status")
@@ -73,6 +70,6 @@ class VoiceCallFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         Log.i(TAG, "onDestroy")
-        voicecallViewModel.endCall()
+        voiceCallViewModel.endCall()
     }
 }
