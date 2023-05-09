@@ -1,11 +1,9 @@
 package com.project.linku.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -21,8 +19,6 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var homeViewModel : HomeViewModel
-    lateinit var textView: TextView
-    private val TAG = "ev_" + javaClass.simpleName
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,17 +26,15 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
-        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home ,container, false)
-        val root: View = binding.root
+            ViewModelProvider(this)[HomeViewModel::class.java]
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.homeViewModel = homeViewModel
-        initViews(container)
+        initViews()
 
-        return root
+        return binding.root
     }
 
-    fun initViews(container: ViewGroup?) {
+    private fun initViews() {
         binding.imgPublish.setOnClickListener{
             this.findNavController().navigate(R.id.navigation_publish)
         }
@@ -53,16 +47,20 @@ class HomeFragment : Fragment() {
         if (MainActivity.islogin) { binding.imgPublish.visibility = View.VISIBLE }
         else { binding.imgPublish.visibility = View.INVISIBLE }
 
-        val mHomeAdapter = HomeAdapter(this, container)
-        binding.recyclerViewArticle.adapter = mHomeAdapter
+        val homeAdapter = HomeAdapter {
+            findNavController().navigate(R.id.action_navigation_home_to_navigation_article, it)
+        }
+
         val staggeredGridLayoutManager =
             StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
-        binding.recyclerViewArticle.layoutManager = staggeredGridLayoutManager
+
+        binding.recyclerViewArticle.apply {
+            adapter = homeAdapter
+            layoutManager = staggeredGridLayoutManager
+        }
 
         homeViewModel.homeAdapterMaterial.observe(viewLifecycleOwner){
-            Log.i(TAG,"size = ${it.size}")
-            mHomeAdapter.setModelList(it)
-            mHomeAdapter.notifyDataSetChanged()
+            homeAdapter.submitList(it)
         }
     }
 
