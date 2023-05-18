@@ -23,15 +23,19 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val application: Application
 ) : ViewModel() {
-    private val _syncArticle = MutableLiveData<Boolean>()
-    val syncArticle: LiveData<Boolean> get() = _syncArticle
+    private val _isSwipeRefresh = MutableLiveData<Boolean>()
+    val isSwipeRefresh: LiveData<Boolean> get() = _isSwipeRefresh
 
     private val _homeAdapterMaterial = MutableLiveData<List<ArticleModel>>()
     val homeAdapterMaterial: LiveData<List<ArticleModel>> get() = _homeAdapterMaterial
 
+//    private val _isSwipeRefresh = MutableLiveData<Boolean>()
+//    val isSwipeRefresh: LiveData<Boolean> get() = _isSwipeRefresh
+
     private var spannableBoardPosition = 0
 
     fun syncBoard(pos: Int) {
+        _isSwipeRefresh.value = true
         viewModelScope.launch(Dispatchers.IO) {
             spannableBoardPosition = pos
             val boardArray = application.resources.getStringArray(R.array.board_array)
@@ -50,7 +54,7 @@ class HomeViewModel @Inject constructor(
     private fun syncSpecificBoard(board: String) {
         FireBaseRepository(object : IFireOperationCallBack {
             override fun <T> onSuccess(t: T) {
-                _syncArticle.value = true
+                _isSwipeRefresh.value = false
                 if (t != null) {
                     val mDataSnapshot = t as DataSnapshot
                     val cacheUser = ArrayList<String>()
@@ -73,7 +77,7 @@ class HomeViewModel @Inject constructor(
                 syncLocalArticle(application.resources.getStringArray(R.array.board_array)[spannableBoardPosition])
             }
             override fun onFail() {
-                _syncArticle.value = false
+                _isSwipeRefresh.value = false
             }
         }).syncBoard(board)
     }

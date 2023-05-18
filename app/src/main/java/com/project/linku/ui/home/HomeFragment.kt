@@ -4,18 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.project.linku.MainActivity
 import com.project.linku.R
 import com.project.linku.databinding.FragmentHomeBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
-
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var homeViewModel : HomeViewModel
@@ -61,6 +63,15 @@ class HomeFragment : Fragment() {
 
         homeViewModel.homeAdapterMaterial.observe(viewLifecycleOwner){
             homeAdapter.submitList(it)
+        }
+
+        // Swipe to refresh article
+        binding.swipe.setOnRefreshListener {
+            homeViewModel.syncBoard(binding.spnHome.selectedItemPosition)
+        }
+
+        homeViewModel.isSwipeRefresh.observe(viewLifecycleOwner) {
+            binding.swipe.isRefreshing = it
         }
     }
 
