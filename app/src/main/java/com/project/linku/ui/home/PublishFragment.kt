@@ -11,21 +11,20 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.project.linku.R
 import com.project.linku.databinding.FragmentPublishBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class PublishFragment: Fragment() {
     private var _binding: FragmentPublishBinding? = null
     private val binding get() = _binding!!
     private val TAG = "ev_" + javaClass.simpleName
     private lateinit var publishViewModel : PublishViewModel
-    private val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()){ uri: Uri? ->
-        uri?.let { imagePath ->
-            Log.i(TAG, imagePath.toString())
-            publishViewModel.send(imagePath)
-        }
-    }
 
     // androidx.fragment.app.Fragment
     override fun onCreateView(
@@ -33,39 +32,50 @@ class PublishFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        publishViewModel = ViewModelProvider(this).get(PublishViewModel::class.java)
+        publishViewModel = ViewModelProvider(this)[PublishViewModel::class.java]
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_publish, container, false)
-        val root: View = binding.root
-        binding.publishViewModel = publishViewModel
-
         initViews()
 
-        return root
+        return binding.root
     }
 
-    fun initViews() {
-        publishViewModel.publishResponse.observe(viewLifecycleOwner) {
-            if (it) {
-                Toast.makeText(requireContext(), resources.getString(R.string.publish_success), Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.navigation_home)
-            } else {
-                Toast.makeText(requireContext(), resources.getString(R.string.publish_fail), Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        publishViewModel.updateResponse.observe(viewLifecycleOwner) {
-            if (it) {
-                Toast.makeText(requireContext(), resources.getString(R.string.update_success), Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), resources.getString(R.string.update_fail), Toast.LENGTH_SHORT).show()
+    private fun initViews() {
+        binding.btnPublishSubmit.setOnClickListener {
+            lifecycleScope.launch {
+                publishViewModel.publishArticle(
+                    board = it.resources.getStringArray(R.array.publish_array)[binding.spnPublishBoard.selectedItemPosition],
+                    title = binding.edtPublishTitle.text.toString(),
+                    content = binding.edtPublishContent.text.toString()
+                ).collectLatest {
+                    if (it) {
+                        Toast.makeText(requireContext(), resources.getString(R.string.publish_success), Toast.LENGTH_SHORT).show()
+                        findNavController().navigate(R.id.navigation_home)
+                    } else {
+                        Toast.makeText(requireContext(), resources.getString(R.string.publish_fail), Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
 
         /* set the imgSelectPicture onClick event >> */
         binding.imgSelectPicture.setOnClickListener {
-            pickImages.launch("image/*")
+            pickImages().launch("image/*")
         }
         /* set the imgSelectPicture onClick event << */
     }
 
+    private fun pickImages() = registerForActivityResult(ActivityResultContracts.GetContent()){ uri: Uri? ->
+        uri?.let { imagePath ->
+            Log.i(TAG, imagePath.toString())
+            lifecycleScope.launch {
+                publishViewModel.send(imagePath).collectLatest {
+                    if (it) {
+                        Toast.makeText(requireContext(), resources.getString(R.string.update_success), Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), resources.getString(R.string.update_fail), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
 }

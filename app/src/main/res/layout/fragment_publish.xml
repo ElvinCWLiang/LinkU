@@ -3,12 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-        <variable
-            name="publishViewModel"
-            type="com.project.linku.ui.home.PublishViewModel" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frameLayout2"
         android:background="@color/light_blue"
@@ -24,7 +18,6 @@
             android:hint="@string/title"
             android:inputType="textPersonName"
             android:minHeight="48dp"
-            android:text="@={publishViewModel.title}"
             app:layout_constraintBottom_toBottomOf="@+id/imageView6"
             app:layout_constraintStart_toEndOf="@+id/imageView6"
             app:layout_constraintTop_toTopOf="@+id/imageView6" />
@@ -41,7 +34,6 @@
             android:gravity="top|left"
             android:hint="@string/input_your_article"
             android:inputType="textPersonName"
-            android:text="@={publishViewModel.content}"
             app:layout_constraintBottom_toTopOf="@+id/btn_publish_submit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView8"
@@ -54,7 +46,6 @@
             android:layout_marginStart="8dp"
             android:entries="@array/publish_array"
             android:minHeight="48dp"
-            android:selectedItemPosition="@={publishViewModel.boardCount}"
             app:layout_constraintBottom_toBottomOf="@+id/imageView7"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -68,7 +59,6 @@
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:background="@color/transparent"
-            android:onClick="@{() -> publishViewModel.publishArticle()}"
             android:scaleType="fitXY"
             android:src="@drawable/send"
             app:layout_constraintBottom_toBottomOf="parent"
