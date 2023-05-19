@@ -74,10 +74,9 @@ class MainActivity : AppCompatActivity() {
         mainactivityViewModel.isLogin.observe(this) {
             it?.let {
                 islogin = it
-                val intent = Intent(this, MessageService::class.java)
-                startService(intent)
-                if (!it) {
-                    AlertDialog.Builder(this).setMessage("Please login").create().show()
+                startService(Intent(this, MessageService::class.java))
+                if (!islogin) {
+                    AlertDialog.Builder(this).setMessage("Please check network and login status").create().show()
                 }
             }
         }
