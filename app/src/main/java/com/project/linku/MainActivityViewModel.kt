@@ -7,10 +7,7 @@ import android.net.ConnectivityManager.NetworkCallback
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.distinctUntilChanged
 import com.project.linku.data.local.LocalDatabase
 import com.project.linku.data.local.LocalRepository
 import com.project.linku.data.local.UserModel
@@ -20,43 +17,52 @@ import com.project.linku.ui.utils.Save
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val application: Application
 ) : ViewModel() {
-    private val _connected = MutableLiveData<Boolean>()
-    val isConnected : LiveData<Boolean> = _connected
-    private val _isLogin = MutableLiveData<Boolean>()
-    val isLogin : LiveData<Boolean> = _isLogin.distinctUntilChanged()
-
-    fun isLogin(){
+    
+    fun isLogin() = callbackFlow {
         FireBaseRepository(object : IFireOperationCallBack {
             override fun <T> onSuccess(t: T) {
-                _isLogin.value = true
+                trySend(true) }
+            override fun onFail() {
+                trySend(false)
             }
-            override fun onFail() { _isLogin.value = false }
         }).signIn(
-            Save.getInstance().getUserAccount(this.application),
-            Save.getInstance().getUserPassword(this.application)
+            Save.getInstance().getUserAccount(application),
+            Save.getInstance().getUserPassword(application)
         )
 
         FirebaseAuth.getInstance().addAuthStateListener {
-            _isLogin.value = it.currentUser != null
+            trySend(it.currentUser != null)
         }
+
+        awaitClose{}
     }
 
-    fun isConnected() {
+    fun isConnected() = callbackFlow {
         val mNetworkRequest =
             NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR).addTransportType(NetworkCapabilities.TRANSPORT_WIFI).build()
         val mConnectivityManager = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         mConnectivityManager.registerNetworkCallback(mNetworkRequest, object : NetworkCallback() {
-                override fun onAvailable(network: Network) { _connected.postValue(true) }
-                override fun onLost(network: Network) { _connected.postValue(false) }
-                override fun onUnavailable() { _connected.postValue(false) }
-            })
+            override fun onAvailable(network: Network) {
+                trySend(true)
+            }
+            override fun onLost(network: Network) {
+                trySend(false)
+            }
+            override fun onUnavailable() {
+                trySend(false)
+            }
+        })
+
+        awaitClose{}
     }
 
     fun syncLocalUserData(): HashMap<String, UserModel> {

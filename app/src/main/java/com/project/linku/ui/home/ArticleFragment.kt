@@ -13,7 +13,6 @@ import com.project.linku.R
 import com.project.linku.databinding.FragmentArticleBinding
 import com.project.linku.ui.utils.GlideApp
 import com.project.linku.ui.utils.Parsefun
-import kotlinx.android.synthetic.main.fragment_article.*
 
 class ArticleFragment: Fragment() {
     private val TAG = "ev_" + javaClass.simpleName

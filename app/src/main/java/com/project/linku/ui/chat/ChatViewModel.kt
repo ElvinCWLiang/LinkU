@@ -17,7 +17,6 @@ import com.google.firebase.database.DataSnapshot
 import com.project.linku.ui.utils.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ChatViewModel(application: Application) : AndroidViewModel(application) {
 

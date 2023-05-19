@@ -14,8 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.project.linku.MainActivity
 import com.project.linku.R
 import com.project.linku.databinding.FragmentDashboardBinding
-import com.project.linku.ui.chat.SearchAccountDialog
-import com.project.linku.ui.utils.Event
 import com.project.linku.ui.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_login.view.*
 
