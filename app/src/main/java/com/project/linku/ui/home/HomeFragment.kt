@@ -4,9 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.AdapterView.OnItemSelectedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -14,6 +19,8 @@ import com.project.linku.MainActivity
 import com.project.linku.R
 import com.project.linku.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -30,48 +37,62 @@ class HomeFragment : Fragment() {
         homeViewModel =
             ViewModelProvider(this)[HomeViewModel::class.java]
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        binding.homeViewModel = homeViewModel
         initViews()
-
         return binding.root
     }
 
     private fun initViews() {
-        binding.imgPublish.setOnClickListener{
-            this.findNavController().navigate(R.id.navigation_publish)
-        }
-        binding.spnHome.setSelection(0, false);
-
-        homeViewModel.syncBoard(binding.spnHome.selectedItemPosition)
-
-        /* TODO **Bug** first time never show the publish icon.
-            islogin need to be updated when livadata response back from MainActivity */
-        if (MainActivity.islogin) { binding.imgPublish.visibility = View.VISIBLE }
-        else { binding.imgPublish.visibility = View.INVISIBLE }
-
         val homeAdapter = HomeAdapter {
             findNavController().navigate(R.id.action_navigation_home_to_navigation_article, it)
         }
 
-        val staggeredGridLayoutManager =
-            StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+        with(binding) {
+            imgPublish.setOnClickListener{
+                it.findNavController().navigate(R.id.navigation_publish)
+            }
 
-        binding.recyclerViewArticle.apply {
-            adapter = homeAdapter
-            layoutManager = staggeredGridLayoutManager
+            spnHome.setSelection(0, false)
+            spnHome.onItemSelectedListener = object : OnItemSelectedListener {
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                    homeViewModel.accept(HomeViewModel.UiAction.Search(p2))
+//                    homeViewModel.syncBoard(p2)
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
+            }
+
+            /* TODO **Bug** first time never show the publish icon.
+            islogin need to be updated when livadata response back from MainActivity */
+            if (MainActivity.islogin) { imgPublish.visibility = View.VISIBLE }
+            else { imgPublish.visibility = View.INVISIBLE }
+
+            recyclerViewArticle.apply {
+                adapter = homeAdapter
+                layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+            }
+
+            // Swipe to refresh article
+            swipe.setOnRefreshListener {
+                homeViewModel.accept(HomeViewModel.UiAction.Search(spnHome.selectedItemPosition))
+            }
         }
 
-        homeViewModel.homeAdapterMaterial.observe(viewLifecycleOwner){
-            homeAdapter.submitList(it)
+        with(homeViewModel) {
+            accept(HomeViewModel.UiAction.Search(0))
         }
 
-        // Swipe to refresh article
-        binding.swipe.setOnRefreshListener {
-            homeViewModel.syncBoard(binding.spnHome.selectedItemPosition)
-        }
+        lifecycleScope.launch {
+            launch {
+                homeViewModel.isRefresh.collectLatest {
+                    binding.swipe.isRefreshing = it
+                }
+            }
 
-        homeViewModel.isSwipeRefresh.observe(viewLifecycleOwner) {
-            binding.swipe.isRefreshing = it
+            launch {
+                homeViewModel.state.collectLatest {
+                    homeAdapter.submitList(it)
+                }
+            }
         }
     }
 
