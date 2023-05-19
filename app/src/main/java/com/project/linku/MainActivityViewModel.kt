@@ -7,10 +7,9 @@ import android.net.ConnectivityManager.NetworkCallback
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import android.os.Build
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.distinctUntilChanged
 import com.project.linku.data.local.LocalDatabase
 import com.project.linku.data.local.LocalRepository
@@ -19,15 +18,18 @@ import com.project.linku.data.remote.FireBaseRepository
 import com.project.linku.data.remote.IFireOperationCallBack
 import com.project.linku.ui.utils.Save
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
-class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
-    private val TAG = "ev_" + javaClass.simpleName
+@HiltViewModel
+class MainActivityViewModel @Inject constructor(
+    private val application: Application
+) : ViewModel() {
     private val _connected = MutableLiveData<Boolean>()
     val isConnected : LiveData<Boolean> = _connected
     private val _isLogin = MutableLiveData<Boolean>()
     val isLogin : LiveData<Boolean> = _isLogin.distinctUntilChanged()
-    private val mApplication = application
 
     fun isLogin(){
         FireBaseRepository(object : IFireOperationCallBack {
@@ -36,8 +38,8 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             }
             override fun onFail() { _isLogin.value = false }
         }).signIn(
-            Save.getInstance().getUserAccount(this.mApplication),
-            Save.getInstance().getUserPassword(this.mApplication)
+            Save.getInstance().getUserAccount(this.application),
+            Save.getInstance().getUserPassword(this.application)
         )
 
         FirebaseAuth.getInstance().addAuthStateListener {
@@ -46,29 +48,26 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun isConnected() {
-        if (this.mApplication != null && Build.VERSION.SDK_INT >= 21) {
-            val mNetworkRequest =
-                NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR).addTransportType(NetworkCapabilities.TRANSPORT_WIFI).build()
-            val mConnectivityManager = mApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val mNetworkRequest =
+            NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR).addTransportType(NetworkCapabilities.TRANSPORT_WIFI).build()
+        val mConnectivityManager = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-            mConnectivityManager.registerNetworkCallback(mNetworkRequest, object : NetworkCallback() {
-                    override fun onAvailable(network: Network) { _connected.postValue(true) }
-                    override fun onLost(network: Network) { _connected.postValue(false) }
-                    override fun onUnavailable() { _connected.postValue(false) }
-                })
-        }
+        mConnectivityManager.registerNetworkCallback(mNetworkRequest, object : NetworkCallback() {
+                override fun onAvailable(network: Network) { _connected.postValue(true) }
+                override fun onLost(network: Network) { _connected.postValue(false) }
+                override fun onUnavailable() { _connected.postValue(false) }
+            })
     }
 
     fun syncLocalUserData(): HashMap<String, UserModel> {
-        var userWithkeySet = HashMap<String, UserModel>()
+        val userWithKeySet = HashMap<String, UserModel>()
         runBlocking {
-            val userModelListRou = async { LocalRepository(LocalDatabase.getInstance(mApplication)).getAllUser() }
+            val userModelListRou = async { LocalRepository(LocalDatabase.getInstance(application)).getAllUser() }
             val userModelList = userModelListRou.await()
             for (i in userModelList.indices) {
-//                Log.i(TAG, "email = ${userModelList[i].email},  useruri = ${userModelList[i].useruri}")
-                userWithkeySet.put(userModelList[i].email, userModelList[i])
+                userWithKeySet[userModelList[i].email] = userModelList[i]
             }
         }
-        return userWithkeySet
+        return userWithKeySet
     }
 }
