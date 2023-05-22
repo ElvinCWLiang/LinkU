@@ -4,64 +4,69 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.project.linku.MainActivity
 import com.project.linku.R
 import com.project.linku.data.local.FriendModel
+import com.project.linku.databinding.AdapterChatBinding
 import com.project.linku.ui.utils.GlideApp
 import com.project.linku.ui.utils.Parsefun
-import kotlinx.android.synthetic.main.adapter_chat.view.*
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
+class ChatAdapter(private val navigate: (Bundle) -> Unit):
+    ListAdapter<FriendModel, ChatAdapter.ChatViewHolder>(DiffCallback()) {
 
-class ChatAdapter(_fragment: Fragment , _container: ViewGroup?):
-    RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
-
-    private val TAG = "ev_" + javaClass.simpleName
-    private var mfriendModel: List<FriendModel> = ArrayList()
-    private var fragment = _fragment
-
-    // androidx.recyclerview.widget.RecyclerView.Adapter
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.adapter_chat, parent, false)
-        return ChatViewHolder(this, view)
+        return ChatViewHolder(
+            AdapterChatBinding.inflate(LayoutInflater.from(parent.context),
+            parent,
+            false))
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        holder.bind(mfriendModel[position], position)
+        holder.bind(getItem(position))
     }
 
-    // androidx.recyclerview.widget.RecyclerView.Adapter
-    override fun getItemCount(): Int {
-        return mfriendModel.size
-    }
-
-    inner class ChatViewHolder(mChatAdapter: ChatAdapter, itemView: View) : RecyclerView.ViewHolder(itemView),
+    inner class ChatViewHolder(private val binding: AdapterChatBinding) : RecyclerView.ViewHolder(binding.root),
         View.OnClickListener {
-        var pos = 0
-        val txv_account = itemView.txv_board
-        val txv_time = itemView.txv_title
-        val txv_content = itemView.txv_content
-        val img_author = itemView.img_local
 
-        fun bind(friendModel: FriendModel, position: Int) {
-            txv_account.text = friendModel.email
-            txv_time.text = Parsefun.getInstance().parseSecondsToDate(friendModel.time)
-            txv_content.text = friendModel.content
-            pos = position
-            GlideApp.with(itemView).load(MainActivity.userkeySet.get(friendModel.email)?.useruri).placeholder(R.drawable.cat).circleCrop().into(img_author)
+        fun bind(friendModel: FriendModel) {
+            binding.txvBoard.text = friendModel.email
+            binding.txvTitle.text = Parsefun.getInstance().parseSecondsToDate(friendModel.time)
+            binding.txvContent.text = friendModel.content
+            GlideApp.with(itemView).load(MainActivity.userkeySet[friendModel.email]?.useruri).placeholder(R.drawable.cat).circleCrop().into(binding.imgLocal)
             itemView.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
             val bundle = Bundle()
-            bundle.putString(fragment.resources.getString(R.string.email), mfriendModel[pos].email)
-            fragment.findNavController().navigate(R.id.action_navigation_chat_to_navigation_conversation, bundle)
+            v?.resources?.let {
+                bundle.putString(it.getString(R.string.email), getItem(adapterPosition).email)
+                navigate.invoke(bundle)
+            }
         }
     }
 
-    fun setModelList(friendModel: List<FriendModel>) {
-        mfriendModel = friendModel
+    private class DiffCallback : DiffUtil.ItemCallback<FriendModel>() {
+        override fun areItemsTheSame(
+            oldItem: FriendModel,
+            newItem: FriendModel
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: FriendModel,
+            newItem: FriendModel
+        ): Boolean {
+            return oldItem.email == newItem.email &&
+                    oldItem.emailfrom == newItem.emailfrom &&
+                    oldItem.content == newItem.content &&
+                    oldItem.time == newItem.time &&
+                    oldItem.type == newItem.type
+        }
     }
 }
