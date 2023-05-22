@@ -3,9 +3,9 @@ package com.project.linku.ui.chat
 import android.app.Application
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.linku.MainActivity
 import com.project.linku.data.local.*
@@ -14,38 +14,36 @@ import com.project.linku.data.remote.IFireOperationCallBack
 import com.project.linku.ui.utils.Save
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
-import com.project.linku.ui.utils.Event
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ChatViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class ChatViewModel @Inject constructor(
+    private val application: Application
+) : ViewModel() {
+    private val _friendModelList = MutableStateFlow<List<FriendModel>>(listOf())
+    val friendModelList = _friendModelList.asStateFlow()
 
-    val _shouldshowSearchAccountDialog = MutableLiveData<Event<String>>()
-    val shouldshowSearchAccountDialog: LiveData<Event<String>> = _shouldshowSearchAccountDialog
-
-    private val _chatAdapterMaterial = MutableLiveData<List<FriendModel>>()
-    val chatAdapterMaterial: LiveData<List<FriendModel>> = _chatAdapterMaterial
-
-    private val mapplication: Application = application
     private val TAG = "ev_" + javaClass.simpleName
-    var acc = ""
 
-    fun showDialog() {
+    fun searchAccount(account: String) = callbackFlow {
         FireBaseRepository(object : IFireOperationCallBack {
             override fun <T> onSuccess(t: T) {
                 val userUri: Uri = Uri.parse((t as DataSnapshot).getValue(UserModel::class.java)?.useruri)
-                Save.getInstance().saveUserAvatarUri(mapplication, acc, userUri)
-                _shouldshowSearchAccountDialog.value = Event(acc)
-                Log.i(TAG, "onSuccess")
+                Save.getInstance().saveUserAvatarUri(application, account, userUri)
+                trySend(account)
             }
 
-            override fun onFail() {
-                Log.i(TAG, "onFail")
-            }
-        }).searchAccount(acc)
+            override fun onFail() {}
+        }).searchAccount(account)
     }
 
-    fun addfriend(acc: String) {
+    fun addFriend(acc: String) {
         FireBaseRepository(object : IFireOperationCallBack {
             override fun <T> onSuccess(t: T) {
                 syncFriendList()
@@ -79,28 +77,31 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                                     }
                                 }
                                 viewModelScope.launch {
-                                    LocalRepository(LocalDatabase.getInstance(mapplication)).insertFriendList(m)
+                                    LocalRepository(LocalDatabase.getInstance(application)).insertFriendList(m)
                                 }
                             } catch (e: Exception) {
                                 Log.e(TAG, "error = $e")
                             }
                         }
                     }
-                    synclocalFriendList()
+                    syncLocalFriendList()
                 }
             }
             override fun onFail() {}
         }).syncFriendList()
 
-        synclocalFriendList()
+        syncLocalFriendList()
     }
 
     /* get friend list from Firebase and put the returning data into Room db << */
-    fun synclocalFriendList() {
+    fun syncLocalFriendList() {
         viewModelScope.launch(Dispatchers.Main) {
-            Log.i(TAG, "Friend list size = ${FirebaseAuth.getInstance().currentUser?.email.toString()}")
-            Log.i(TAG, "Friend list size = ${LocalRepository(LocalDatabase.getInstance(mapplication)).getFriendList(FirebaseAuth.getInstance().currentUser?.email.toString())}")
-            _chatAdapterMaterial.value = LocalRepository(LocalDatabase.getInstance(mapplication)).getFriendList(FirebaseAuth.getInstance().currentUser?.email.toString())
+            _friendModelList.emit(
+                LocalRepository(LocalDatabase.getInstance(application))
+                    .getFriendList(FirebaseAuth.getInstance().currentUser?.email.toString())
+            )
+//            _chatAdapterMaterial.value = LocalRepository(LocalDatabase.getInstance(application))
+//                .getFriendList(FirebaseAuth.getInstance().currentUser?.email.toString())
         }
     }
 
@@ -111,7 +112,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                     //save current user
                     val userModel = (t as DataSnapshot).getValue(UserModel::class.java)
                     viewModelScope.launch {
-                        LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(userModel)
+                        LocalRepository(LocalDatabase.getInstance(application)).insertUserList(userModel)
                     }
                     userModel?.let {
                         MainActivity.userkeySet.put(userModel.email, userModel)

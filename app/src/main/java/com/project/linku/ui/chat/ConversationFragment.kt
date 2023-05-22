@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.linku.databinding.FragmentConversationBinding
 import com.project.linku.R
 import com.project.linku.ui.utils.Parsefun
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ConversationFragment : Fragment() {
 
     private val TAG = "ev_" + javaClass.simpleName

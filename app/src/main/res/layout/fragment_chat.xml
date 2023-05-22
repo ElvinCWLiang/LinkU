@@ -3,12 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-        <variable
-            name="chatViewModel"
-            type="com.project.linku.ui.chat.ChatViewModel" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:background="@color/background"
         android:layout_width="match_parent"
@@ -42,7 +36,6 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@color/transparent"
-                android:onClick="@{() -> chatViewModel.showDialog()}"
                 android:src="@drawable/search"
                 app:layout_constraintBottom_toBottomOf="@+id/edt_search_account"
                 app:layout_constraintEnd_toEndOf="@+id/recyclerViewChat"
@@ -73,7 +66,6 @@
                 android:hint="@string/account"
                 android:inputType="textPersonName"
                 android:minHeight="48dp"
-                android:text="@={chatViewModel.acc}"
                 app:layout_constraintEnd_toStartOf="@+id/btn_search_account"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

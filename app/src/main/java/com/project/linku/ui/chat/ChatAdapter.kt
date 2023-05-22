@@ -13,9 +13,7 @@ import com.project.linku.data.local.FriendModel
 import com.project.linku.databinding.AdapterChatBinding
 import com.project.linku.ui.utils.GlideApp
 import com.project.linku.ui.utils.Parsefun
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class ChatAdapter(private val navigate: (Bundle) -> Unit):
     ListAdapter<FriendModel, ChatAdapter.ChatViewHolder>(DiffCallback()) {
 
