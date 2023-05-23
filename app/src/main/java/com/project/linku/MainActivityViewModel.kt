@@ -12,31 +12,39 @@ import com.project.linku.data.local.LocalDatabase
 import com.project.linku.data.local.LocalRepository
 import com.project.linku.data.local.UserModel
 import com.project.linku.data.remote.FireBaseRepository
-import com.project.linku.data.remote.IFireOperationCallBack
 import com.project.linku.ui.utils.Save
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
+    private val repository : FireBaseRepository,
     private val application: Application
 ) : ViewModel() {
-    
+
+
     fun isLogin() = callbackFlow {
-        FireBaseRepository(object : IFireOperationCallBack {
-            override fun <T> onSuccess(t: T) {
-                trySend(true) }
-            override fun onFail() {
-                trySend(false)
-            }
-        }).signIn(
-            Save.getInstance().getUserAccount(application),
-            Save.getInstance().getUserPassword(application)
-        )
+        repository.signIn(
+            Save.getUserAccount(application),
+            Save.getUserPassword(application)
+        ).collectLatest {
+            trySend(it)
+        }
+
+//        FireBaseRepository(object : IFireOperationCallBack {
+//            override fun <T> onSuccess(t: T) {
+//                trySend(true) }
+//            override fun onFail() {
+//                trySend(false)
+//            }
+//        }).signIn(
+//
+//        )
 
         FirebaseAuth.getInstance().addAuthStateListener {
             trySend(it.currentUser != null)

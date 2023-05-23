@@ -4,19 +4,11 @@ import android.content.Context
 import android.net.Uri
 import com.project.linku.R
 
-class Save {
+object Save {
     private val Account = "ACCOUNT"
     private val ConnectionStatus = "CONNECTIONSTATUS"
     private val Password = "PASSWORD"
     private val UsersURI = "USERSURI"
-
-    companion object {
-        private var instance: Save? = null
-
-        fun getInstance(): Save {
-            return instance ?: Save()
-        }
-    }
 
     fun saveConnectionStatus(mContext: Context, isConnected: Boolean) {
         mContext.getSharedPreferences(mContext.getResources().getString(R.string.data), 0).edit()

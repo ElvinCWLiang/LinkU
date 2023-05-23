@@ -1,5 +1,6 @@
 package com.project.linku.data.remote
 
+import android.app.Application
 import android.net.Uri
 import android.util.Log
 import com.project.linku.data.local.ArticleModel
@@ -11,14 +12,29 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import com.project.linku.di.ServiceModule
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import java.util.*
+import javax.inject.Inject
 
-class FireBaseRepository(private val callBack: IFireOperationCallBack?): IFireBaseApiService {
+class FireBaseRepository @Inject constructor(
+//    application: Application,
+//    @Assisted
+//    private val callBack: IFireOperationCallBack?
+    application: Application
+): IFireBaseApiService {
     private val tag = "ev_" + javaClass.simpleName
-    private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var database: DatabaseReference = FirebaseDatabase.getInstance().reference
+    private val hiltEntryPoint =
+        EntryPointAccessors.fromApplication(application.applicationContext, ServiceModule.FirebaseServiceEntryPoint::class.java)
+    val auth = hiltEntryPoint.auth()
     private val currentUser: FirebaseUser? = auth.currentUser
 
     override fun getUserName(): String? {
@@ -133,13 +149,17 @@ class FireBaseRepository(private val callBack: IFireOperationCallBack?): IFireBa
     }
 
     /* user sign in */
-    override fun signIn(acc: String, pwd: String) {
+    override fun signIn(acc: String, pwd: String) = callbackFlow {
         Log.i(tag,"sign in with acc = $acc, pwd = $pwd")
         auth.signInWithEmailAndPassword(acc, pwd)
             .addOnCompleteListener{
-                if (it.isSuccessful) this.callBack?.onSuccess(null)
-                else this.callBack?.onFail()
+                if (it.isSuccessful) {
+                    trySend(true)
+                } else {
+                    trySend(false)
+                }
             }
+        awaitClose{}
     }
 
     override fun getFirebaseAuth(): FirebaseAuth {
