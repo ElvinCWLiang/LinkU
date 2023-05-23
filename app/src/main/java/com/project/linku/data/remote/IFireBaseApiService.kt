@@ -12,7 +12,7 @@ interface IFireBaseApiService {
     fun getUserName(): String?
     fun publishArticle(articleModel: ArticleModel)
     fun searchAccount(str: String)
-    fun send(userMessage: String, acc: String, type: Int)
+    fun send(userMessage: String, account: String, type: Int)
     fun send(imagePath: Uri)
     fun sendImageWithArticle(imagePath: Uri)
     fun sendReply(userReply: String, articleId: String, board: String)

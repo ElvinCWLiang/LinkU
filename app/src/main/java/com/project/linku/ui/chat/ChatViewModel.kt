@@ -87,10 +87,10 @@ class ChatViewModel @Inject constructor(
                     syncLocalFriendList()
                 }
             }
-            override fun onFail() {}
+            override fun onFail() {
+                syncLocalFriendList()
+            }
         }).syncFriendList()
-
-        syncLocalFriendList()
     }
 
     /* get friend list from Firebase and put the returning data into Room db << */
@@ -100,8 +100,6 @@ class ChatViewModel @Inject constructor(
                 LocalRepository(LocalDatabase.getInstance(application))
                     .getFriendList(FirebaseAuth.getInstance().currentUser?.email.toString())
             )
-//            _chatAdapterMaterial.value = LocalRepository(LocalDatabase.getInstance(application))
-//                .getFriendList(FirebaseAuth.getInstance().currentUser?.email.toString())
         }
     }
 
