@@ -34,14 +34,14 @@ class ConversationFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         conversationViewModel = ViewModelProvider(this).get(ConversationViewModel::class.java)
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_conversation ,container, false)
         val root: View = binding.root
         binding.conversationViewModel = conversationViewModel
 
         initVariables()
-        initView()
+        initView(binding)
 
         return root
     }
@@ -85,11 +85,11 @@ class ConversationFragment : Fragment() {
         Log.i(TAG, "onResume")
     }
 
-    private fun initView() {
+    private fun initView(binding: FragmentConversationBinding) {
         Log.i(TAG, "initView")
         /* init reyclerview & adapter >> */
-        val mConversationAdapter = ConversationAdapter(this, acc)
-        binding.recyclerViewConversation.adapter = mConversationAdapter
+        val conversationAdapter = ConversationAdapter(this, acc)
+        binding.recyclerViewConversation.adapter = conversationAdapter
         binding.recyclerViewConversation.layoutManager = LinearLayoutManager(activity)
         /* init reyclerview & adapter << */
 
@@ -101,20 +101,19 @@ class ConversationFragment : Fragment() {
 
         /* receive the data from local repository and insert it into the ConversationAdapter >> */
         conversationViewModel.conversationAdapterMaterial.observe(viewLifecycleOwner) {
-            mConversationAdapter.setModelList(it)
+            conversationAdapter.setModelList(it)
             if (it.isNotEmpty()) {
                 Log.i(TAG, "size = ${it.size}  it.emfail = ${it[0].email}  type = ${it[0].type}")
-                binding.recyclerViewConversation.scrollToPosition(it.size - 1)
+                this.binding.recyclerViewConversation.scrollToPosition(it.size - 1)
             }
-            mConversationAdapter.notifyDataSetChanged()
+            conversationAdapter.notifyDataSetChanged()
         }
         /* receive the data from local repository and insert it into the ConversationAdapter << */
 
-        /* clear the input message >> */
-        conversationViewModel.userMessage.observe(viewLifecycleOwner){
-            if(it == "") binding.edtUsercontent.text.clear()
+        binding.btnSend.setOnClickListener {
+            conversationViewModel.send(binding.edtUsercontent.text.toString())
+            binding.edtUsercontent.text.clear()
         }
-        /* clear the input message << */
 
         /* navigate the view to voice call or video call when the message has been uploaded to firebase successfully >> */
         conversationViewModel.callStatus.observe(viewLifecycleOwner) {
@@ -131,11 +130,11 @@ class ConversationFragment : Fragment() {
         }
         /* navigate the view to voice call or video call when the message has been uploaded to firebase successfully << */
 
-        binding.voicecall.setOnClickListener {
+        this.binding.voicecall.setOnClickListener {
             conversationViewModel.send(type = 2, Parsefun.getInstance().randomStringGenerator())
         }
 
-        binding.videocall.setOnClickListener {
+        this.binding.videocall.setOnClickListener {
             conversationViewModel.send(type = 3, Parsefun.getInstance().randomStringGenerator())
         }
     }

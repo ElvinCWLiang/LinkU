@@ -20,6 +20,7 @@ import com.google.firebase.ktx.Firebase
 import com.project.linku.data.remote.FirebaseResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,7 +37,6 @@ class ConversationViewModel @Inject constructor(
     val callStatus : LiveData<Pair<Int, String>> = _callStatus
     var remoteAccount = ""
     private var localAccount = Firebase.auth.currentUser?.email!!
-    val userMessage = MutableLiveData<String>().apply { value = "" }
 
     /* sync specific account conversation on Firebase */
     fun syncConversation(acc: String) {
@@ -61,10 +61,6 @@ class ConversationViewModel @Inject constructor(
         fetchLocalConversation(remoteAccount)
     }
 
-    fun onTextChange(editable: Editable?) {
-        userMessage.value = editable.toString()
-    }
-
     /* fetch account conversation on local db */
     fun fetchLocalConversation(remoteAccount: String) {
         viewModelScope.launch(IO) {
@@ -73,12 +69,8 @@ class ConversationViewModel @Inject constructor(
     }
 
     /* type 0 = text, type 1 = image, type 2 = voice call, type 3 = video call */
-    fun send(type: Int) {
-        userMessage.value?.let {
-            repository.send(it, remoteAccount, type)
-            Log.i(tag,"userReply = ${userMessage.value}, remoteAccount = $remoteAccount")
-            userMessage.value = ""
-        }
+    fun send(message: String) = viewModelScope.launch {
+        repository.send(message, remoteAccount, 0).collect()
     }
 
     /* type 0 = text, type 1 = image, type 2 = voice call, type 3 = video call */
