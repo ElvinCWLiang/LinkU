@@ -3,27 +3,32 @@ package com.project.linku.ui.dashboard
 import android.app.Application
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import com.project.linku.data.local.LocalDatabase
 import com.project.linku.data.local.LocalRepository
 import com.project.linku.data.local.UserModel
 import com.project.linku.data.remote.FireBaseRepository
-import com.project.linku.data.remote.IFireOperationCallBack
 import com.project.linku.ui.utils.Save
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
+import com.project.linku.data.remote.FirebaseResult
 import com.project.linku.ui.utils.Event
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DashboardViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class DashboardViewModel @Inject constructor(
+    private val repository : FireBaseRepository,
+    private val application: Application
+) : ViewModel() {
 
-    private var mapplication = application
-    private val TAG = "ev_" + javaClass.simpleName
+    private val tag = "ev_" + javaClass.simpleName
     private val _userAccount = MutableLiveData<String>().apply { value = FirebaseAuth.getInstance().currentUser?.email }
     val userAccount : LiveData<String> = _userAccount
     private val _updateRespond = MutableLiveData<Event<String>>()
@@ -33,99 +38,113 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val currentUser = FirebaseAuth.getInstance().currentUser?.email.toString()
     private val _introduction = MutableLiveData<String>().apply {
         viewModelScope.launch(Dispatchers.IO) {
-            postValue(LocalRepository(LocalDatabase.getInstance(mapplication)).getUser(currentUser)?.userintroduction)
+            postValue(LocalRepository(LocalDatabase.getInstance(this@DashboardViewModel.application)).getUser(currentUser)?.userintroduction)
         }
     }
     val introduction : LiveData<String> = _introduction
 
     fun signUp(acc: String, pwd: String) {
-        FireBaseRepository(object : IFireOperationCallBack {
-            override fun <T> onSuccess(t: T) {
-                Log.i(TAG, acc + "signUp")
-                _updateRespond.value = Event("Success")
-                signIn(acc, pwd)
-            }
-            override fun onFail() { _updateRespond.value = Event("Fail") }
-        }).signUp(acc, pwd)
-    }
-
-    fun signIn(acc: String, pwd: String) {
-        FireBaseRepository(object : IFireOperationCallBack {
-            override fun <T> onSuccess(t: T) {
-                Save.getInstance().saveUser(mapplication, acc, pwd)
-                Log.i(TAG, acc + "signIn")
-                _userAccount.value = acc
-                _updateRespond.value = Event("Success")
-                _isAvatarChanged.value = Uri.parse(Save.getInstance().getUserAvatarUri(mapplication, acc))
-                viewModelScope.launch(Dispatchers.IO) {
-                    syncUser(acc)
-                }
-            }
-            override fun onFail() {
-                Log.i(TAG, "signIn onFail")
-                _updateRespond.value = Event("Fail")
-            }
-        }).signIn(acc, pwd)
-    }
-
-    fun syncUser(acc: String) {
-        viewModelScope.launch {
-            FireBaseRepository(object : IFireOperationCallBack {
-                override fun <T> onSuccess(t: T) {
-                    //save current user
-                    viewModelScope.launch {
-                        LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList((t as DataSnapshot).getValue(UserModel::class.java))
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.signUp(acc, pwd).collectLatest {
+                when (it) {
+                    is FirebaseResult.Success -> {
+                        Log.i(tag, acc + "signUp")
+                        _updateRespond.value = Event("Success")
+                        signIn(acc, pwd)
                     }
-                    _introduction.value = (t as DataSnapshot).getValue(UserModel::class.java)?.userintroduction
+                    else -> {
+                        _updateRespond.value = Event("Fail")
+                    }
                 }
-                override fun onFail() { }
-            }).syncUser(acc)
+            }
+        }
+    }
+
+    fun signIn(account: String, password: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.signIn(
+                account, password
+            ).collectLatest {
+                when (it) {
+                    is FirebaseResult.Success -> {
+                        Save.saveUser(application, account, password)
+                        Log.i(tag, account + "signIn")
+                        _userAccount.value = account
+                        _updateRespond.value = Event("Success")
+                        _isAvatarChanged.value = Uri.parse(Save.getUserAvatarUri(application, account))
+                        viewModelScope.launch(Dispatchers.IO) {
+                            syncUser(account)
+                        }
+                    }
+                    else -> {
+                        Log.i(tag, "signIn onFail")
+                        _updateRespond.value = Event("Fail")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun syncUser(account: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.syncUser(account).collectLatest {
+                when (it) {
+                    is FirebaseResult.Success -> {
+                        //save current user
+                        viewModelScope.launch {
+                            val userModel = it.data.getValue(UserModel::class.java)
+                            LocalRepository(LocalDatabase.getInstance(application)).insertUserList(userModel)
+                            _introduction.value = userModel?.userintroduction.orEmpty()
+                        }
+                    }
+                    else -> {}
+                }
+            }
         }
     }
 
     fun updateAvatar(imagePath: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
-            val mUserModel = LocalRepository(LocalDatabase.getInstance(mapplication)).getUser(currentUser)
-            mUserModel?.let {
-                mUserModel.useruri = imagePath.toString()
-                FireBaseRepository(object : IFireOperationCallBack {
-                    override fun <T> onSuccess(t: T) {
-                        viewModelScope.launch {
-                            LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(t as UserModel)
+            val userModel = LocalRepository(LocalDatabase.getInstance(application)).getUser(currentUser)
+            userModel?.let {
+                userModel.useruri = imagePath.toString()
+                repository.updateAvatar(userModel, imagePath).collectLatest {
+                    when (it) {
+                        is FirebaseResult.Success -> {
+                            viewModelScope.launch {
+                                LocalRepository(LocalDatabase.getInstance(application)).insertUserList(it.data)
+                            }
+                            _isAvatarChanged.value = Uri.parse(it.data.useruri)
+                            Save.saveUserAvatarUri(application, currentUser, Uri.parse(it.data.useruri))
                         }
-                        _isAvatarChanged.value = Uri.parse((t as UserModel).useruri)
-                        Save.getInstance().saveUserAvatarUri(mapplication, currentUser, Uri.parse((t as UserModel).useruri))
+                        else -> {}
                     }
-                    override fun onFail() {  }
-                }).updateAvatar(mUserModel, imagePath)
+                }
             }
         }
     }
 
     fun updateUserIntroduction(intro: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val mUserModel = LocalRepository(LocalDatabase.getInstance(mapplication)).getUser(currentUser)
-            mUserModel?.let {
-                mUserModel.userintroduction = intro
-                FireBaseRepository(object : IFireOperationCallBack {
-                    override fun <T> onSuccess(t: T) {
-                        _introduction.value = (t as UserModel).userintroduction
-                        viewModelScope.launch {
-                            LocalRepository(LocalDatabase.getInstance(mapplication)).insertUserList(t as UserModel)
-                        }
+            val userModel = LocalRepository(LocalDatabase.getInstance(application)).getUser(currentUser)
+            userModel?.let {
+                userModel.userintroduction = intro
+                repository.updateUserIntroduction(userModel).collectLatest {
+                    _introduction.value = it.data.userintroduction
+                    viewModelScope.launch {
+                        LocalRepository(LocalDatabase.getInstance(application)).insertUserList(it.data)
                     }
-                    override fun onFail() {  }
-                }).updateUserIntroduction(mUserModel)
+                }
             }
         }
     }
 
     fun logout() {
-        FireBaseRepository(null).signOut()
+        repository.signOut()
         viewModelScope.launch(Dispatchers.IO) {
-            LocalRepository(LocalDatabase.getInstance(mapplication)).deleteFriendList()
+            LocalRepository(LocalDatabase.getInstance(application)).deleteFriendList()
         }
-        Save.getInstance().deleteUser(mapplication)
+        Save.deleteUser(application)
         _userAccount.value = null
     }
 

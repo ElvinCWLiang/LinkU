@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             /* observe the network connection status >> */
             launch {
                 mainViewModel.isConnected().collectLatest {
-                    if (it) Save.getInstance().saveConnectionStatus(this@MainActivity, it)
+                    if (it) Save.saveConnectionStatus(this@MainActivity, it)
                     else Toast.makeText(this@MainActivity, "Disconnect", Toast.LENGTH_SHORT).show()
                 }
             }

@@ -12,8 +12,7 @@ import com.project.linku.data.local.LocalDatabase
 import com.project.linku.data.local.LocalRepository
 import com.project.linku.data.local.UserModel
 import com.project.linku.data.remote.FireBaseRepository
-import com.project.linku.data.remote.IFireOperationCallBack
-import com.google.firebase.database.DataSnapshot
+import com.project.linku.data.remote.FirebaseResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,6 +34,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val repository : FireBaseRepository,
     private val application: Application
 ) : ViewModel() {
     private val _homeAdapterMaterial = MutableLiveData<List<ArticleModel>>()
@@ -108,59 +108,59 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun syncSpecificBoard(board: String): Flow<List<ArticleModel>> = callbackFlow {
-        FireBaseRepository(object : IFireOperationCallBack {
-            override fun <T> onSuccess(t: T) {
-                _isSwipeRefresh.tryEmit(false)
-                if (t != null) {
-                    val mDataSnapshot = t as DataSnapshot
-                    val cacheUser = ArrayList<String>()
-                    val articleModelList = mutableListOf<ArticleModel>()
-                    for (next in mDataSnapshot.children) {
-                        val articleModel = next.getValue(ArticleModel::class.java)
-                        if (articleModel != null) {
-                            articleModel.id = next.key.toString()
-                        }
-                        articleModel?.let {
-                            it.publishAuthor?.let { author ->
-                                if (!cacheUser.contains(author)) {
-                                    syncUser(author)
-                                    cacheUser.add(author)
-                                }
+        repository.syncBoard(board).collectLatest {
+            when (it) {
+                is FirebaseResult.Success -> {
+                    _isSwipeRefresh.tryEmit(false)
+                    if (it.data != null) {
+                        val dataSnapshot = it.data
+                        val cacheUser = ArrayList<String>()
+                        val articleModelList = mutableListOf<ArticleModel>()
+                        for (next in dataSnapshot.children) {
+                            val articleModel = next.getValue(ArticleModel::class.java)
+                            if (articleModel != null) {
+                                articleModel.id = next.key.toString()
                             }
-                            articleModelList.add(it)
-                        }
+                            articleModel?.let {
+                                it.publishAuthor?.let { author ->
+                                    if (!cacheUser.contains(author)) {
+                                        syncUser(author)
+                                        cacheUser.add(author)
+                                    }
+                                }
+                                articleModelList.add(it)
+                            }
 
-                        viewModelScope.launch {
-                            LocalRepository(LocalDatabase.getInstance(application)).insertArticle(articleModel)
+                            viewModelScope.launch {
+                                LocalRepository(LocalDatabase.getInstance(application)).insertArticle(articleModel)
+                            }
                         }
+                        trySend(articleModelList)
                     }
-                    trySend(articleModelList)
+                    syncLocalArticle(application.resources.getStringArray(R.array.board_array)[spannableBoardPosition])
                 }
-                syncLocalArticle(application.resources.getStringArray(R.array.board_array)[spannableBoardPosition])
+                else -> {
+                    _isSwipeRefresh.tryEmit(false)
+                    close()
+                }
             }
-            override fun onFail() {
-                _isSwipeRefresh.tryEmit(false)
-                close()
-            }
-        }).syncBoard(board)
+        }
 
         awaitClose{}
     }
 
-    fun syncUser(acc: String) {
-        viewModelScope.launch {
-            FireBaseRepository(object : IFireOperationCallBack {
-                override fun <T> onSuccess(t: T) {
-                    val userModel = (t as DataSnapshot).getValue(UserModel::class.java)
-                    viewModelScope.launch {
-                        LocalRepository(LocalDatabase.getInstance(application)).insertUserList(userModel)
-                    }
+    private fun syncUser(acc: String) = viewModelScope.launch(Dispatchers.IO) {
+        repository.syncUser(acc).collectLatest {
+            when (it) {
+                is FirebaseResult.Success -> {
+                    val userModel = it.data.getValue(UserModel::class.java)
+                    LocalRepository(LocalDatabase.getInstance(application)).insertUserList(userModel)
                     userModel?.let {
                         userkeySet.put(userModel.email, userModel)
                     }
                 }
-                override fun onFail() { }
-            }).syncUser(acc)
+                else -> {}
+            }
         }
     }
 

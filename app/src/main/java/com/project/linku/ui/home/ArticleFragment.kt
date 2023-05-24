@@ -13,7 +13,9 @@ import com.project.linku.R
 import com.project.linku.databinding.FragmentArticleBinding
 import com.project.linku.ui.utils.GlideApp
 import com.project.linku.ui.utils.Parsefun
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ArticleFragment: Fragment() {
     private val TAG = "ev_" + javaClass.simpleName
     private var _binding: FragmentArticleBinding? = null

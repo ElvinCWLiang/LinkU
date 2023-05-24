@@ -15,11 +15,11 @@ import com.project.linku.MainActivity
 import com.project.linku.R
 import com.project.linku.databinding.FragmentDashboardBinding
 import com.project.linku.ui.utils.GlideApp
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_login.view.*
 
-
+@AndroidEntryPoint
 class DashboardFragment : Fragment() {
-
     private var _binding: FragmentDashboardBinding? = null
     private val TAG = "ev_" + javaClass.simpleName
     private val binding get() = _binding!!
@@ -38,16 +38,15 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
+            ViewModelProvider(this)[DashboardViewModel::class.java]
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
         initView(container)
 
-        return root
+        return binding.root
     }
 
-    fun initView(container: ViewGroup?) {
+    private fun initView(container: ViewGroup?) {
         dialog = LoginDialog(requireContext(), dashboardViewModel)
 
         binding.dashboardViewModel = dashboardViewModel

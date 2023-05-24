@@ -15,8 +15,6 @@ import javax.inject.Singleton
 object ServiceModule {
 
     @Singleton
-    @EntryPoint
-    interface FirebaseServiceEntryPoint {
-        fun auth(): FirebaseAuth = Firebase.auth
-    }
+    @Provides
+    fun auth(): FirebaseAuth = Firebase.auth
 }

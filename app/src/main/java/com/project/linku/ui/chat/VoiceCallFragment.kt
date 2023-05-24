@@ -18,7 +18,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class VoiceCallFragment : Fragment() {
-
     val TAG = "ev_" + javaClass.simpleName
     private var _binding: FragmentVoicecallBinding? = null
     private val binding get() = _binding!!

@@ -19,7 +19,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ConversationFragment : Fragment() {
-
     private val TAG = "ev_" + javaClass.simpleName
     private var _binding: FragmentConversationBinding? = null
     private val binding get() = _binding!!

@@ -28,23 +28,23 @@ class MessageService : Service() {
 
     /* sync specific account conversation on Firebase */
     private fun notifyMessage() {
-        FireBaseRepository(null).notifyMessage(object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                Log.i(TAG, "onChildAdded")
-                val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                val notificationBuilder = NotificationCompat.Builder(applicationContext, "")
-                   // .setSmallIcon(R.drawable.ic_android)
-                    .setContentTitle("FCM Message")
-                    .setContentText("message")
-                    .setAutoCancel(true)
-                    .setSound(defaultSoundUri)
-                val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.notify(0, notificationBuilder.build())
-            }
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onCancelled(error: DatabaseError) {}
-        })
+//        FireBaseRepository(null).notifyMessage(object : ChildEventListener {
+//            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+//                Log.i(TAG, "onChildAdded")
+//                val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+//                val notificationBuilder = NotificationCompat.Builder(applicationContext, "")
+//                   // .setSmallIcon(R.drawable.ic_android)
+//                    .setContentTitle("FCM Message")
+//                    .setContentText("message")
+//                    .setAutoCancel(true)
+//                    .setSound(defaultSoundUri)
+//                val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//                notificationManager.notify(0, notificationBuilder.build())
+//            }
+//            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+//            override fun onChildRemoved(snapshot: DataSnapshot) {}
+//            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+//            override fun onCancelled(error: DatabaseError) {}
+//        })
     }
 }
