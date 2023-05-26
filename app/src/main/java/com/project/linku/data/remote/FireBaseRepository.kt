@@ -50,8 +50,8 @@ class FireBaseRepository @Inject constructor(
     /* search account in ChatFragment */
     override fun searchAccount(str: String) = callbackFlow {
         Log.i(tag,str)
-        val mQuery = database.child(ACCOUNT_LIST).child(Parsefun.getInstance().parseEmailasAccount(str))
-        mQuery.addListenerForSingleValueEvent(object : ValueEventListener {
+        val query = database.child(ACCOUNT_LIST).child(Parsefun.getInstance().parseEmailasAccount(str))
+        val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     trySend(FirebaseResult.Success(dataSnapshot))
@@ -62,9 +62,10 @@ class FireBaseRepository @Inject constructor(
             override fun onCancelled(databaseError: DatabaseError) {
                 trySend(FirebaseResult.Failure(databaseError.toException()))
             }
-        })
+        }
+        query.addListenerForSingleValueEvent(listener)
 
-        awaitClose()
+        awaitClose { query.removeEventListener(listener) }
     }
 
     override fun addFriend(account: String) = callbackFlow {
@@ -209,17 +210,18 @@ class FireBaseRepository @Inject constructor(
     }
 
     override fun syncUser(acc: String): Flow<FirebaseResult<DataSnapshot>> = callbackFlow {
-        val mQuery = database.child(ACCOUNT_LIST).child(Parsefun.getInstance().parseEmailasAccount(acc))
-        mQuery.addListenerForSingleValueEvent(object : ValueEventListener {
+        val query = database.child(ACCOUNT_LIST).child(Parsefun.getInstance().parseEmailasAccount(acc))
+        val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 trySend(FirebaseResult.Success(dataSnapshot))
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 trySend(FirebaseResult.Failure(databaseError.toException()))
             }
-        })
+        }
+        query.addListenerForSingleValueEvent(listener)
 
-        awaitClose()
+        awaitClose { query.removeEventListener(listener) }
     }
 
     override fun notifyMessage(param: ChildEventListener) {
